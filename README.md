@@ -7,25 +7,34 @@ Installation
 --------------
 ### Requirements
 
-1. Python 2.7 \
+1. Python 2.7 
+
 [https://www.python.org/downloads/](https://www.python.org/downloads/)
 
-2. Numpy \
+2. Numpy 
+
 [http://sourceforge.net/projects/numpy/files/NumPy/1.9.1/](http://sourceforge.net/projects/numpy/files/NumPy/1.9.1/)
 
-3. OpenCV \
-[http://sourceforge.net/projects/opencvlibrary/files/opencv-win/2.4.10/](http://sourceforge.net/projects/opencvlibrary/files/opencv-win/2.4.10/) \
-Goto opencv/build/python/2.7 folder. \
+3. OpenCV 
+
+[http://sourceforge.net/projects/opencvlibrary/files/opencv-win/2.4.10/](http://sourceforge.net/projects/opencvlibrary/files/opencv-win/2.4.10/) 
+
+Goto opencv/build/python/2.7 folder. 
+
 Copy cv2.pyd to C:/Python27/lib/site-packages.
 
-4. Python-Tesseract \
+4. Python-Tesseract 
+
 [https://bitbucket.org/3togo/python-tesseract/downloads/](https://bitbucket.org/3togo/python-tesseract/downloads/)
 
-5. PyQt4 \
+5. PyQt4 
+
 [http://www.riverbankcomputing.co.uk/software/pyqt/download](http://www.riverbankcomputing.co.uk/software/pyqt/download)
 
-6. qimage2ndarray \
-pip install qimage2ndarray \
+6. qimage2ndarray 
+
+pip install qimage2ndarray 
+
 [http://pypi.python.org/pypi/qimage2ndarray](http://pypi.python.org/pypi/qimage2ndarray)
 
 Prerequisites
