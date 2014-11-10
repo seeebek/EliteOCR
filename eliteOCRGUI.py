@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'eliteOCRGUI.ui'
 #
-# Created: Mon Nov 10 12:59:53 2014
+# Created: Mon Nov 10 14:12:47 2014
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -23,11 +23,11 @@ except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
-class Ui_eliteOCR(object):
-    def setupUi(self, eliteOCR):
-        eliteOCR.setObjectName(_fromUtf8("eliteOCR"))
-        eliteOCR.resize(1096, 674)
-        self.centralwidget = QtGui.QWidget(eliteOCR)
+class Ui_MainWindow(object):
+    def setupUi(self, MainWindow):
+        MainWindow.setObjectName(_fromUtf8("MainWindow"))
+        MainWindow.resize(1092, 600)
+        self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.verticalLayout_2 = QtGui.QVBoxLayout(self.centralwidget)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
@@ -294,21 +294,40 @@ class Ui_eliteOCR(object):
         self.export_button.setObjectName(_fromUtf8("export_button"))
         self.horizontalLayout_2.addWidget(self.export_button)
         self.verticalLayout_2.addLayout(self.horizontalLayout_2)
-        eliteOCR.setCentralWidget(self.centralwidget)
+        MainWindow.setCentralWidget(self.centralwidget)
+        self.menubar = QtGui.QMenuBar(MainWindow)
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1092, 21))
+        self.menubar.setObjectName(_fromUtf8("menubar"))
+        self.menuHelp = QtGui.QMenu(self.menubar)
+        self.menuHelp.setObjectName(_fromUtf8("menuHelp"))
+        MainWindow.setMenuBar(self.menubar)
+        self.statusbar = QtGui.QStatusBar(MainWindow)
+        self.statusbar.setObjectName(_fromUtf8("statusbar"))
+        MainWindow.setStatusBar(self.statusbar)
+        self.actionHow_to_use = QtGui.QAction(MainWindow)
+        self.actionHow_to_use.setObjectName(_fromUtf8("actionHow_to_use"))
+        self.actionAbout = QtGui.QAction(MainWindow)
+        self.actionAbout.setObjectName(_fromUtf8("actionAbout"))
+        self.menuHelp.addAction(self.actionHow_to_use)
+        self.menuHelp.addAction(self.actionAbout)
+        self.menubar.addAction(self.menuHelp.menuAction())
 
-        self.retranslateUi(eliteOCR)
-        QtCore.QMetaObject.connectSlotsByName(eliteOCR)
+        self.retranslateUi(MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-    def retranslateUi(self, eliteOCR):
-        eliteOCR.setWindowTitle(_translate("eliteOCR", "EliteOCR", None))
-        self.image_button.setText(_translate("eliteOCR", "Chose Image", None))
-        self.label_5.setText(_translate("eliteOCR", "Station", None))
-        self.label.setText(_translate("eliteOCR", "commodity", None))
-        self.label_2.setText(_translate("eliteOCR", "sell", None))
-        self.label_3.setText(_translate("eliteOCR", "buy", None))
-        self.label_4.setText(_translate("eliteOCR", "demand", None))
-        self.label_6.setText(_translate("eliteOCR", "supply", None))
-        self.skip_button.setText(_translate("eliteOCR", "Skip", None))
-        self.save_button.setText(_translate("eliteOCR", "Save and Next", None))
-        self.export_button.setText(_translate("eliteOCR", "Export", None))
+    def retranslateUi(self, MainWindow):
+        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow", None))
+        self.image_button.setText(_translate("MainWindow", "Chose Image", None))
+        self.label_5.setText(_translate("MainWindow", "Station", None))
+        self.label.setText(_translate("MainWindow", "commodity", None))
+        self.label_2.setText(_translate("MainWindow", "sell", None))
+        self.label_3.setText(_translate("MainWindow", "buy", None))
+        self.label_4.setText(_translate("MainWindow", "demand", None))
+        self.label_6.setText(_translate("MainWindow", "supply", None))
+        self.skip_button.setText(_translate("MainWindow", "Skip", None))
+        self.save_button.setText(_translate("MainWindow", "Save and Next", None))
+        self.export_button.setText(_translate("MainWindow", "Export", None))
+        self.menuHelp.setTitle(_translate("MainWindow", "Help", None))
+        self.actionHow_to_use.setText(_translate("MainWindow", "How to use", None))
+        self.actionAbout.setText(_translate("MainWindow", "About", None))
 

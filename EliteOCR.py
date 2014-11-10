@@ -3,12 +3,14 @@ import cv2
 import numpy as np
 import tesseract
 import time, datetime
-from os.path import isfile, getctime
+from os import environ
+from os.path import isfile, isdir, getctime, dirname
 from time import gmtime, strftime
 from PyQt4.QtGui import *
-from PyQt4.QtCore import Qt, QString
+from PyQt4 import QtCore
+from PyQt4.QtCore import Qt, QString, QObject
 
-from eliteOCRGUI import Ui_eliteOCR
+from eliteOCRGUI import Ui_MainWindow
 from qimage2ndarray import array2qimage
 from ocr import *
     
@@ -43,7 +45,7 @@ def adjustTableImg(img):
     new[:h3, w1+w2:w1+w2+w3] = right
     return new
 
-class EliteOCR(QMainWindow, Ui_eliteOCR):
+class EliteOCR(QMainWindow, Ui_MainWindow):
     def __init__(self):            
         QMainWindow.__init__(self)
         self.setupUi(self)
@@ -62,10 +64,42 @@ class EliteOCR(QMainWindow, Ui_eliteOCR):
         self.skip_button.setEnabled(False)
         self.export_button.clicked.connect(self.exportTable)
         self.export_button.setEnabled(False)
-        
+        if isdir(environ['USERPROFILE']+'\\Pictures\\Frontier Developments\\Elite Dangerous'):
+            self.screenshotdir = environ['USERPROFILE']+'\\Pictures\\Frontier Developments\\Elite Dangerous'
+        else:
+            self.screenshotdir = './'
         self.rowcount = 0
         self.OCRline = 0
         self.tablerowcount = 0
+        QObject.connect(self.actionHow_to_use, QtCore.SIGNAL('triggered()'),
+                        self.howToUse)
+        QObject.connect(self.actionAbout, QtCore.SIGNAL('triggered()'),
+                        self.About)
+    
+    def howToUse(self):
+        QMessageBox.about(self,"How to use", """Click "Choose Image" and select your screenshot.
+Check if the values have been recognised properly. Optionally correct them and click
+on "Save and Next" to continue to next line. 
+You can edit the values in the table by double clicking on the entry.
+
+After processing one screenshot you can add another of the same station. Should
+there be repeated entry, you can click "Skip" to continue to next line without
+adding current one to the list.
+
+When you have all the entries of one stations commodity market in the table click
+on "Export" to save your results to a csv-file. (separated by ; )
+CSV can be opened by most spreadsheet editors like Excel, LibreOffice Calc etc.""")
+
+    def About(self):
+        QMessageBox.about(self,"About", """EliteOCR is capable of recognising the commodities in screenshots.
+Those should be at least 1920 by 1080 pixel in size and have an aspect ratio
+of 16:9. Best results (100% accuracy) are achieved with screenshots
+of 3840 by 2160 pixel (4K).
+You can make screenshots in game by pressing F10. You find them usually in
+C:\Users\USERNAME\Pictures\Frontier Developments\Elite Dangerous
+
+Owners of Nvidia video cards and use DSR technology to increase the resolution 
+for screenshots and revert it back to normal without leaving the game.""")
     
     def setupTable(self):
         self.result_table.setColumnCount(8)
@@ -83,11 +117,14 @@ class EliteOCR(QMainWindow, Ui_eliteOCR):
             "contains big.traineddata and small.traineddata")
             self.close()
             return
-        self.path_to_image.setText(QFileDialog.getOpenFileName())
-        tmstmp = gmtime(getctime(str(self.path_to_image.text())))
-        self.file_tmstmp = str(strftime("%Y-%m-%dT%H:%M", tmstmp))
+        self.path_to_image.setText(QFileDialog.getOpenFileName(self, "Open", self.screenshotdir))
+        if self.path_to_image.text() == '':
+            return
+        self.screenshotdir = dirname(str(self.path_to_image.text()))
         if self.makeImages( str(self.path_to_image.text())) == 0:
             return
+        tmstmp = gmtime(getctime(str(self.path_to_image.text())))
+        self.file_tmstmp = str(strftime("%Y-%m-%dT%H:%M", tmstmp))
         self.station = ocr(self.contrast_station_name, "UTF8").strip()
         self.drawStationName()
         self.station_name.setText(self.station)
