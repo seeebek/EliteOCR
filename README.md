@@ -7,15 +7,15 @@ Installation
 --------------
 ### Requirements
 
-1. Python 2.7 
+###### Python 2.7 
 
 [https://www.python.org/downloads/](https://www.python.org/downloads/)
 
-2. Numpy 
+###### Numpy 
 
 [http://sourceforge.net/projects/numpy/files/NumPy/1.9.1/](http://sourceforge.net/projects/numpy/files/NumPy/1.9.1/)
 
-3. OpenCV 
+###### OpenCV 
 
 [http://sourceforge.net/projects/opencvlibrary/files/opencv-win/2.4.10/](http://sourceforge.net/projects/opencvlibrary/files/opencv-win/2.4.10/) 
 
@@ -23,15 +23,15 @@ Goto opencv/build/python/2.7 folder.
 
 Copy cv2.pyd to C:/Python27/lib/site-packages.
 
-4. Python-Tesseract 
+###### Python-Tesseract 
 
 [https://bitbucket.org/3togo/python-tesseract/downloads/](https://bitbucket.org/3togo/python-tesseract/downloads/)
 
-5. PyQt4 
+######PyQt4 
 
 [http://www.riverbankcomputing.co.uk/software/pyqt/download](http://www.riverbankcomputing.co.uk/software/pyqt/download)
 
-6. qimage2ndarray 
+###### qimage2ndarray 
 
 pip install qimage2ndarray 
 
