@@ -16,3 +16,28 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -------------------------------------------------------------------
+
+* Source code in main repositories is covered by GPLv3:
+    - http://sourceforge.net/projects/eliteocr
+
+Executable is generated using pyinstaller and contains following components:
+    
+* Python 2.7 is covered by PSF LICENSE
+    - https://docs.python.org/2.7/license.html
+    - https://python.org/
+    
+* Numpy is licensed under the BSD license
+    - http://www.numpy.org/
+    
+* OpenCV is released under a BSD license
+    - http://opencv.org/
+    
+* python-tesseract is licensed under Apache License 2.0
+    - https://code.google.com/p/python-tesseract/
+    
+* PyQt4 is covered by GPLv3
+    - http://www.riverbankcomputing.co.uk/software/pyqt/intro
+
+* qimage2ndarray is released following license:
+    - https://github.com/hmeine/qimage2ndarray/blob/master/LICENSE.txt
+    - https://github.com/hmeine/qimage2ndarray

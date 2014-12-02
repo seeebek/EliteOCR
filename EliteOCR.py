@@ -1,240 +1,355 @@
 import sys
-import cv2
-import numpy as np
-import tesseract
-import time, datetime
-from os import environ
-from os.path import isfile, isdir, getctime, dirname
-from time import gmtime, strftime
-from PyQt4.QtGui import *
-from PyQt4 import QtCore
-from PyQt4.QtCore import Qt, QString, QObject
+import time
+from os.path import split, isfile
+from PyQt4.QtGui import QApplication, QMainWindow, QFileDialog, QGraphicsScene, QMessageBox,\
+                        QPixmap, QPen, QTableWidgetItem
+from PyQt4.QtCore import Qt, QObject, SIGNAL
 
 from eliteOCRGUI import Ui_MainWindow
+from customqlistwidgetitem import CustomQListWidgetItem
+from calibrate import CalibrateDialog
+from settingsdialog import SettingsDialog
+from settings import loadSettings
+from ocr import OCR
 from qimage2ndarray import array2qimage
-from ocr import *
-    
-def contBright(value, in_min, in_max):
-    """ Adjust brightness and contrast of image provided as array
-    in value. Comparable to "Levels" in GIMP.
-    """
-    value = np.divide(np.subtract(value, in_min), (in_max-in_min))
-    value = np.multiply(value, 255.0)
-    value = np.clip(value, 0, 255)
-    value = value.astype(np.uint8)
-    return value
-    
-def adjustTableImg(img):
-    """ Cuts the image of commodities table in three pieces and 
-    adjusts brightness and contrast of all pieces to
-    aprox. the same level.
-    """
-    h, w = img.shape
-    left = img[0:h, 0:intR(0.4341*w)]
-    left = contBright( left, 84.0, 171.0)
-    mid = img[0:h, intR(0.4346*w):intR(0.5193*w)]
-    mid = contBright( mid, 155.0, 193.0)
-    right = img[0:h, intR(0.5198*w):w]
-    right = contBright( right, 84.0, 171.0)
-    h1, w1 = left.shape
-    h2, w2 = mid.shape
-    h3, w3 = right.shape
-    new = np.zeros((h, w), np.uint8)
-    new[:h1, :w1] = left
-    new[:h2, w1:w1+w2] = mid
-    new[:h3, w1+w2:w1+w2+w3] = right
-    return new
 
 class EliteOCR(QMainWindow, Ui_MainWindow):
     def __init__(self):            
         QMainWindow.__init__(self)
         self.setupUi(self)
         self.setupTable()
-        self.fields = [self.name, self.sell, self.buy, self.demand_num,
-                       self.demand, self.supply_num, self.supply]
-        self.canvases = [self.name_img, self.sell_img, self.buy_img,
-                         self.demand_img, self.demand_text_img,
-                         self.supply_img, self.supply_text_img]
-        
+        self.settings = loadSettings(self)
+        self.ocr_all_set = False
+        self.fields = [self.name, self.sell, self.buy, self.demand_num, self.demand,
+                       self.supply_num, self.supply]
+        self.canvases = [self.name_img, self.sell_img, self.buy_img, self.demand_img,
+                         self.demand_text_img, self.supply_img, self.supply_text_img]
         #setup buttons
-        self.image_button.clicked.connect(self.selectFile)
+        self.add_button.clicked.connect(self.addFiles)
+        self.remove_button.clicked.connect(self.removeFile)
         self.save_button.clicked.connect(self.addItemToTable)
-        self.skip_button.clicked.connect(self.skipItem)
-        self.save_button.setEnabled(False)
-        self.skip_button.setEnabled(False)
+        self.skip_button.clicked.connect(self.nextLine)
+        self.ocr_button.clicked.connect(self.performOCR)
+        self.ocr_all.clicked.connect(self.runOCRAll)
         self.export_button.clicked.connect(self.exportTable)
-        self.export_button.setEnabled(False)
-        if isdir(environ['USERPROFILE']+'\\Pictures\\Frontier Developments\\Elite Dangerous'):
-            self.screenshotdir = environ['USERPROFILE']+'\\Pictures\\Frontier Developments\\Elite Dangerous'
-        else:
-            self.screenshotdir = './'
-        self.rowcount = 0
-        self.OCRline = 0
-        self.tablerowcount = 0
-        QObject.connect(self.actionHow_to_use, QtCore.SIGNAL('triggered()'),
-                        self.howToUse)
-        QObject.connect(self.actionAbout, QtCore.SIGNAL('triggered()'),
-                        self.About)
-    
+        self.clear_table.clicked.connect(self.clearTable)
+        
+        QObject.connect(self.actionHow_to_use, SIGNAL('triggered()'), self.howToUse)
+        QObject.connect(self.actionAbout, SIGNAL('triggered()'), self.About)
+        QObject.connect(self.actionOpen, SIGNAL('triggered()'), self.addFiles)
+        QObject.connect(self.actionPreferences, SIGNAL('triggered()'), self.openSettings)
+        QObject.connect(self.actionCalibrate, SIGNAL('triggered()'), self.openCalibrate)
+        self.error_close = False
+        if not isfile("./tessdata/big.traineddata"):
+            QMessageBox.critical(self,"Error", "OCR training data not found!\n"+\
+            "Make sure tessdata directory exists and contains big.traineddata.")
+            self.error_close = True
+
     def howToUse(self):
-        QMessageBox.about(self,"How to use", """Click "Choose Image" and select your screenshot.
-Check if the values have been recognised properly. Optionally correct them and click
-on "Save and Next" to continue to next line. 
-You can edit the values in the table by double clicking on the entry.
-
-After processing one screenshot you can add another of the same station. Should
-there be repeated entry, you can click "Skip" to continue to next line without
-adding current one to the list.
-
-When you have all the entries of one stations commodity market in the table click
-on "Export" to save your results to a csv-file. (separated by ; )
-CSV can be opened by most spreadsheet editors like Excel, LibreOffice Calc etc.""")
+        QMessageBox.about(self, "How to use", "Click \"+\" and select your screenshots. Select "+\
+            "multiple files by holding CTRL or add them one by one. Select one file and click "+\
+            "the OCR button. Check if the values have been recognised properly. Optionally "+\
+            "correct them and click on \"Add and Next\" to continue to next line. You can edit "+\
+            "the values in the table by double clicking on the entry.\n\nAfter processing one "+\
+            "screenshot you can "+\
+            "click on the next file on the list and click the ORC Button again. Should there be r"+\
+            "epeated entry, you can click \"Skip\" to continue to next line without adding curren"+\
+            "t one to the list.\n\nWhen finished click on \"Export\" to save your results to a cs"+\
+            "v-file(separated by ; ). CSV can be opened by most spreadsheet editors like Excel, L"+\
+            "ibreOffice Calc etc.")
 
     def About(self):
-        QMessageBox.about(self,"About", """EliteOCR is capable of recognising the commodities in screenshots.
-Those should be at least 1920 by 1080 pixel in size and have an aspect ratio
-of 16:9. Best results (100% accuracy) are achieved with screenshots
-of 3840 by 2160 pixel (4K).
-You can make screenshots in game by pressing F10. You find them usually in
-C:\Users\USERNAME\Pictures\Frontier Developments\Elite Dangerous
-
-Owners of Nvidia video cards and use DSR technology to increase the resolution 
-for screenshots and revert it back to normal without leaving the game.""")
-    
+        QMessageBox.about(self,"About", "EliteOCR by CMDR SEEEBEK\nVersion 0.3.1.1\n\n"
+        "EliteOCR is capable of reading the entries in Elite: Dangerous markets screenshots.\n\n"+\
+        "Best results are achieved with screenshots of 3840 by 2160 pixel (4K) or more. "+\
+        "You can make screenshots in game by pressing F10. You find them usually in\n"+\
+        "C:\Users\USERNAME\Pictures\Frontier Developments\Elite Dangerous\n"+\
+        "Screenshots made with ALT+F10 have lower recognition rate!\n\n"+\
+        "Owners of Nvidia video cards can use DSR technology to increase the resolution "+\
+        "for screenshots and revert it back to normal without leaving the game.")
+        
     def setupTable(self):
-        self.result_table.setColumnCount(8)
-        self.result_table.setHorizontalHeaderLabels(['name', 'sell', 'buy',
+        """Add columns and column names to the table"""
+        self.result_table.setColumnCount(9)
+        self.result_table.setHorizontalHeaderLabels(['station', 'commodity', 'sell', 'buy',
                                                      'demand', 'dem', 'supply',
                                                      'sup', 'timestamp'])
-        self.result_table.setColumnHidden(7, True)
-        self.result_table.show()
+        self.result_table.setColumnHidden(8, True)
+        
+    def openSettings(self):
+        """Open settings dialog and reload settings"""
+        settingsDialog = SettingsDialog(self)
+        settingsDialog.exec_()
+        self.settings = loadSettings(self)
     
-    def selectFile(self):
-        if not (isfile("./tessdata/big.traineddata") and
-                isfile("./tessdata/small.traineddata")):
-            QMessageBox.critical(self,"Error", "OCR data not found!"+\
-            "\nMake sure the directory tessdata existis and "+\
-            "contains big.traineddata and small.traineddata")
-            self.close()
-            return
-        self.path_to_image.setText(QFileDialog.getOpenFileName(self, "Open", self.screenshotdir))
-        if self.path_to_image.text() == '':
-            return
-        self.screenshotdir = dirname(str(self.path_to_image.text()))
-        if self.makeImages( str(self.path_to_image.text())) == 0:
-            return
-        tmstmp = gmtime(getctime(str(self.path_to_image.text())))
-        self.file_tmstmp = str(strftime("%Y-%m-%dT%H:%M", tmstmp))
-        self.station = ocr(self.contrast_station_name, "UTF8").strip()
-        self.drawStationName()
-        self.station_name.setText(self.station)
-        self.goods = ocr(self.contrast_table, "HOCR")
-        self.rowcount = 0
-        self.OCRline = 0
-        self.drawPreview()
-        if len(self.goods) < 1:
-            return
-        self.previewRects[self.rowcount].setPen(QPen(Qt.blue))
-        self.drawRow(self.OCRline)
-        self.save_button.setEnabled(True)
-        self.skip_button.setEnabled(True)
+    def openCalibrate(self, dir=None):
+        """Open calibrate dialog and reload settings"""
+        if dir == None:
+            image = QFileDialog.getOpenFileName(self, "Open", self.settings['screenshot_dir'])
+        else:
+            image = QFileDialog.getOpenFileName(self, "Open", dir)
+        if image != "":
+            calibrateDialog = CalibrateDialog(self, image)
+            calibrateDialog.exec_()
+            self.settings = loadSettings(self)
+            self.file_list.settings = loadSettings(self)
         
-    def makeImages(self, imagepath):
-        """ Creates image pieces for the use in OCR and display in the
-        tool.
-        """
-        origimg = cv2.imread(imagepath, 0)
-        h, w = origimg.shape
-        if w < 1920 or h <1080:
-            QMessageBox.critical(self, "Error",
-                                 "Invalid or too small picture.\n"+\
-                                 "Screenshots must be at least 1920"+\
-"                                 pixel wide and 1080 pixel hight.")
-            return 0
-        if int((float(w)/h)*100) != 177:
-            QMessageBox.critical(self, "Error", "At the moment only"+\
-                                 " Screenshots in format 16:9 are "+\
-                                 "supported.\n e.g. 1920x1080, "+\
-                                 "2351x1323, 2715x1527, ...")
-            return 0
-        offset = 10
-        sttnimg = origimg[intR(0.0583*h):intR(0.0851*h),
-                          intR(0.0427*w):intR(0.5703*w)]
-        sttnimg = cv2.copyMakeBorder(sttnimg,offset,offset,
-                                     offset,offset,
-                                     cv2.BORDER_CONSTANT,value=(0)) 
-        self.tblimg = origimg[intR(0.2287*h):intR(0.8587*h),
-                                   intR(0.0664*w):intR(0.5703*w)]
-        self.tblimg = cv2.copyMakeBorder(self.tblimg,
-                                         offset,offset,offset,offset,
-                                         cv2.BORDER_CONSTANT,value=(0))
-        # contrast_station_name is used in OCR
-        self.contrast_station_name = contBright(255.0 - sttnimg,
-                                                76.0, 179.0)
-        # contrast_table is used in OCR
-        self.contrast_table = adjustTableImg(255.0 - self.tblimg)
-        self.table_h, self.table_w = self.contrast_table.shape
+    def addFiles(self):
+        """Add files to the file list."""
+        files = QFileDialog.getOpenFileNames(self, "Open", self.settings['screenshot_dir'])
+        if files == []:
+            return
+        first_item = None
+        for file in files:
+            item = CustomQListWidgetItem(split(str(file))[1], file)
+            if first_item == None:
+                first_item = item
+            self.file_list.addItem(item)
         
-    def drawPreview(self):
-        self.previewRects = []
-        old_h, old_w = self.tblimg.shape
-        processedimage = array2qimage(self.tblimg)
-        pix = QPixmap()
-        pix.convertFromImage(processedimage)
-        pix = pix.scaled(self.preview.size(),
-                         Qt.KeepAspectRatio,
-                         Qt.SmoothTransformation)
-        new_h = pix.height()
-        new_w = pix.width()
-        ratio_h = old_h/float(new_h)
-        ratio_w = old_w/float(new_w)
-        self.scene = QGraphicsScene()
-        self.scene.addPixmap(pix)
-        pen = QPen(Qt.yellow)
-        for line in self.goods:
-            rect = self.scene.addRect(line.x1/ratio_w - 4.0,
-                                      line.y1/ratio_h - 4.0,
-                                      line.w/ratio_w + 7.0,
-                                      line.h/ratio_h + 5.0, pen)
-            self.previewRects.append(rect)
-        self.preview.setScene(self.scene)
+        self.file_list.itemClicked.connect(self.selectFile)
+        self.save_button.setEnabled(False)
+        self.skip_button.setEnabled(False)
+        #self.cleanAllFields()
+        #self.cleanAllSnippets()
+        if first_item !=None:
+            self.selectFile(first_item)
+        if self.ocr_button.isEnabled() and self.file_list.count() > 1:
+            self.ocr_all.setEnabled(True)
+        self.cleanAllFields()
+        self.cleanAllSnippets()
+
+    def removeFile(self):
+        """Remove selected file from file list."""
+        item = self.file_list.currentItem()
+        self.file_list.takeItem(self.file_list.currentRow())
+        del item
+        self.file_label.setText("-")
+        scene = QGraphicsScene()
+        self.previewSetScene(scene)
+        self.save_button.setEnabled(False)
+        self.skip_button.setEnabled(False)
+        self.cleanAllFields()
+        self.cleanAllSnippets()
+        if self.file_list.currentItem():
+            self.selectFile(self.file_list.currentItem())
+        if self.file_list.count() == 0:
+            self.remove_button.setEnabled(False)
+            self.ocr_button.setEnabled(False)
+        if self.file_list.count() < 2:
+            self.ocr_all.setEnabled(False)
+    
+    def selectFile(self, item):
+        """Select clicked file and shows prewiev of the selected file."""
+        self.ocr_all_set = False
+        self.file_list.setCurrentItem(item)
+        self.file_label.setText(item.text())
+        self.setPreviewImage(item.preview_image)
+        self.remove_button.setEnabled(True)
+        self.ocr_button.setEnabled(True)
+        if self.file_list.count() > 1:
+            self.ocr_all.setEnabled(True)
+        
+    def setPreviewImage(self, image):
+        """Show image in self.preview."""
+        pix = image.scaled(self.preview.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        scene = QGraphicsScene()
+        scene.addPixmap(pix)
+        self.previewSetScene(scene)
+        
+    def previewSetScene(self, scene):
+        """Shows scene in preview"""
+        self.preview.setScene(scene)
         self.preview.show()
         
-    def drawRow(self, num):
-        if len(self.goods) <= num:
-            self.cleanAllFields()
-            self.cleanAllCanvases()
+    def runOCRAll(self):
+        self.ocr_all_set = True
+        self.performOCR()
+        
+    def performOCR(self):
+        """Send image to OCR and process the results"""
+        #start_time = time.time()
+        self.OCRline = 0
+        self.current_result = OCR(self.file_list.currentItem().color_image, self.file_list.currentItem().image)
+        if self.current_result.station == None:
+            QMessageBox.critical(self,"Error", "Screenshot not recognized.\n"+\
+                "Make sure you use a valid screenshot from the commodieties market. Should the "+\
+                "problem persist, please recalibrate the OCR areas with Settings->Calibrate.")
+            return
+        self.drawOCRPreview()
+        self.markCurrentRectangle()
+        self.drawStationName()
+        self.processOCRLine()
+        self.skip_button.setEnabled(True)
+        self.save_button.setEnabled(True)
+        #print(time.time() - start_time)
+        
+    def addItemToTable(self):
+        """Adds items from current OCR result line to the result table."""
+        tab = self.result_table
+        res_station = self.current_result.station.name.value
+        row_count = tab.rowCount()
+        self.export_button.setEnabled(True)
+        self.clear_table.setEnabled(True)
+        #check for duplicates
+        duplicate = False
+        if self.settings["remove_dupli"]:
+            for i in range(row_count):
+                station = tab.item(i, 0).text()
+                com1 = tab.item(i, 1).text()
+                com2 = self.fields[0].currentText().replace(',', '')
+                if station == res_station and com1 == com2:
+                    duplicate = True
+        
+        if not duplicate:
+            tab.insertRow(row_count)
+            newitem = QTableWidgetItem(res_station)
+            tab.setItem(row_count, 0, newitem)
+            for n, field in enumerate(self.fields):
+                newitem = QTableWidgetItem(str(field.currentText()).replace(',', ''))
+                tab.setItem(row_count, n+1, newitem)
+            newitem = QTableWidgetItem(self.file_list.currentItem().timestamp)
+            tab.setItem(row_count, 8, newitem)
+            tab.resizeColumnsToContents()
+            tab.resizeRowsToContents()
+        self.nextLine()
+        
+    def nextLine(self):
+        """Skip current OCR result line."""
+        self.markCurrentRectangle(QPen(Qt.green))
+        self.OCRline += 1
+        if len(self.previewRects) > self.OCRline:
+            self.markCurrentRectangle()
+            self.processOCRLine()
+        else:
             self.save_button.setEnabled(False)
             self.skip_button.setEnabled(False)
-        else:
-            for field, canvas, item in zip(self.fields, self.canvases,
-                                           self.goods[num].items):
+            self.cleanAllFields()
+            self.cleanAllSnippets()
+            if self.ocr_all_set:
+                self.nextFile()
+                
+    def nextFile(self):
+        if self.file_list.currentRow() < self.file_list.count()-1:
+            self.file_list.setCurrentRow(self.file_list.currentRow() + 1)
+            self.performOCR()
+            
+    def clearTable(self):
+        """Empty the result table."""
+        self.result_table.setRowCount(0)
+        self.clear_table.setEnabled(False)
+        self.export_button.setEnabled(False)
+    
+    def processOCRLine(self):
+        """Process current OCR result line."""
+        if len(self.current_result.commodities) > self.OCRline:
+            res = self.current_result.commodities[self.OCRline]
+            autofill = True
+            if self.settings["auto_fill"]:
+                for item in res.items:
+                    if item == None:
+                        continue
+                    if not item.confidence > 0.84:
+                        autofill = False
+                        
+            for field, canvas, item in zip(self.fields, self.canvases, res.items):
                 if item != None:
-                    field.setText(item.value)
-                    self.drawSnippet(canvas, item)
+                    field.clear()
+                    field.addItems(item.optional_values)
+                    field.setEditText(item.value)
+                    if not(self.settings["auto_fill"] and autofill):
+                        self.setConfidenceColor(field, item)
+                        self.drawSnippet(canvas, item)
                 else:
-                    self.cleanImage(canvas)
+                    self.cleanSnippet(canvas)
                     self.cleanField(field)
+            if self.settings["auto_fill"] and autofill:
+                self.addItemToTable()
+    
+    def setConfidenceColor(self, field, item):
+        c = item.confidence
+        if c > 0.84:
+            color  = "#ffffff"
+        if c <= 0.84 and c >0.67:
+            color = "#ffffbf"
+        if c <= 0.67 and c >0.5:
+            color = "#fff2bf"
+        if c <= 0.5 and c >0.34:
+            color = "#ffe6bf"
+        if c <= 0.34 and c >0.17:
+            color = "#ffd9bf"
+        if c <= 0.17:
+            color = "#ffccbf"
+        field.lineEdit().setStyleSheet("QLineEdit{background: "+color+";}")
 
-            self.OCRline += 1
+    def drawOCRPreview(self):
+        """Draw processed file preview and show recognised areas."""
+        res = self.current_result
+        name = res.station.name
+        img = self.file_list.currentItem().preview_image
+        
+        old_h = img.height()
+        old_w = img.width()
+        
+        pix = img.scaled(self.preview.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        
+        new_h = pix.height()
+        new_w = pix.width()
+        
+        ratio_h = old_h/float(new_h)
+        ratio_w = old_w/float(new_w)
+        
+        self.scene = QGraphicsScene()
+        self.scene.addPixmap(pix)
+        
+        self.previewRects = []
+        pen = QPen(Qt.green)
+        rect = self.addRect(self.scene, name, ratio_w, ratio_h, pen)
+        
+        pen = QPen(Qt.yellow)
+        for line in res.commodities:
+            rect = self.addRect(self.scene, line, ratio_w, ratio_h, pen)
+            self.previewRects.append(rect)
+            
+        self.previewSetScene(self.scene)
+        
+    def addRect(self, scene, item, ratio_w, ratio_h, pen):
+        """Adds a rectangle to scene and returns it."""
+        rect = scene.addRect((item.x1/item.scale)/ratio_w -3,(item.y1/item.scale)/ratio_h - 3,
+                              item.w/item.scale/ratio_w +7, item.h/item.scale/ratio_h +6, pen)
+        return rect
+    
+    def markCurrentRectangle(self, pen=QPen(Qt.blue)):
+        self.previewRects[self.OCRline].setPen(pen)
+    
+    def cutImage(self, image, item):
+        """Cut image snippet from a big image using points from item."""
+        snippet = image[item.y1/item.scale - 5:item.y2/item.scale + 5,
+                        item.x1/item.scale - 5:item.x2/item.scale + 5]
+        return snippet
     
     def drawSnippet(self, graphicsview, item):
-        snippet = self.contrast_table[item.y1-5:item.y2+5,
-                                      item.x1-5:item.x2+5]
+        """Draw single result item to graphicsview"""
+        res = self.current_result
+        snippet = self.cutImage(res.contrast_commodities_img, item)
+        #cv2.imwrite('snippets/'+str(self.currentsnippet)+'.png',snippet)
+        #self.currentsnippet += 1
         processedimage = array2qimage(snippet)
         pix = QPixmap()
         pix.convertFromImage(processedimage)
         if graphicsview.height() < pix.height():
-            pix = pix.scaled(graphicsview.size(), Qt.KeepAspectRatio,
-                             Qt.SmoothTransformation)
+            pix = pix.scaled(graphicsview.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
         scene = QGraphicsScene()
         scene.addPixmap(pix)
         graphicsview.setScene(scene)
         graphicsview.show()
-
     
     def drawStationName(self):
-        processedimage = array2qimage(self.contrast_station_name)
+        """Draw station name snippet to station_name_img"""
+        res = self.current_result
+        name = res.station.name
+        self.station_name.setEditText(name.value)
+        img = self.cutImage(res.contrast_station_img, name)
+        processedimage = array2qimage(img)
         pix = QPixmap()
         pix.convertFromImage(processedimage)
         if self.station_name_img.height() < pix.height():
@@ -243,78 +358,58 @@ for screenshots and revert it back to normal without leaving the game.""")
                              Qt.SmoothTransformation)
         scene = QGraphicsScene()
         scene.addPixmap(pix)
+        
         self.station_name_img.setScene(scene)
         self.station_name_img.show()
-    
+        
     def cleanAllFields(self):
         for field in self.fields:
-            field.setText('')
-        self.station_name.setText('')
+            self.cleanField(field)
+        self.cleanField(self.station_name)
     
     def cleanField(self, field):
-        field.setText('')
+        field.setEditText('')
+        field.lineEdit().setStyleSheet("")
+        field.clear()
             
-    def cleanAllCanvases(self):
-        scene = QGraphicsScene()
+    def cleanAllSnippets(self):
         for field in self.canvases:
-            field.setScene(scene)
-            #field.show()
-        self.station_name_img.setScene(scene)
+            self.cleanSnippet(field)
+        self.cleanSnippet(self.station_name_img)
     
-    def cleanImage(self, graphicsview):
+    def cleanSnippet(self, graphicsview):
         scene = QGraphicsScene()
         graphicsview.setScene(scene)
-        #field.show()
     
-    def addItemToTable(self):
-        self.export_button.setEnabled(True)
-        self.result_table.insertRow(self.tablerowcount)
-        for n, field in enumerate(self.fields):
-            newitem = QTableWidgetItem(str(field.text()).replace(',',
-                                                                 ''))
-            self.result_table.setItem(self.tablerowcount, n, newitem)
-        newitem = QTableWidgetItem(self.file_tmstmp)
-        self.result_table.setItem(self.tablerowcount, 7, newitem)
-        self.result_table.resizeColumnsToContents()
-        self.result_table.resizeRowsToContents()
-        self.updatePreview()
-        self.rowcount += 1
-        self.tablerowcount += 1
-        self.drawRow(self.OCRline)
-        
-    def skipItem(self):
-        self.updatePreview()
-        self.rowcount += 1
-        self.drawRow(self.OCRline)
-        
-    def updatePreview(self):
-        self.previewRects[self.rowcount].setPen(QPen(Qt.green))
-        if len(self.previewRects)>(self.rowcount+1):
-            self.previewRects[self.rowcount+1].setPen(QPen(Qt.blue))
-            
     def exportTable(self):
-        dir = QString('"./'+self.station.strip().title()+'.csv"')
-        file = QFileDialog.getSaveFileName(self, QString('Save'), dir)
+        res = self.current_result
+        name = res.station.name.value
+        dir = self.settings["export_dir"]+"/"+name.title()+'.csv"'
+        file = QFileDialog.getSaveFileName(self, 'Save', dir)
         if not file:
             return
         allRows = self.result_table.rowCount()
         towrite = ''
         for row in xrange(0, allRows):
-            line = self.station + ";"+\
-                   self.result_table.item(row,0).text()+";"+\
+            line = self.result_table.item(row,0).text()+";"+\
                    self.result_table.item(row,1).text()+";"+\
                    self.result_table.item(row,2).text()+";"+\
+                   self.result_table.item(row,3).text()+";"+\
                    self.result_table.item(row,4).text()+";"+\
+                   self.result_table.item(row,5).text()+";"+\
                    self.result_table.item(row,6).text()+";"+\
-                   self.result_table.item(row,7).text()+";\n"
+                   self.result_table.item(row,7).text()+";"+\
+                   self.result_table.item(row,8).text()+";\n"
             towrite += line
         csv_file = open(file, "w")
         csv_file.write(towrite)
         csv_file.close()
-
+        
 def main():
     app = QApplication(sys.argv)
     window = EliteOCR()
+    if window.error_close:
+       sys.exit() 
     window.show()
     sys.exit(app.exec_())
 
