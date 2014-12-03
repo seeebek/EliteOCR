@@ -1,9 +1,12 @@
+import random
 import sys
 import time
-from os.path import split, isfile
+from os.path import split, isfile, dirname, realpath, exists
+from os import makedirs
 from PyQt4.QtGui import QApplication, QMainWindow, QFileDialog, QGraphicsScene, QMessageBox,\
                         QPixmap, QPen, QTableWidgetItem
 from PyQt4.QtCore import Qt, QObject, SIGNAL
+import cv2
 
 from eliteOCRGUI import Ui_MainWindow
 from customqlistwidgetitem import CustomQListWidgetItem
@@ -211,8 +214,27 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
             tab.setItem(row_count, 8, newitem)
             tab.resizeColumnsToContents()
             tab.resizeRowsToContents()
+            self.saveValuesForTraining()
         self.nextLine()
-        
+
+    def saveValuesForTraining(self):
+        """Get OCR image/user values and save them away for later processing, and training neural net"""
+        cres = self.current_result
+        res = cres.commodities[self.OCRline]
+        trainingImageDir = dirname(realpath(__file__)) + "\\nn_training_images\\"
+        if not exists(trainingImageDir):
+            makedirs(trainingImageDir)
+        w = len(self.current_result.contrast_commodities_img)
+        h = len(self.current_result.contrast_commodities_img[0])
+        for index, field, canvas, item in zip(range(0, len(self.canvases)), self.fields, self.canvases, res.items):
+            if index in [1, 2, 3, 5]:
+                val = str(field.currentText()).replace(',', '')
+                if val:
+                    snippet = self.cutImage(cres.contrast_commodities_img, item)
+                    #cv2.imshow('snippet', snippet)
+                    imageFilepath = trainingImageDir + val + '_' + str(w) + 'x' + str(h) + '-' + str(int(time.time())) + '-' + str(random.randint(10000, 100000)) + '.png'
+                    cv2.imwrite(imageFilepath, snippet)
+
     def nextLine(self):
         """Skip current OCR result line."""
         self.markCurrentRectangle(QPen(Qt.green))
