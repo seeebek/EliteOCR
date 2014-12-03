@@ -14,7 +14,8 @@ def loadSettings(widget = None):
                          'auto_fill': settings.value('auto_fill', type=bool),
                          'remove_dupli': settings.value('remove_dupli', type=bool),
                          'cal_points': settings.value('cal_points', type=float),
-                         'img_res': settings.value('img_res', type=int)}
+                         'img_res': settings.value('img_res', type=int),
+                         'contribute_nn_images': settings.value('contribute_nn_images', type=bool)}
         return settings_dict
     else:
         return setDefaultSettings(widget)
@@ -28,6 +29,7 @@ def setDefaultSettings(widget):
     """ Sets settings to default values """
     settings = QSettings('seeebek', 'eliteOCR')
     settings.setValue('auto_fill', False)
+    settings.setValue('contribute_nn_images', True)
     settings.setValue('remove_dupli', True)
     if isdir(environ['USERPROFILE']+'\\Pictures\\Frontier Developments\\Elite Dangerous'):
         dir = environ['USERPROFILE']+'\\Pictures\\Frontier Developments\\Elite Dangerous'

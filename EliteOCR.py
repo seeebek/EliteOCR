@@ -48,6 +48,10 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
             "Make sure tessdata directory exists and contains big.traineddata.")
             self.error_close = True
 
+        #set up required items for nn
+        self.training_image_dir = './nn_training_images/' #dirname(realpath(__file__)) + "\\nn_training_images\\"
+
+
     def howToUse(self):
         QMessageBox.about(self, "How to use", "Click \"+\" and select your screenshots. Select "+\
             "multiple files by holding CTRL or add them one by one. Select one file and click "+\
@@ -214,16 +218,16 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
             tab.setItem(row_count, 8, newitem)
             tab.resizeColumnsToContents()
             tab.resizeRowsToContents()
-            self.saveValuesForTraining()
+            if self.settings['create_nn_images']:
+                self.saveValuesForTraining()
         self.nextLine()
 
     def saveValuesForTraining(self):
         """Get OCR image/user values and save them away for later processing, and training neural net"""
         cres = self.current_result
         res = cres.commodities[self.OCRline]
-        trainingImageDir = dirname(realpath(__file__)) + "\\nn_training_images\\"
-        if not exists(trainingImageDir):
-            makedirs(trainingImageDir)
+        if not exists(self.training_image_dir):
+            makedirs(self.training_image_dir)
         w = len(self.current_result.contrast_commodities_img)
         h = len(self.current_result.contrast_commodities_img[0])
         for index, field, canvas, item in zip(range(0, len(self.canvases)), self.fields, self.canvases, res.items):
@@ -232,7 +236,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                 if val:
                     snippet = self.cutImage(cres.contrast_commodities_img, item)
                     #cv2.imshow('snippet', snippet)
-                    imageFilepath = trainingImageDir + val + '_' + str(w) + 'x' + str(h) + '-' + str(int(time.time())) + '-' + str(random.randint(10000, 100000)) + '.png'
+                    imageFilepath = self.training_image_dir + val + '_' + str(w) + 'x' + str(h) + '-' + str(int(time.time())) + '-' + str(random.randint(10000, 100000)) + '.png'
                     cv2.imwrite(imageFilepath, snippet)
 
     def nextLine(self):
