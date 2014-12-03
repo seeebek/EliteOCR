@@ -26,6 +26,7 @@ class nnTraining:
             os.makedirs(directory)
 
     def getImageList(self):
+        #@TODO: store images already converted, and filter them from this list
         trainingImageNames = os.listdir(self.trainingImageDir)
         trainingImageNames.remove(self.splitTrainingImageFolderName)
         return map(lambda trainingImageNames: self.trainingImageDir + trainingImageNames, trainingImageNames)
@@ -50,7 +51,7 @@ class nnTraining:
             #cv2.waitKey(0)
             #cv2.destroyAllWindows()
 
-            cv2.imwrite(self.splitTrainingImageDir+val+'_'+rand+'.png', segment[0])
+            cv2.imwrite(self.splitTrainingImageDir + val + '_' + rand + '.png', segment[0])
             s = segment[0]
             h = len(s)
             w = len(s[0])
@@ -108,7 +109,7 @@ class nnTraining:
             h = horizontalBound[1] - y
             x = 0
             w = width
-            if w * h > self.minSegmentArea:  #remove pesky commas
+            if w * h > self.minSegmentArea:  #remove pesky commas/periods from the images
                 imageSlices.append(numpy.array(imgBig[y:y + h, x:x + w]))
                 #cv2.rectangle(imgBig, (x, y), (x + w, y + h), (0, 255, 0), 1)
         return numpy.array(imageSlices)
@@ -142,7 +143,7 @@ class nnTraining:
             w = verticalBound[1] - x
             y = 0
             h = height
-            if w * h > self.minSegmentArea:  #remove pesky commas
+            if w * h > self.minSegmentArea:  #remove pesky commas/periods from the images
                 imageSlices.append(numpy.array(imgBig[y:y + h, x:x + w]))
                 #cv2.rectangle(imgBig, (x, y), (x + w, y + h), (0, 255, 0), 1)
         return imageSlices
@@ -154,12 +155,15 @@ class nnTraining:
         return pow(dist, 0.5) <= threshold
 
 
+print 'Conversion of images beginning...'
 train = nnTraining()
 imgList = train.getImageList()
 imgPaths = imgList  #[0:10]
-#imgPaths = 'C:\\Users\\NoOne\\Desktop\\ED\\eliteOCR.0.3\\nn_training_images\\1462_1417536191-38695.png'
+#imgPaths = './nn_training_images/1462_1417536191-38695.png'
+print 'Found', len(imgPaths), 'images to chop'
+print 'Chopping...'
 train.processImage(imgPaths, [0, 0, 0], 350)
-
-#print train.maxSegmentWidth, train.maxSegmentHeight
+print 'Chopping completed.'
+print 'Max digit image dimensions:', train.maxSegmentWidth, train.maxSegmentHeight
 
 cv2.waitKey(0)
