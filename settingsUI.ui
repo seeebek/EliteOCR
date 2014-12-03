@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>540</width>
-    <height>189</height>
+    <height>239</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -43,6 +43,27 @@
        </item>
        <item>
         <widget class="QPushButton" name="browse">
+         <property name="text">
+          <string>Browse</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Log Directory (for system names):</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <item>
+        <widget class="QLineEdit" name="lg_dir"/>
+       </item>
+       <item>
+        <widget class="QPushButton" name="lg_browse">
          <property name="text">
           <string>Browse</string>
          </property>
