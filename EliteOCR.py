@@ -230,7 +230,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
             makedirs(self.training_image_dir)
         w = len(self.current_result.contrast_commodities_img)
         h = len(self.current_result.contrast_commodities_img[0])
-        for index, field, canvas, item in zip(range(0, len(self.canvases)), self.fields, self.canvases, res.items):
+        for index, field, canvas, item in zip(range(0, len(self.canvases) - 1), self.fields, self.canvases, res.items):
             if index in [1, 2, 3, 5]:
                 val = str(field.currentText()).replace(',', '')
                 if val:
