@@ -13,9 +13,17 @@ class nnTraining:
         self.trainingImageDir = dirname(realpath(__file__)) + "\\nn_training_images\\"
         self.splitTrainingImageFolderName = 'split_training_images'
         self.splitTrainingImageDir = self.trainingImageDir + self.splitTrainingImageFolderName + "\\"
+
+        self.checkAndMakeDir(self.trainingImageDir)
+        self.checkAndMakeDir(self.splitTrainingImageDir)
+
         self.minSegmentArea = 600
         self.maxSegmentWidth = 0
         self.maxSegmentHeight = 0
+
+    def checkAndMakeDir(self, directory):
+        if not os.path.exists(directory):
+            os.makedirs(directory)
 
     def getImageList(self):
         trainingImageNames = os.listdir(self.trainingImageDir)
@@ -41,7 +49,8 @@ class nnTraining:
             #cv2.imshow('asd', numpy.asarray(segment[0]))
             #cv2.waitKey(0)
             #cv2.destroyAllWindows()
-            #cv2.imwrite(self.splitTrainingImageDir+val+'_'+rand+'.png', segment[0])
+
+            cv2.imwrite(self.splitTrainingImageDir+val+'_'+rand+'.png', segment[0])
             s = segment[0]
             h = len(s)
             w = len(s[0])
