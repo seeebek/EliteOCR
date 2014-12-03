@@ -8,6 +8,7 @@ from PyQt4.QtCore import Qt, QObject, SIGNAL
 from eliteOCRGUI import Ui_MainWindow
 from customqlistwidgetitem import CustomQListWidgetItem
 from calibrate import CalibrateDialog
+from busydialog import BusyDialog
 from settingsdialog import SettingsDialog
 from settings import loadSettings
 from ocr import OCR
@@ -169,6 +170,9 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         """Send image to OCR and process the results"""
         #start_time = time.time()
         self.OCRline = 0
+        busyDialog = BusyDialog(self)
+        busyDialog.show()
+        QApplication.processEvents()
         self.current_result = OCR(self.file_list.currentItem().color_image, self.file_list.currentItem().image)
         if self.current_result.station == None:
             QMessageBox.critical(self,"Error", "Screenshot not recognized.\n"+\
@@ -178,9 +182,9 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.drawOCRPreview()
         self.markCurrentRectangle()
         self.drawStationName()
-        self.processOCRLine()
         self.skip_button.setEnabled(True)
         self.save_button.setEnabled(True)
+        self.processOCRLine()
         #print(time.time() - start_time)
         
     def addItemToTable(self):
@@ -214,7 +218,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.nextLine()
         
     def nextLine(self):
-        """Skip current OCR result line."""
+        """Process next OCR result line."""
         self.markCurrentRectangle(QPen(Qt.green))
         self.OCRline += 1
         if len(self.previewRects) > self.OCRline:
@@ -229,6 +233,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                 self.nextFile()
                 
     def nextFile(self):
+        """OCR next file"""
         if self.file_list.currentRow() < self.file_list.count()-1:
             self.file_list.setCurrentRow(self.file_list.currentRow() + 1)
             self.performOCR()
