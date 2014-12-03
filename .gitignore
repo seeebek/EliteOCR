@@ -214,3 +214,13 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+
+#jetbrains project files
+.idea
+.idea/
+.idea/*
+
+
+
+# Neural Net training/source data
+nn_training_images
