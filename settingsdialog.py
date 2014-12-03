@@ -14,8 +14,10 @@ class SettingsDialog(QDialog, Ui_Settings):
         self.exp_dir.setText(self.exportdir)
         self.auto_fill.setChecked(self.settings['auto_fill'])
         self.remove_dupli.setChecked(self.settings['remove_dupli'])
+        self.create_nn_images.setChecked(self.settings['create_nn_images'])
         self.browse.clicked.connect(self.browseDir)
         self.exp_browse.clicked.connect(self.browseExportDir)
+
     
     def browseDir(self):
         new_dir = QFileDialog.getExistingDirectory(self, "Choose", self.screenshotdir)
@@ -35,5 +37,6 @@ class SettingsDialog(QDialog, Ui_Settings):
         new_settings.setValue('export_dir', self.exportdir)
         new_settings.setValue('auto_fill', self.auto_fill.isChecked())
         new_settings.setValue('remove_dupli', self.remove_dupli.isChecked())
+        new_settings.setValue('create_nn_images', self.create_nn_images.isChecked())
         del new_settings
         self.close()

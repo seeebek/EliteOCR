@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>540</width>
-    <height>189</height>
+    <width>686</width>
+    <height>212</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -82,6 +82,16 @@
       <widget class="QCheckBox" name="remove_dupli">
        <property name="text">
         <string>Remove duplicates in Table</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="create_nn_images">
+       <property name="text">
+        <string>Save digits from processed images to improve OCR accuracy</string>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
