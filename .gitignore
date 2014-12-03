@@ -219,3 +219,8 @@ pip-log.txt
 .idea
 .idea/
 .idea/*
+
+
+
+# Neural Net training/source data
+nn_training_images
