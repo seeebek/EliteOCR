@@ -1,13 +1,13 @@
 from PyQt4.QtGui import QDialog, QFileDialog
 from PyQt4.QtCore import QSettings
 from settingsUI import Ui_Settings
-from settings import loadSettings
+from settings import Settings
 
 class SettingsDialog(QDialog, Ui_Settings):
-    def __init__(self, parent=None):
+    def __init__(self, settings):
         QDialog.__init__(self)
         self.setupUi(self)
-        self.settings = loadSettings(None)
+        self.settings = settings
         self.screenshotdir = self.settings['screenshot_dir']
         self.exportdir = self.settings['export_dir']
         self.logdir = self.settings['log_dir']
@@ -40,12 +40,11 @@ class SettingsDialog(QDialog, Ui_Settings):
             self.exp_dir.setText(self.exportdir)
     
     def accept(self):
-        new_settings = QSettings('seeebek', 'eliteOCR')
-        new_settings.setValue('screenshot_dir', self.screenshotdir)
-        new_settings.setValue('export_dir', self.exportdir)
-        new_settings.setValue('log_dir', self.logdir)
-        new_settings.setValue('auto_fill', self.auto_fill.isChecked())
-        new_settings.setValue('remove_dupli', self.remove_dupli.isChecked())
-        new_settings.setValue('create_nn_images', self.create_nn_images.isChecked())
-        del new_settings
+        self.settings.setValue('screenshot_dir', self.screenshotdir)
+        self.settings.setValue('export_dir', self.exportdir)
+        self.settings.setValue('log_dir', self.logdir)
+        self.settings.setValue('auto_fill', self.auto_fill.isChecked())
+        self.settings.setValue('remove_dupli', self.remove_dupli.isChecked())
+        self.settings.setValue('create_nn_images', self.create_nn_images.isChecked())
+        self.settings.sync()
         self.close()

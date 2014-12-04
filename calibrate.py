@@ -161,6 +161,15 @@ class CalibrateDialog(QDialog, Ui_Calibrate):
     def showImage(self, image):
         origimg = cv2.imread(str(image), 0)
         self.imgh, self.imgw = origimg.shape
+        
+        #cut image if too long to prevent memory errors
+        aspect_ratio = float(self.imgw) / (self.imgh)
+        if aspect_ratio > 1.78:
+            new_w = int(1.77778*self.imgh)
+            origimg = origimg[0:self.imgh, (self.imgw - new_w)/2:(self.imgw - new_w)/2 + new_w]
+            self.imgh, self.imgw = origimg.shape
+        
+        self.imgh, self.imgw = origimg.shape
         processedimage = array2qimage(origimg)
         pix = QPixmap()
         pix.convertFromImage(processedimage)

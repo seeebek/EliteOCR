@@ -2,8 +2,7 @@
 
 # Form implementation generated from reading ui file 'settingsUI.ui'
 #
-
-# Created: Wed Dec 03 22:00:29 2014
+# Created: Thu Dec 04 14:26:19 2014
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -28,7 +27,7 @@ class Ui_Settings(object):
     def setupUi(self, Settings):
         Settings.setObjectName(_fromUtf8("Settings"))
         Settings.setEnabled(True)
-        Settings.resize(540, 239)
+        Settings.resize(540, 262)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/ico/icon.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         Settings.setWindowIcon(icon)
@@ -106,6 +105,6 @@ class Ui_Settings(object):
         self.exp_browse.setText(_translate("Settings", "Browse", None))
         self.auto_fill.setText(_translate("Settings", "Automatically add results with high confidence", None))
         self.remove_dupli.setText(_translate("Settings", "Remove duplicates in Table", None))
-        self.create_nn_images.setText(_translate("Settings", "Save digits from processed images to improve OCR accuracy", None))
+        self.create_nn_images.setText(_translate("Settings", "Save digits from processed images for machine learning (will improve accuracy in the future versions)", None))
 
 import res_rc

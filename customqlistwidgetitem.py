@@ -5,17 +5,16 @@ from os import listdir
 from os.path import getctime
 from time import gmtime, localtime, strftime
 from PyQt4.QtGui import QListWidgetItem, QPixmap
-from settings import loadSettings
 from qimage2ndarray import array2qimage
 from imageprocessing import *
 
 class CustomQListWidgetItem(QListWidgetItem):
-    def __init__(self, text, hiddentext):
+    def __init__(self, text, hiddentext, settings):
         QListWidgetItem.__init__(self, text)
-        self.settings = loadSettings()
+        self.settings = settings
         self.hiddentext = hiddentext
         self.color_image = self.addImage(hiddentext)
-        self.image = cv2.cvtColor(self.color_image, cv2.COLOR_BGR2GRAY)
+        #self.image = cv2.cvtColor(self.color_image, cv2.COLOR_BGR2GRAY)
         self.preview_image = self.addPreviewImage()
         
         self.timestamp = self.getTimeStamp()
@@ -24,12 +23,18 @@ class CustomQListWidgetItem(QListWidgetItem):
         
     def addImage(self,imagepath):
         image = cv2.imread(str(imagepath))
+        h, w, c = image.shape
+        #cut image if too long to prevent memory errors
+        aspect_ratio = float(w) / (h)
+        if aspect_ratio > 1.78:
+            new_w = int(1.77778*h)
+            cut = image[0:h, (w - new_w)/2:(w - new_w)/2 + new_w]
+            return cut
         return image
     
     def addPreviewImage(self):
-        #image = self.color_image
-        #h, w, c = image.shape
-        image = self.image
+        image = self.color_image
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         h, w = image.shape
         cut = image[0:self.settings["cal_points"][7]*h + 20,
                     0:self.settings["cal_points"][6]*w + 20]
@@ -56,6 +61,7 @@ class CustomQListWidgetItem(QListWidgetItem):
         return [year, month, day, hour, minute, second]
         
     def getSystemName(self):
+        """Get system name from log files""" # TODO make more robust and cleaner
         path = self.settings['log_dir']
         dir = listdir(path)
         matchfile = "^netLog."+self.filetime[0]+self.filetime[1]+self.filetime[2]

@@ -13,17 +13,16 @@ from customqlistwidgetitem import CustomQListWidgetItem
 from calibrate import CalibrateDialog
 from busydialog import BusyDialog
 from settingsdialog import SettingsDialog
-from settings import loadSettings
+from settings import Settings
 from ocr import OCR
 from qimage2ndarray import array2qimage
-from plugins.BPC_Feeder.bpcfeeder_wrapper import test #TODO
 
 class EliteOCR(QMainWindow, Ui_MainWindow):
     def __init__(self):            
         QMainWindow.__init__(self)
         self.setupUi(self)
         self.setupTable()
-        self.settings = loadSettings(self)
+        self.settings = Settings(self)
         self.ocr_all_set = False
         self.fields = [self.name, self.sell, self.buy, self.demand_num, self.demand,
                        self.supply_num, self.supply]
@@ -51,7 +50,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
             self.error_close = True
 
         #set up required items for nn
-        self.training_image_dir = './nn_training_images/' #dirname(realpath(__file__)) + "\\nn_training_images\\"
+        self.training_image_dir = self.settings.app_path +"\\nn_training_images\\"
 
 
     def howToUse(self):
@@ -68,7 +67,9 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
             "ibreOffice Calc etc.")
 
     def About(self):
-        QMessageBox.about(self,"About", "EliteOCR by CMDR SEEEBEK\nVersion 0.3.1.1\n\n"
+        QMessageBox.about(self,"About", "EliteOCR\nVersion 0.3.2\n\n"+\
+        "Contributors:\n"+\
+        "Seeebek, CapCap\n\n"+\
         "EliteOCR is capable of reading the entries in Elite: Dangerous markets screenshots.\n\n"+\
         "Best results are achieved with screenshots of 3840 by 2160 pixel (4K) or more. "+\
         "You can make screenshots in game by pressing F10. You find them usually in\n"+\
@@ -87,9 +88,8 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         
     def openSettings(self):
         """Open settings dialog and reload settings"""
-        settingsDialog = SettingsDialog(self)
+        settingsDialog = SettingsDialog(self.settings)
         settingsDialog.exec_()
-        self.settings = loadSettings(self)
     
     def openCalibrate(self, dir=None):
         """Open calibrate dialog and reload settings"""
@@ -100,8 +100,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         if image != "":
             calibrateDialog = CalibrateDialog(self, image)
             calibrateDialog.exec_()
-            self.settings = loadSettings(self)
-            self.file_list.settings = loadSettings(self)
+            self.settings.sync()
         
     def addFiles(self):
         """Add files to the file list."""
@@ -110,7 +109,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
             return
         first_item = None
         for file in files:
-            item = CustomQListWidgetItem(split(str(file))[1], file)
+            item = CustomQListWidgetItem(split(str(file))[1], file, self.settings)
             if first_item == None:
                 first_item = item
             self.file_list.addItem(item)
@@ -180,7 +179,14 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         busyDialog = BusyDialog(self)
         busyDialog.show()
         QApplication.processEvents()
-        self.current_result = OCR(self.file_list.currentItem().color_image, self.file_list.currentItem().image)
+        #self.current_result = OCR(self.file_list.currentItem().color_image)
+        try:
+            self.current_result = OCR(self.file_list.currentItem().color_image)
+        except:
+            QMessageBox.critical(self,"Error", "Error while performing OCR.\nPlease report the "+\
+            "problem to the developers through github, sourceforge or forum and provide the "+\
+            "screenshot which causes the problem.")
+            return
         if self.current_result.station == None:
             QMessageBox.critical(self,"Error", "Screenshot not recognized.\n"+\
                 "Make sure you use a valid screenshot from the commodieties market. Should the "+\
@@ -228,20 +234,24 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.nextLine()
 
     def saveValuesForTraining(self):
-        """Get OCR image/user values and save them away for later processing, and training neural net"""
+        """Get OCR image/user values and save them away for later processing, and training
+        neural net"""
         cres = self.current_result
         res = cres.commodities[self.OCRline]
         if not exists(self.training_image_dir):
             makedirs(self.training_image_dir)
         w = len(self.current_result.contrast_commodities_img)
         h = len(self.current_result.contrast_commodities_img[0])
-        for index, field, canvas, item in zip(range(0, len(self.canvases) - 1), self.fields, self.canvases, res.items):
+        for index, field, canvas, item in zip(range(0, len(self.canvases) - 1),
+                                              self.fields, self.canvases, res.items):
             if index in [1, 2, 3, 5]:
                 val = str(field.currentText()).replace(',', '')
                 if val:
                     snippet = self.cutImage(cres.contrast_commodities_img, item)
                     #cv2.imshow('snippet', snippet)
-                    imageFilepath = self.training_image_dir + val + '_' + str(w) + 'x' + str(h) + '-' + str(int(time.time())) + '-' + str(random.randint(10000, 100000)) + '.png'
+                    imageFilepath = self.training_image_dir + val + '_' + str(w) + 'x' + str(h) +\
+                                    '-' + str(int(time.time())) + '-' +\
+                                    str(random.randint(10000, 100000)) + '.png'
                     cv2.imwrite(imageFilepath, snippet)
 
     def nextLine(self):

@@ -6,11 +6,13 @@ import os
 from os.path import dirname, realpath
 import cv2
 import numpy
+from settings import Settings
 
 
 class nnTraining:
     def __init__(self):
-        self.trainingImageDir = dirname(realpath(__file__)) + "\\nn_training_images\\"
+        settings = Settings()
+        self.trainingImageDir = dirname(settings.app_path + "\\nn_training_images\\"
         self.splitTrainingImageFolderName = 'split_training_images'
         self.splitTrainingImageDir = self.trainingImageDir + self.splitTrainingImageFolderName + "\\"
 
