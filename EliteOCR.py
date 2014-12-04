@@ -4,7 +4,7 @@ import time
 from os.path import split, isfile, dirname, realpath, exists
 from os import makedirs
 from PyQt4.QtGui import QApplication, QMainWindow, QFileDialog, QGraphicsScene, QMessageBox,\
-                        QPixmap, QPen, QTableWidgetItem
+                        QPixmap, QPen, QTableWidgetItem, QPushButton
 from PyQt4.QtCore import Qt, QObject, SIGNAL
 import cv2
 
@@ -16,6 +16,9 @@ from settingsdialog import SettingsDialog
 from settings import Settings
 from ocr import OCR
 from qimage2ndarray import array2qimage
+#plugins
+import imp
+#from plugins.BPC_Feeder.bpcfeeder_wrapper import BPC_Feeder
 
 class EliteOCR(QMainWindow, Ui_MainWindow):
     def __init__(self):            
@@ -51,7 +54,28 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
 
         #set up required items for nn
         self.training_image_dir = self.settings.app_path +"\\nn_training_images\\"
-
+    
+        #plugin test
+        if isfile(self.settings.app_path+"\\plugins\\BPC_Feeder\\bpcfeeder_wrapper.py") and \
+           isfile(self.settings.app_path+"\\plugins\\BPC_Feeder\\BPC feeder.exe"):
+            plugin = imp.load_source('bpcfeeder_wrapper', self.settings.app_path+"\\plugins\\BPC_Feeder\\bpcfeeder_wrapper.py")
+            
+            self.bpcfeeder = plugin.BPC_Feeder(self, self.settings.app_path)
+            self.bpc_feeder_button = QPushButton(self.centralwidget)
+            self.bpc_feeder_button.setText("Run BPC Feeder")
+            self.bpc_feeder_button.setEnabled(False)
+            self.horizontalLayout_2.addWidget(self.bpc_feeder_button)
+            self.bpc_feeder_button.clicked.connect(self.bpcfeeder.run)
+        
+    def enablePluginButtons(self):
+        if 'bpcfeeder' in dir(self):
+            if self.bpcfeeder != None:
+                self.bpc_feeder_button.setEnabled(True)
+        
+    def disablePluginButtons(self):
+        if 'bpcfeeder' in dir(self):
+            if self.bpcfeeder != None:
+                self.bpc_feeder_button.setEnabled(False)
 
     def howToUse(self):
         QMessageBox.about(self, "How to use", "Click \"+\" and select your screenshots. Select "+\
@@ -205,6 +229,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         res_station = self.current_result.station.name.value
         row_count = tab.rowCount()
         self.export_button.setEnabled(True)
+        self.enablePluginButtons()
         self.clear_table.setEnabled(True)
         #check for duplicates
         duplicate = False
@@ -280,6 +305,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.result_table.setRowCount(0)
         self.clear_table.setEnabled(False)
         self.export_button.setEnabled(False)
+        self.disablePluginButtons()
     
     def processOCRLine(self):
         """Process current OCR result line."""
