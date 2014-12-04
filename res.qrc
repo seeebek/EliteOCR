@@ -4,8 +4,8 @@
     <file>p2.png</file>
     <file>p3.png</file>
     <file>p4.png</file>
-    <file>plus.png</file>
-    <file>minus.png</file>
     <file>icon.ico</file>
+    <file>minus.png</file>
+    <file>plus.png</file>
   </qresource>
 </RCC>
