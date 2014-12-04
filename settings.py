@@ -1,6 +1,6 @@
 import sys
 from os import environ
-from os.path import isdir, dirname, realpath
+from os.path import isdir, dirname, split, realpath
 from PyQt4.QtCore import QSettings, QString
 from PyQt4.QtGui import QMessageBox, QFileDialog
 from calibrate import CalibrateDialog
@@ -104,8 +104,10 @@ class Settings():
                 "you installed the game. Otherwise system names will not be added to the results.")
             logdir = QFileDialog.getExistingDirectory(None, "Choose", self.app_path)
             if logdir != "":
-                if isdir(dir+"\\Products\\FORC-FDEV-D-1002\\Logs"):
+                if isdir(logdir + "\\Products\\FORC-FDEV-D-1002\\Logs"):
                     self.reg.setValue('log_dir', logdir+"\\Products\\FORC-FDEV-D-1002\\Logs")
+                elif split(str(logdir))[1] == "Logs":
+                    self.reg.setValue('log_dir', logdir)
                 else:
                     QMessageBox.warning(None, "Warning", "Log directory not found.\n"+\
                         "You can add this directory later in settings menu. Until then your "+\
