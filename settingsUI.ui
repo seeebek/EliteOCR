@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>540</width>
-    <height>189</height>
+    <height>262</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -51,6 +51,27 @@
       </layout>
      </item>
      <item>
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Log Directory (for system names):</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <item>
+        <widget class="QLineEdit" name="lg_dir"/>
+       </item>
+       <item>
+        <widget class="QPushButton" name="lg_browse">
+         <property name="text">
+          <string>Browse</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
       <widget class="QLabel" name="label_2">
        <property name="text">
         <string>Export Directory:</string>
@@ -82,6 +103,16 @@
       <widget class="QCheckBox" name="remove_dupli">
        <property name="text">
         <string>Remove duplicates in Table</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="create_nn_images">
+       <property name="text">
+        <string>Save digits from processed images for machine learning (will improve accuracy in the future versions)</string>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
        </property>
       </widget>
      </item>

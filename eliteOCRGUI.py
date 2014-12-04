@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'eliteOCRGUI.ui'
 #
-# Created: Wed Dec 03 12:30:01 2014
+# Created: Thu Dec 04 14:26:03 2014
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -511,7 +511,7 @@ class Ui_MainWindow(object):
         self.skip_button.setText(_translate("MainWindow", "Skip", None))
         self.save_button.setText(_translate("MainWindow", "Add and Next", None))
         self.clear_table.setText(_translate("MainWindow", "Clear Table", None))
-        self.export_button.setText(_translate("MainWindow", "Export", None))
+        self.export_button.setText(_translate("MainWindow", "CSV Export", None))
         self.menuHelp.setTitle(_translate("MainWindow", "Help", None))
         self.menuFile.setTitle(_translate("MainWindow", "File", None))
         self.menuSettings.setTitle(_translate("MainWindow", "Settings", None))
