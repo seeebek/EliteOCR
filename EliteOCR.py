@@ -16,6 +16,7 @@ from settingsdialog import SettingsDialog
 from settings import loadSettings
 from ocr import OCR
 from qimage2ndarray import array2qimage
+from plugins.BPC_Feeder.bpcfeeder_wrapper import test #TODO
 
 class EliteOCR(QMainWindow, Ui_MainWindow):
     def __init__(self):            
@@ -78,10 +79,10 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         
     def setupTable(self):
         """Add columns and column names to the table"""
-        self.result_table.setColumnCount(9)
+        self.result_table.setColumnCount(10)
         self.result_table.setHorizontalHeaderLabels(['station', 'commodity', 'sell', 'buy',
                                                      'demand', 'dem', 'supply',
-                                                     'sup', 'timestamp'])
+                                                     'sup', 'timestamp','system'])
         self.result_table.setColumnHidden(8, True)
         
     def openSettings(self):
@@ -156,7 +157,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.ocr_button.setEnabled(True)
         if self.file_list.count() > 1:
             self.ocr_all.setEnabled(True)
-        
+    
     def setPreviewImage(self, image):
         """Show image in self.preview."""
         pix = image.scaled(self.preview.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
@@ -175,7 +176,6 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         
     def performOCR(self):
         """Send image to OCR and process the results"""
-        #start_time = time.time()
         self.OCRline = 0
         busyDialog = BusyDialog(self)
         busyDialog.show()
@@ -192,7 +192,6 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.skip_button.setEnabled(True)
         self.save_button.setEnabled(True)
         self.processOCRLine()
-        #print(time.time() - start_time)
         
     def addItemToTable(self):
         """Adds items from current OCR result line to the result table."""
@@ -220,6 +219,8 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                 tab.setItem(row_count, n+1, newitem)
             newitem = QTableWidgetItem(self.file_list.currentItem().timestamp)
             tab.setItem(row_count, 8, newitem)
+            newitem = QTableWidgetItem(self.file_list.currentItem().system)
+            tab.setItem(row_count, 9, newitem)
             tab.resizeColumnsToContents()
             tab.resizeRowsToContents()
             if self.settings['create_nn_images']:
@@ -430,7 +431,8 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                    self.result_table.item(row,5).text()+";"+\
                    self.result_table.item(row,6).text()+";"+\
                    self.result_table.item(row,7).text()+";"+\
-                   self.result_table.item(row,8).text()+";\n"
+                   self.result_table.item(row,8).text()+";"+\
+                   self.result_table.item(row,9).text()+";\n"
             towrite += line
         csv_file = open(file, "w")
         csv_file.write(towrite)

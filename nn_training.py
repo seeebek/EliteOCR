@@ -33,7 +33,9 @@ class nnTraining:
 
     def processImages(self, imageFilePaths, objectColor, threshold):
         processedImages = []
-        for imageFilePath in imageFilePaths:
+        for i, imageFilePath in zip(range(0, len(imageFilePaths) - 1), imageFilePaths):
+            if i%100 == 0.0:
+                print 'Chopped', i, 'images so far...'
             processedImages.append(self.processImage(imageFilePath, objectColor, threshold))
         return processedImages
 

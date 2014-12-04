@@ -220,7 +220,8 @@ pip-log.txt
 .idea/
 .idea/*
 
-
+#Compiled files for release
+compiled
 
 # Neural Net training/source data
 nn_training_images
