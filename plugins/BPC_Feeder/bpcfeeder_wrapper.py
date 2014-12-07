@@ -18,7 +18,8 @@ class BPC_Feeder():
     def writeIni(self):
         dir = (self.path+"\\plugins\\BPC_Feeder\\CSV\\")
         towrite = "[settings]\ntest mode = 1\ninput delay = "+self.delay+"\n"+\
-            "EliteOCR CSV path = "+ dir
+            "EliteOCR CSV path = "+ dir+"\n"+\
+            "Add Commod Prices open method = 1"
         file = self.path+"\\plugins\\BPC_Feeder\\bpc feeder.ini"
         ini_file = open(file, "w")
         ini_file.write(towrite)
@@ -33,7 +34,7 @@ class BPC_Feeder():
     def run(self):
         res = self.parent.current_result
         name = res.station.name.value
-        file = self.path+"\\plugins\\BPC_Feeder\\CSV\\"+name.title()+".csv"
+        file = self.path+"\\plugins\\BPC_Feeder\\CSV\\"+str(name).title()+".csv"
         allRows = self.parent.result_table.rowCount()
         towrite = ''
         for row in xrange(0, allRows):

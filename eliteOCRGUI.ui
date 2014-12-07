@@ -990,7 +990,7 @@
          </size>
         </property>
         <property name="text">
-         <string>CSV Export</string>
+         <string>Export</string>
         </property>
        </widget>
       </item>
@@ -1063,6 +1063,11 @@
   <action name="actionPreferences">
    <property name="text">
     <string>Preferences</string>
+   </property>
+  </action>
+  <action name="actionTest">
+   <property name="text">
+    <string>Test</string>
    </property>
   </action>
  </widget>

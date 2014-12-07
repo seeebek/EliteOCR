@@ -12,8 +12,13 @@ class Settings():
         self.values = {}
         self.reg = QSettings('seeebek', 'eliteOCR')
         if self.reg.contains('settings_version'):
-            # in future if version < X.X then...
-            self.values = self.loadSettings()
+            if float(self.reg.value('settings_version', type=QString)) < 1.1:
+                self.setDefaultExportOptions()
+                self.setSettingsVersion()
+                self.reg.sync()
+                self.values = self.loadSettings()
+            else:
+                self.values = self.loadSettings()
         else:
             self.cleanReg()
             self.setAllDefaults()
@@ -57,6 +62,7 @@ class Settings():
         """Load all settings to a dict"""
         set = {'screenshot_dir': self.reg.value('screenshot_dir', type=QString),
                'export_dir': self.reg.value('export_dir', type=QString),
+               'horizontal_exp': self.reg.value('horizontal_exp', type=bool),
                'log_dir': self.reg.value('log_dir', type=QString),
                'auto_fill': self.reg.value('auto_fill', type=bool),
                'remove_dupli': self.reg.value('remove_dupli', type=bool),
@@ -76,7 +82,10 @@ class Settings():
         self.setSettingsVersion()
         
     def setSettingsVersion(self):
-        self.reg.setValue('settings_version', "1.0")
+        self.reg.setValue('settings_version', "1.1")
+        
+    def setDefaultExportOptions(self):
+        self.setValue('horizontal_exp', False)
     
     def setDefaultAutoFill(self):
         self.reg.setValue('auto_fill', False)

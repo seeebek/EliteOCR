@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'settingsUI.ui'
 #
-# Created: Thu Dec 04 14:26:19 2014
+# Created: Sun Dec 07 20:29:45 2014
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,7 +27,7 @@ class Ui_Settings(object):
     def setupUi(self, Settings):
         Settings.setObjectName(_fromUtf8("Settings"))
         Settings.setEnabled(True)
-        Settings.resize(540, 262)
+        Settings.resize(526, 312)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/ico/icon.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         Settings.setWindowIcon(icon)
@@ -48,6 +48,11 @@ class Ui_Settings(object):
         self.browse.setObjectName(_fromUtf8("browse"))
         self.horizontalLayout.addWidget(self.browse)
         self.verticalLayout.addLayout(self.horizontalLayout)
+        self.line_2 = QtGui.QFrame(Settings)
+        self.line_2.setFrameShape(QtGui.QFrame.HLine)
+        self.line_2.setFrameShadow(QtGui.QFrame.Sunken)
+        self.line_2.setObjectName(_fromUtf8("line_2"))
+        self.verticalLayout.addWidget(self.line_2)
         self.label_3 = QtGui.QLabel(Settings)
         self.label_3.setObjectName(_fromUtf8("label_3"))
         self.verticalLayout.addWidget(self.label_3)
@@ -60,6 +65,11 @@ class Ui_Settings(object):
         self.lg_browse.setObjectName(_fromUtf8("lg_browse"))
         self.horizontalLayout_3.addWidget(self.lg_browse)
         self.verticalLayout.addLayout(self.horizontalLayout_3)
+        self.line_3 = QtGui.QFrame(Settings)
+        self.line_3.setFrameShape(QtGui.QFrame.HLine)
+        self.line_3.setFrameShadow(QtGui.QFrame.Sunken)
+        self.line_3.setObjectName(_fromUtf8("line_3"))
+        self.verticalLayout.addWidget(self.line_3)
         self.label_2 = QtGui.QLabel(Settings)
         self.label_2.setObjectName(_fromUtf8("label_2"))
         self.verticalLayout.addWidget(self.label_2)
@@ -72,6 +82,14 @@ class Ui_Settings(object):
         self.exp_browse.setObjectName(_fromUtf8("exp_browse"))
         self.horizontalLayout_2.addWidget(self.exp_browse)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
+        self.horizontal_exp = QtGui.QCheckBox(Settings)
+        self.horizontal_exp.setObjectName(_fromUtf8("horizontal_exp"))
+        self.verticalLayout.addWidget(self.horizontal_exp)
+        self.line = QtGui.QFrame(Settings)
+        self.line.setFrameShape(QtGui.QFrame.HLine)
+        self.line.setFrameShadow(QtGui.QFrame.Sunken)
+        self.line.setObjectName(_fromUtf8("line"))
+        self.verticalLayout.addWidget(self.line)
         self.auto_fill = QtGui.QCheckBox(Settings)
         self.auto_fill.setObjectName(_fromUtf8("auto_fill"))
         self.verticalLayout.addWidget(self.auto_fill)
@@ -103,6 +121,7 @@ class Ui_Settings(object):
         self.lg_browse.setText(_translate("Settings", "Browse", None))
         self.label_2.setText(_translate("Settings", "Export Directory:", None))
         self.exp_browse.setText(_translate("Settings", "Browse", None))
+        self.horizontal_exp.setText(_translate("Settings", "Horizontal export", None))
         self.auto_fill.setText(_translate("Settings", "Automatically add results with high confidence", None))
         self.remove_dupli.setText(_translate("Settings", "Remove duplicates in Table", None))
         self.create_nn_images.setText(_translate("Settings", "Save digits from processed images for machine learning (will improve accuracy in the future versions)", None))

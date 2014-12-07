@@ -1,10 +1,11 @@
 import random
 import sys
 import time
+from datetime import datetime
 from os.path import split, isfile, dirname, realpath, exists
 from os import makedirs
 from PyQt4.QtGui import QApplication, QMainWindow, QFileDialog, QGraphicsScene, QMessageBox,\
-                        QPixmap, QPen, QTableWidgetItem, QPushButton
+                        QPixmap, QPen, QTableWidgetItem, QPushButton, QAction
 from PyQt4.QtCore import Qt, QObject, SIGNAL
 import cv2
 
@@ -16,6 +17,10 @@ from settingsdialog import SettingsDialog
 from settings import Settings
 from ocr import OCR
 from qimage2ndarray import array2qimage
+
+from openpyxl import Workbook
+from ezodf import newdoc, Sheet
+
 #plugins
 import imp
 #from plugins.BPC_Feeder.bpcfeeder_wrapper import BPC_Feeder
@@ -38,7 +43,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.skip_button.clicked.connect(self.nextLine)
         self.ocr_button.clicked.connect(self.performOCR)
         self.ocr_all.clicked.connect(self.runOCRAll)
-        self.export_button.clicked.connect(self.exportTable)
+        self.export_button.clicked.connect(self.export)
         self.clear_table.clicked.connect(self.clearTable)
         
         QObject.connect(self.actionHow_to_use, SIGNAL('triggered()'), self.howToUse)
@@ -55,18 +60,22 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         #set up required items for nn
         self.training_image_dir = self.settings.app_path +"\\nn_training_images\\"
     
-        #plugin test
+        self.loadPlugins()
+        
+    
+    def loadPlugins(self):
         if isfile(self.settings.app_path+"\\plugins\\BPC_Feeder\\bpcfeeder_wrapper.py") and \
            isfile(self.settings.app_path+"\\plugins\\BPC_Feeder\\BPC feeder.exe"):
-            plugin = imp.load_source('bpcfeeder_wrapper', self.settings.app_path+"\\plugins\\BPC_Feeder\\bpcfeeder_wrapper.py")
-            
+            plugin = imp.load_source('bpcfeeder_wrapper', self.settings.app_path+\
+                                     "\\plugins\\BPC_Feeder\\bpcfeeder_wrapper.py")
+
             self.bpcfeeder = plugin.BPC_Feeder(self, self.settings.app_path)
             self.bpc_feeder_button = QPushButton(self.centralwidget)
             self.bpc_feeder_button.setText("Run BPC Feeder")
             self.bpc_feeder_button.setEnabled(False)
             self.horizontalLayout_2.addWidget(self.bpc_feeder_button)
             self.bpc_feeder_button.clicked.connect(self.bpcfeeder.run)
-        
+    
     def enablePluginButtons(self):
         if 'bpcfeeder' in dir(self):
             if self.bpcfeeder != None:
@@ -226,7 +235,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
     def addItemToTable(self):
         """Adds items from current OCR result line to the result table."""
         tab = self.result_table
-        res_station = self.current_result.station.name.value
+        res_station = self.station_name.currentText()
         row_count = tab.rowCount()
         self.export_button.setEnabled(True)
         self.enablePluginButtons()
@@ -235,22 +244,23 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         duplicate = False
         if self.settings["remove_dupli"]:
             for i in range(row_count):
-                station = tab.item(i, 0).text()
-                com1 = tab.item(i, 1).text()
-                com2 = self.fields[0].currentText().replace(',', '')
+                station = str(tab.item(i, 0).text()).title()
+                com1 = str(tab.item(i, 1).text()).title()
+                com2 = str(self.fields[0].currentText()).replace(',', '').title()
                 if station == res_station and com1 == com2:
                     duplicate = True
         
         if not duplicate:
+            self.current_result.station.name.value = self.station_name.currentText()
             tab.insertRow(row_count)
-            newitem = QTableWidgetItem(res_station)
+            newitem = QTableWidgetItem(str(res_station).title())
             tab.setItem(row_count, 0, newitem)
             for n, field in enumerate(self.fields):
-                newitem = QTableWidgetItem(str(field.currentText()).replace(',', ''))
+                newitem = QTableWidgetItem(str(field.currentText()).replace(',', '').title())
                 tab.setItem(row_count, n+1, newitem)
             newitem = QTableWidgetItem(self.file_list.currentItem().timestamp)
             tab.setItem(row_count, 8, newitem)
-            newitem = QTableWidgetItem(self.file_list.currentItem().system)
+            newitem = QTableWidgetItem(self.file_list.currentItem().system.title())
             tab.setItem(row_count, 9, newitem)
             tab.resizeColumnsToContents()
             tab.resizeRowsToContents()
@@ -448,32 +458,76 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
     def cleanSnippet(self, graphicsview):
         scene = QGraphicsScene()
         graphicsview.setScene(scene)
+        
+    def tableToList(self):
+        all_rows = self.result_table.rowCount()
+        all_cols = self.result_table.columnCount()
+        result_list = [["System","Station","Commodity","Sell","Buy","Demand","","Supply","","Date"]]
+        for row in xrange(0, all_rows):
+            line = [self.safeStrToList(self.result_table.item(row,9).text()),
+                    self.safeStrToList(self.result_table.item(row,0).text()),
+                    self.safeStrToList(self.result_table.item(row,1).text()),
+                    self.safeStrToList(self.result_table.item(row,2).text()),
+                    self.safeStrToList(self.result_table.item(row,3).text()),
+                    self.safeStrToList(self.result_table.item(row,4).text()),
+                    self.safeStrToList(self.result_table.item(row,5).text()),
+                    self.safeStrToList(self.result_table.item(row,6).text()),
+                    self.safeStrToList(self.result_table.item(row,7).text()),
+                    self.safeStrToList(self.result_table.item(row,8).text())]
+            result_list.append(line)
+        if self.settings['horizontal_exp']:
+            result_list = map(list, zip(*result_list))
+        return result_list
     
-    def exportTable(self):
-        res = self.current_result
-        name = res.station.name.value
-        dir = self.settings["export_dir"]+"/"+name.title()+'.csv"'
-        file = QFileDialog.getSaveFileName(self, 'Save', dir)
-        if not file:
-            return
-        allRows = self.result_table.rowCount()
-        towrite = ''
-        for row in xrange(0, allRows):
-            line = self.result_table.item(row,0).text()+";"+\
-                   self.result_table.item(row,1).text()+";"+\
-                   self.result_table.item(row,2).text()+";"+\
-                   self.result_table.item(row,3).text()+";"+\
-                   self.result_table.item(row,4).text()+";"+\
-                   self.result_table.item(row,5).text()+";"+\
-                   self.result_table.item(row,6).text()+";"+\
-                   self.result_table.item(row,7).text()+";"+\
-                   self.result_table.item(row,8).text()+";"+\
-                   self.result_table.item(row,9).text()+";\n"
-            towrite += line
+    def safeStrToList(self, input):
+        try:
+            return float(input)
+        except:
+            return str(input)
+    
+    def exportToCsv(self, result, file):
+        towrite = ""
+        for row in result:
+            for cell in row:
+                towrite += str(cell)+";"
+            towrite += "\n"
         csv_file = open(file, "w")
         csv_file.write(towrite)
         csv_file.close()
+
+    def exportToOds(self, result, file):
+        ods = newdoc(doctype='ods', filename=str(file))
+        sheet = Sheet('Sheet 1', size=(len(result)+1, len(result[0])+1))
+        ods.sheets += sheet
         
+        for i in xrange(len(result)):
+            for j in xrange(len(result[0])):
+                sheet[i,j].set_value(result[i][j])
+        ods.save()
+
+    def exportToXlsx(self, result, file):
+        wb = Workbook()
+        ws = wb.active
+
+        for i in xrange(1,len(result)+1):
+            for j in xrange(1,len(result[0])+1):
+                ws.cell(row = i, column = j).value = result[i-1][j-1]
+        wb.save(str(file))
+            
+    def export(self):
+        name = self.current_result.station.name.value
+        dir = self.settings["export_dir"]+"/"+name+'.csv"'
+        file = QFileDialog.getSaveFileName(self, 'Save', dir, "CSV-File (*.csv);;OpenDocument Spreadsheet (*.ods);;Excel Workbook (*.xlsx)")
+        if not file:
+            return
+            
+        if file.split(".")[-1] == "csv":
+            self.exportToCsv(self.tableToList(), file)
+        elif file.split(".")[-1] == "ods":
+            self.exportToOds(self.tableToList(), file)
+        elif file.split(".")[-1] == "xlsx":
+            self.exportToXlsx(self.tableToList(), file)
+
 def main():
     app = QApplication(sys.argv)
     window = EliteOCR()

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'eliteOCRGUI.ui'
 #
-# Created: Thu Dec 04 14:26:03 2014
+# Created: Sun Dec 07 12:39:16 2014
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -479,6 +479,8 @@ class Ui_MainWindow(object):
         self.actionCalibrate.setObjectName(_fromUtf8("actionCalibrate"))
         self.actionPreferences = QtGui.QAction(MainWindow)
         self.actionPreferences.setObjectName(_fromUtf8("actionPreferences"))
+        self.actionTest = QtGui.QAction(MainWindow)
+        self.actionTest.setObjectName(_fromUtf8("actionTest"))
         self.menuHelp.addAction(self.actionHow_to_use)
         self.menuHelp.addAction(self.actionAbout)
         self.menuFile.addAction(self.actionOpen)
@@ -511,7 +513,7 @@ class Ui_MainWindow(object):
         self.skip_button.setText(_translate("MainWindow", "Skip", None))
         self.save_button.setText(_translate("MainWindow", "Add and Next", None))
         self.clear_table.setText(_translate("MainWindow", "Clear Table", None))
-        self.export_button.setText(_translate("MainWindow", "CSV Export", None))
+        self.export_button.setText(_translate("MainWindow", "Export", None))
         self.menuHelp.setTitle(_translate("MainWindow", "Help", None))
         self.menuFile.setTitle(_translate("MainWindow", "File", None))
         self.menuSettings.setTitle(_translate("MainWindow", "Settings", None))
@@ -521,6 +523,7 @@ class Ui_MainWindow(object):
         self.actionExit.setText(_translate("MainWindow", "Exit", None))
         self.actionCalibrate.setText(_translate("MainWindow", "Calibrate", None))
         self.actionPreferences.setText(_translate("MainWindow", "Preferences", None))
+        self.actionTest.setText(_translate("MainWindow", "Test", None))
 
 from customqtablewidget import CustomQTableWidget
 import res_rc
