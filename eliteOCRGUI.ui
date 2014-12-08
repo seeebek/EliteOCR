@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1131</width>
+    <width>1197</width>
     <height>788</height>
    </rect>
   </property>
@@ -314,6 +314,11 @@
                <width>16777215</width>
                <height>16777215</height>
               </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>11</pointsize>
+              </font>
              </property>
              <property name="acceptDrops">
               <bool>false</bool>
@@ -681,6 +686,11 @@
                    <height>16777215</height>
                   </size>
                  </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>11</pointsize>
+                  </font>
+                 </property>
                  <property name="styleSheet">
                   <string notr="true"/>
                  </property>
@@ -708,6 +718,11 @@
                    <width>16777215</width>
                    <height>16777215</height>
                   </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>11</pointsize>
+                  </font>
                  </property>
                  <property name="styleSheet">
                   <string notr="true"/>
@@ -737,6 +752,11 @@
                    <height>16777215</height>
                   </size>
                  </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>11</pointsize>
+                  </font>
+                 </property>
                  <property name="styleSheet">
                   <string notr="true"/>
                  </property>
@@ -764,6 +784,11 @@
                    <width>16777215</width>
                    <height>16777215</height>
                   </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>11</pointsize>
+                  </font>
                  </property>
                  <property name="styleSheet">
                   <string notr="true"/>
@@ -793,6 +818,11 @@
                    <height>16777215</height>
                   </size>
                  </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>11</pointsize>
+                  </font>
+                 </property>
                  <property name="styleSheet">
                   <string notr="true"/>
                  </property>
@@ -821,6 +851,11 @@
                    <height>16777215</height>
                   </size>
                  </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>11</pointsize>
+                  </font>
+                 </property>
                  <property name="styleSheet">
                   <string notr="true"/>
                  </property>
@@ -848,6 +883,11 @@
                    <width>16777215</width>
                    <height>16777215</height>
                   </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>11</pointsize>
+                  </font>
                  </property>
                  <property name="styleSheet">
                   <string notr="true"/>
@@ -990,7 +1030,7 @@
          </size>
         </property>
         <property name="text">
-         <string>CSV Export</string>
+         <string>Export</string>
         </property>
        </widget>
       </item>
@@ -1006,7 +1046,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1131</width>
+     <width>1197</width>
      <height>21</height>
     </rect>
    </property>
@@ -1063,6 +1103,11 @@
   <action name="actionPreferences">
    <property name="text">
     <string>Preferences</string>
+   </property>
+  </action>
+  <action name="actionTest">
+   <property name="text">
+    <string>Test</string>
    </property>
   </action>
  </widget>

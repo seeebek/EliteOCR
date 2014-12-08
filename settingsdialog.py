@@ -9,16 +9,21 @@ class SettingsDialog(QDialog, Ui_Settings):
         self.setupUi(self)
         self.settings = settings
         self.screenshotdir = self.settings['screenshot_dir']
+        
         self.exportdir = self.settings['export_dir']
+        self.exp_dir.setText(self.exportdir)
+        self.horizontal_exp.setChecked(self.settings['horizontal_exp'])
+        self.exp_browse.clicked.connect(self.browseExportDir)
+        
         self.logdir = self.settings['log_dir']
         self.scr_dir.setText(self.screenshotdir)
-        self.exp_dir.setText(self.exportdir)
+        
         self.lg_dir.setText(self.logdir)
         self.auto_fill.setChecked(self.settings['auto_fill'])
         self.remove_dupli.setChecked(self.settings['remove_dupli'])
         self.create_nn_images.setChecked(self.settings['create_nn_images'])
         self.browse.clicked.connect(self.browseDir)
-        self.exp_browse.clicked.connect(self.browseExportDir)
+        
         self.lg_browse.clicked.connect(self.browseLogDir)
     
     def browseDir(self):
@@ -40,8 +45,12 @@ class SettingsDialog(QDialog, Ui_Settings):
             self.exp_dir.setText(self.exportdir)
     
     def accept(self):
+        self.screenshotdir = self.scr_dir.text()
+        self.exportdir = self.exp_dir.text()
+        self.logdir = self.lg_dir.text()
         self.settings.setValue('screenshot_dir', self.screenshotdir)
         self.settings.setValue('export_dir', self.exportdir)
+        self.settings.setValue('horizontal_exp', self.horizontal_exp.isChecked())
         self.settings.setValue('log_dir', self.logdir)
         self.settings.setValue('auto_fill', self.auto_fill.isChecked())
         self.settings.setValue('remove_dupli', self.remove_dupli.isChecked())
