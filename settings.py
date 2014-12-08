@@ -63,6 +63,7 @@ class Settings():
         set = {'screenshot_dir': self.reg.value('screenshot_dir', type=QString),
                'export_dir': self.reg.value('export_dir', type=QString),
                'horizontal_exp': self.reg.value('horizontal_exp', type=bool),
+               'last_export_format': self.reg.value('last_export_format', type=QString),
                'log_dir': self.reg.value('log_dir', type=QString),
                'auto_fill': self.reg.value('auto_fill', type=bool),
                'remove_dupli': self.reg.value('remove_dupli', type=bool),
@@ -86,6 +87,7 @@ class Settings():
         
     def setDefaultExportOptions(self):
         self.setValue('horizontal_exp', False)
+        self.setValue('last_export_format', 'xlsx')
     
     def setDefaultAutoFill(self):
         self.reg.setValue('auto_fill', False)

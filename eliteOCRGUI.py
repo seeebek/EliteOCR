@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'eliteOCRGUI.ui'
 #
-# Created: Sun Dec 07 12:39:16 2014
+# Created: Mon Dec 08 13:54:52 2014
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(1131, 788)
+        MainWindow.resize(1197, 788)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/ico/icon.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         MainWindow.setWindowIcon(icon)
@@ -146,6 +146,9 @@ class Ui_MainWindow(object):
         self.station_name.setSizePolicy(sizePolicy)
         self.station_name.setMinimumSize(QtCore.QSize(0, 20))
         self.station_name.setMaximumSize(QtCore.QSize(16777215, 16777215))
+        font = QtGui.QFont()
+        font.setPointSize(11)
+        self.station_name.setFont(font)
         self.station_name.setAcceptDrops(False)
         self.station_name.setStyleSheet(_fromUtf8(""))
         self.station_name.setEditable(True)
@@ -311,6 +314,9 @@ class Ui_MainWindow(object):
         self.name.setSizePolicy(sizePolicy)
         self.name.setMinimumSize(QtCore.QSize(0, 20))
         self.name.setMaximumSize(QtCore.QSize(16777215, 16777215))
+        font = QtGui.QFont()
+        font.setPointSize(11)
+        self.name.setFont(font)
         self.name.setStyleSheet(_fromUtf8(""))
         self.name.setEditable(True)
         self.name.setObjectName(_fromUtf8("name"))
@@ -323,6 +329,9 @@ class Ui_MainWindow(object):
         self.sell.setSizePolicy(sizePolicy)
         self.sell.setMinimumSize(QtCore.QSize(0, 20))
         self.sell.setMaximumSize(QtCore.QSize(16777215, 16777215))
+        font = QtGui.QFont()
+        font.setPointSize(11)
+        self.sell.setFont(font)
         self.sell.setStyleSheet(_fromUtf8(""))
         self.sell.setEditable(True)
         self.sell.setObjectName(_fromUtf8("sell"))
@@ -335,6 +344,9 @@ class Ui_MainWindow(object):
         self.buy.setSizePolicy(sizePolicy)
         self.buy.setMinimumSize(QtCore.QSize(0, 20))
         self.buy.setMaximumSize(QtCore.QSize(16777215, 16777215))
+        font = QtGui.QFont()
+        font.setPointSize(11)
+        self.buy.setFont(font)
         self.buy.setStyleSheet(_fromUtf8(""))
         self.buy.setEditable(True)
         self.buy.setObjectName(_fromUtf8("buy"))
@@ -347,6 +359,9 @@ class Ui_MainWindow(object):
         self.demand_num.setSizePolicy(sizePolicy)
         self.demand_num.setMinimumSize(QtCore.QSize(0, 20))
         self.demand_num.setMaximumSize(QtCore.QSize(16777215, 16777215))
+        font = QtGui.QFont()
+        font.setPointSize(11)
+        self.demand_num.setFont(font)
         self.demand_num.setStyleSheet(_fromUtf8(""))
         self.demand_num.setEditable(True)
         self.demand_num.setObjectName(_fromUtf8("demand_num"))
@@ -359,6 +374,9 @@ class Ui_MainWindow(object):
         self.demand.setSizePolicy(sizePolicy)
         self.demand.setMinimumSize(QtCore.QSize(0, 20))
         self.demand.setMaximumSize(QtCore.QSize(16777215, 16777215))
+        font = QtGui.QFont()
+        font.setPointSize(11)
+        self.demand.setFont(font)
         self.demand.setStyleSheet(_fromUtf8(""))
         self.demand.setEditable(True)
         self.demand.setObjectName(_fromUtf8("demand"))
@@ -371,6 +389,9 @@ class Ui_MainWindow(object):
         self.supply_num.setSizePolicy(sizePolicy)
         self.supply_num.setMinimumSize(QtCore.QSize(0, 20))
         self.supply_num.setMaximumSize(QtCore.QSize(16777215, 16777215))
+        font = QtGui.QFont()
+        font.setPointSize(11)
+        self.supply_num.setFont(font)
         self.supply_num.setStyleSheet(_fromUtf8(""))
         self.supply_num.setEditable(True)
         self.supply_num.setObjectName(_fromUtf8("supply_num"))
@@ -383,6 +404,9 @@ class Ui_MainWindow(object):
         self.supply.setSizePolicy(sizePolicy)
         self.supply.setMinimumSize(QtCore.QSize(0, 20))
         self.supply.setMaximumSize(QtCore.QSize(16777215, 16777215))
+        font = QtGui.QFont()
+        font.setPointSize(11)
+        self.supply.setFont(font)
         self.supply.setStyleSheet(_fromUtf8(""))
         self.supply.setEditable(True)
         self.supply.setObjectName(_fromUtf8("supply"))
@@ -458,7 +482,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_5.addLayout(self.horizontalLayout_2)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1131, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1197, 21))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuHelp = QtGui.QMenu(self.menubar)
         self.menuHelp.setObjectName(_fromUtf8("menuHelp"))

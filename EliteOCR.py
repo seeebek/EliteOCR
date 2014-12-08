@@ -5,7 +5,7 @@ from datetime import datetime
 from os.path import split, isfile, dirname, realpath, exists
 from os import makedirs
 from PyQt4.QtGui import QApplication, QMainWindow, QFileDialog, QGraphicsScene, QMessageBox,\
-                        QPixmap, QPen, QTableWidgetItem, QPushButton, QAction
+                        QPixmap, QPen, QTableWidgetItem, QPushButton, QAction, QFont
 from PyQt4.QtCore import Qt, QObject, SIGNAL
 import cv2
 
@@ -32,6 +32,8 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.setupTable()
         self.settings = Settings(self)
         self.ocr_all_set = False
+        self.color_image = None
+        self.preview_image = None
         self.fields = [self.name, self.sell, self.buy, self.demand_num, self.demand,
                        self.supply_num, self.supply]
         self.canvases = [self.name_img, self.sell_img, self.buy_img, self.demand_img,
@@ -181,10 +183,12 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
     
     def selectFile(self, item):
         """Select clicked file and shows prewiev of the selected file."""
+        self.color_image = item.loadColorImage()
+        self.preview_image = item.loadPreviewImage(self.color_image)
         self.ocr_all_set = False
         self.file_list.setCurrentItem(item)
         self.file_label.setText(item.text())
-        self.setPreviewImage(item.preview_image)
+        self.setPreviewImage(self.preview_image)
         self.remove_button.setEnabled(True)
         self.ocr_button.setEnabled(True)
         if self.file_list.count() > 1:
@@ -212,14 +216,14 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         busyDialog = BusyDialog(self)
         busyDialog.show()
         QApplication.processEvents()
-        #self.current_result = OCR(self.file_list.currentItem().color_image)
-        try:
-            self.current_result = OCR(self.file_list.currentItem().color_image)
-        except:
-            QMessageBox.critical(self,"Error", "Error while performing OCR.\nPlease report the "+\
-            "problem to the developers through github, sourceforge or forum and provide the "+\
-            "screenshot which causes the problem.")
-            return
+        self.current_result = OCR(self.color_image)
+        #try:
+        #    self.current_result = OCR(self.color_image)
+        #except:
+        #    QMessageBox.critical(self,"Error", "Error while performing OCR.\nPlease report the "+\
+        #    "problem to the developers through github, sourceforge or forum and provide the "+\
+        #    "screenshot which causes the problem.")
+        #    return
         if self.current_result.station == None:
             QMessageBox.critical(self,"Error", "Screenshot not recognized.\n"+\
                 "Make sure you use a valid screenshot from the commodieties market. Should the "+\
@@ -235,7 +239,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
     def addItemToTable(self):
         """Adds items from current OCR result line to the result table."""
         tab = self.result_table
-        res_station = self.station_name.currentText()
+        res_station = str(self.station_name.currentText()).title()
         row_count = tab.rowCount()
         self.export_button.setEnabled(True)
         self.enablePluginButtons()
@@ -308,6 +312,8 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         """OCR next file"""
         if self.file_list.currentRow() < self.file_list.count()-1:
             self.file_list.setCurrentRow(self.file_list.currentRow() + 1)
+            self.color_image = self.file_list.currentItem().loadColorImage()
+            self.preview_image = self.file_list.currentItem().loadPreviewImage(self.color_image)
             self.performOCR()
             
     def clearTable(self):
@@ -320,6 +326,8 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
     def processOCRLine(self):
         """Process current OCR result line."""
         if len(self.current_result.commodities) > self.OCRline:
+            font = QFont()
+            font.setPointSize(11)
             res = self.current_result.commodities[self.OCRline]
             autofill = True
             if self.settings["auto_fill"]:
@@ -334,6 +342,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                     field.clear()
                     field.addItems(item.optional_values)
                     field.setEditText(item.value)
+                    field.lineEdit().setFont(font)
                     if not(self.settings["auto_fill"] and autofill):
                         self.setConfidenceColor(field, item)
                         self.drawSnippet(canvas, item)
@@ -363,7 +372,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         """Draw processed file preview and show recognised areas."""
         res = self.current_result
         name = res.station.name
-        img = self.file_list.currentItem().preview_image
+        img = self.preview_image
         
         old_h = img.height()
         old_w = img.width()
@@ -481,7 +490,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
     
     def safeStrToList(self, input):
         try:
-            return float(input)
+            return int(input)
         except:
             return str(input)
     
@@ -515,17 +524,34 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         wb.save(str(file))
             
     def export(self):
+        if self.settings['last_export_format'] == "":
+            self.settings.setValue('last_export_format', "xlsx")
+            self.settings.sync()
+            
+        if self.settings['last_export_format'] == "xlsx":
+            filter = "Excel Workbook (*.xlsx)"
+        elif self.settings['last_export_format'] == "ods":
+            filter = "OpenDocument Spreadsheet (*.ods)"
+        elif self.settings['last_export_format'] == "csv":
+            filter = "CSV-File (*.csv)"
+            
         name = self.current_result.station.name.value
-        dir = self.settings["export_dir"]+"/"+name+'.csv"'
-        file = QFileDialog.getSaveFileName(self, 'Save', dir, "CSV-File (*.csv);;OpenDocument Spreadsheet (*.ods);;Excel Workbook (*.xlsx)")
+        dir = self.settings["export_dir"]+"/"+name+'.'+self.settings['last_export_format']+'"'
+        file = QFileDialog.getSaveFileName(self, 'Save', dir, "CSV-File (*.csv);;OpenDocument Spreadsheet (*.ods);;Excel Workbook (*.xlsx)", filter)
         if not file:
             return
             
         if file.split(".")[-1] == "csv":
+            self.settings.setValue('last_export_format', "csv")
+            self.settings.sync()
             self.exportToCsv(self.tableToList(), file)
         elif file.split(".")[-1] == "ods":
+            self.settings.setValue('last_export_format', "ods")
+            self.settings.sync()
             self.exportToOds(self.tableToList(), file)
         elif file.split(".")[-1] == "xlsx":
+            self.settings.setValue('last_export_format', "xlsx")
+            self.settings.sync()
             self.exportToXlsx(self.tableToList(), file)
 
 def main():

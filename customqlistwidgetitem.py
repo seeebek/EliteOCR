@@ -13,14 +13,19 @@ class CustomQListWidgetItem(QListWidgetItem):
         QListWidgetItem.__init__(self, text)
         self.settings = settings
         self.hiddentext = hiddentext
-        self.color_image = self.addImage(hiddentext)
-        #self.image = cv2.cvtColor(self.color_image, cv2.COLOR_BGR2GRAY)
-        self.preview_image = self.addPreviewImage()
+        #self.color_image = self.addImage(hiddentext)
+        #self.preview_image = self.addPreviewImage()
         
         self.timestamp = self.getTimeStamp()
         self.filetime = self.getFileTime()
         self.system = self.getSystemName()
         
+    def loadColorImage(self):
+        return self.addImage(self.hiddentext)
+        
+    def loadPreviewImage(self, color_image):
+        return self.addPreviewImage(color_image)
+    
     def addImage(self,imagepath):
         image = cv2.imread(str(imagepath))
         h, w, c = image.shape
@@ -32,8 +37,8 @@ class CustomQListWidgetItem(QListWidgetItem):
             return cut
         return image
     
-    def addPreviewImage(self):
-        image = self.color_image
+    def addPreviewImage(self, color_image):
+        image = color_image
         image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         h, w = image.shape
         cut = image[0:self.settings["cal_points"][7]*h + 20,
