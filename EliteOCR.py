@@ -102,7 +102,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
             "ibreOffice Calc etc.")
 
     def About(self):
-        QMessageBox.about(self,"About", "EliteOCR\nVersion 0.3.2\n\n"+\
+        QMessageBox.about(self,"About", "EliteOCR\nVersion 0.3.3\n\n"+\
         "Contributors:\n"+\
         "Seeebek, CapCap\n\n"+\
         "EliteOCR is capable of reading the entries in Elite: Dangerous markets screenshots.\n\n"+\
@@ -216,14 +216,14 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         busyDialog = BusyDialog(self)
         busyDialog.show()
         QApplication.processEvents()
-        self.current_result = OCR(self.color_image)
-        #try:
-        #    self.current_result = OCR(self.color_image)
-        #except:
-        #    QMessageBox.critical(self,"Error", "Error while performing OCR.\nPlease report the "+\
-        #    "problem to the developers through github, sourceforge or forum and provide the "+\
-        #    "screenshot which causes the problem.")
-        #    return
+        #self.current_result = OCR(self.color_image)
+        try:
+            self.current_result = OCR(self.color_image)
+        except:
+            QMessageBox.critical(self,"Error", "Error while performing OCR.\nPlease report the "+\
+            "problem to the developers through github, sourceforge or forum and provide the "+\
+            "screenshot which causes the problem.")
+            return
         if self.current_result.station == None:
             QMessageBox.critical(self,"Error", "Screenshot not recognized.\n"+\
                 "Make sure you use a valid screenshot from the commodieties market. Should the "+\
