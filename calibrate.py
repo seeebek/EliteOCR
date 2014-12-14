@@ -159,7 +159,7 @@ class CalibrateDialog(QDialog, Ui_Calibrate):
         self.example.setScene(self.ex[self.current])
     
     def showImage(self, image):
-        origimg = cv2.imread(str(image), 0)
+        origimg = cv2.imread(unicode(image), 0)
         self.imgh, self.imgw = origimg.shape
         
         #cut image if too long to prevent memory errors

@@ -66,6 +66,24 @@ pip install qimage2ndarray
 
 [http://pypi.python.org/pypi/qimage2ndarray](http://pypi.python.org/pypi/qimage2ndarray)
 
+###### Openpyxl 
+
+pip install openpyxl
+
+[https://pypi.python.org/pypi/openpyxl](https://pypi.python.org/pypi/openpyxl)
+    
+###### Ezodf 
+
+pip install ezodf
+
+[https://pypi.python.org/pypi/ezodf](https://pypi.python.org/pypi/ezodf)
+
+###### Lxml
+
+pip install lxml
+
+[https://pypi.python.org/pypi/lxml](https://pypi.python.org/pypi/lxml)
+
 Run EliteOCR.py
 
 To create a standalone exe file

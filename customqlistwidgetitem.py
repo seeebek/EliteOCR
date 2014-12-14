@@ -7,22 +7,29 @@ from time import gmtime, localtime, strftime
 from PyQt4.QtGui import QListWidgetItem, QPixmap
 from qimage2ndarray import array2qimage
 from imageprocessing import *
+from ocrmethods import OCRAreasFinder
 
 class CustomQListWidgetItem(QListWidgetItem):
     def __init__(self, text, hiddentext, settings):
         QListWidgetItem.__init__(self, text)
         self.settings = settings
         self.hiddentext = hiddentext
-        self.color_image = self.addImage(hiddentext)
-        #self.image = cv2.cvtColor(self.color_image, cv2.COLOR_BGR2GRAY)
-        self.preview_image = self.addPreviewImage()
+        #self.color_image = self.addImage(hiddentext)
+        #self.preview_image = self.addPreviewImage()
         
         self.timestamp = self.getTimeStamp()
         self.filetime = self.getFileTime()
         self.system = self.getSystemName()
+        self.valid_market = False
         
+    def loadColorImage(self):
+        return self.addImage(self.hiddentext)
+        
+    def loadPreviewImage(self, color_image):
+        return self.addPreviewImage(color_image)
+    
     def addImage(self,imagepath):
-        image = cv2.imread(str(imagepath))
+        image = cv2.imread(unicode(imagepath))
         h, w, c = image.shape
         #cut image if too long to prevent memory errors
         aspect_ratio = float(w) / (h)
@@ -32,12 +39,18 @@ class CustomQListWidgetItem(QListWidgetItem):
             return cut
         return image
     
-    def addPreviewImage(self):
-        image = self.color_image
+    def addPreviewImage(self, color_image):
+        image = color_image
         image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         h, w = image.shape
-        cut = image[0:self.settings["cal_points"][7]*h + 20,
-                    0:self.settings["cal_points"][6]*w + 20]
+        ocr_areas = OCRAreasFinder(color_image)
+        points = ocr_areas.market_table
+        self.valid_market = ocr_areas.valid
+        if self.valid_market:
+            cut = image[0:points[1][1] + 20,
+                        0:points[1][0] + 20]
+        else:
+            cut = image[:]
         processedimage = array2qimage(cut)
         pix = QPixmap()
         pix.convertFromImage(processedimage)
@@ -45,13 +58,13 @@ class CustomQListWidgetItem(QListWidgetItem):
         
     def getTimeStamp(self):
         """Return timestamp for selected file."""
-        tmstmp = gmtime(getctime(str(self.hiddentext)))
-        file_tmstmp = str(strftime("%Y-%m-%dT%H:%M", tmstmp))
+        tmstmp = gmtime(getctime(unicode(self.hiddentext)))
+        file_tmstmp = unicode(strftime("%Y-%m-%dT%H:%M", tmstmp))
         return file_tmstmp
     
     def getFileTime(self):
         """Return creation time as an array, for searching in logs"""
-        tmstmp = localtime(getctime(str(self.hiddentext)))
+        tmstmp = localtime(getctime(unicode(self.hiddentext)))
         year = strftime("%y", tmstmp)
         month = strftime("%m", tmstmp)
         day = strftime("%d", tmstmp)
@@ -65,7 +78,7 @@ class CustomQListWidgetItem(QListWidgetItem):
         path = self.settings['log_dir']
         dir = listdir(path)
         matchfile = "^netLog."+self.filetime[0]+self.filetime[1]+self.filetime[2]
-        matchfile2 = "^netLog."+self.filetime[0]+self.filetime[1]+str(int(self.filetime[2])-1)
+        matchfile2 = "^netLog."+self.filetime[0]+self.filetime[1]+unicode(int(self.filetime[2])-1)
         matchscreen = "^{"+self.filetime[3]+":"+self.filetime[4]+":..} SCREENSHOT:"
         matchsystem = "^{[\S]*}\sSystem:"
         findname = "[(].+?[)]"
