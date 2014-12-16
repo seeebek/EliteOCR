@@ -1,11 +1,14 @@
 import cv2
 import math
 import tesseract
+import json
 import numpy as np
 import cv2.cv as cv
 from imageprocessing import *
 from bs4 import BeautifulSoup
 from nn_scripts.nn_training import nnTraining
+from Levenshtein import ratio, distance
+from collections import Counter
 
 class OCRAreasFinder:
     def __init__(self, image):
@@ -24,13 +27,15 @@ class OCRAreasFinder:
         ret,thresh1 = cv2.threshold(value,128,255,cv2.THRESH_BINARY)
         workimg = cv2.GaussianBlur(thresh1,(51,11),0)
         ret,cont = cv2.threshold(workimg,1,255,cv2.THRESH_BINARY)
-
+        #cv2.imshow("xx", cont)
+        #cv2.waitKey(0)
         contours,hierarchy = cv2.findContours(cont, 1, 2)
         cnt = contours
         y_pos = []
         for c in cnt:
-            x,y,w,h = cv2.boundingRect(c)
-            y_pos.append([y,h])
+            if cv2.contourArea(c) > 40:
+                x,y,w,h = cv2.boundingRect(c)
+                y_pos.append([y,h])
         
         r = np.add(r, 0.0) 
         new = np.absolute(np.subtract(r, b))
@@ -158,6 +163,85 @@ class TesseractStation:
                 linelist.append(newline)
         return linelist
 
+class TesseractStationMulti:
+    def __init__(self, image, data):
+        self.image = image
+        self.result = self.cleanStationName(data)
+        
+    def cleanStationName(self, data):
+        item = data.name
+        image = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
+        h, w = image.shape
+        factor = 2400.0/h
+        
+        snippet = image[item.y1-1:item.y2+1, item.x1-1:item.x2+1]
+        h, w = snippet.shape
+        new_size = (int(w*factor), int(h*factor))
+        snippet = cv2.resize(snippet, new_size, 0, 0, cv2.INTER_CUBIC)
+        
+        repeats = 5
+        img = []
+        for i in xrange(0,repeats):
+            img.append(255 - contBright(snippet, 70.0+5*i, 255.0-10*i))
+        
+        fullimg = self.genNewImage(img)
+        #cv2.imshow("xx", fullimg)
+        #cv2.waitKey(0)
+        results = self.hocrToList(self.ocr(fullimg))
+        results.append(data.name.value)
+        most_common = Counter(results).most_common()
+        if len(most_common) > 0:
+            item.value = most_common[0][0]
+            item.confidence = most_common[0][1]/(repeats+1.0)
+            item.optional_values = self.sortAlternatives(most_common)
+
+    def sortAlternatives(self, alt):
+        sorted = []
+        for tuple in alt:
+            sorted.append(tuple[0])
+        return sorted
+    
+    def genNewImage(self, img):
+        h, w = img[0].shape
+        vis = np.zeros((int(1.5*h*len(img))+20, int(1.5*w)+20), np.uint8)
+        vis = 255 - vis
+        currenty = 20
+        currentx = 20
+        for i in img:
+            height, width = i.shape
+            vis[currenty:currenty+height, currentx:currentx+width] = i
+            currenty += height + 15
+        return vis
+    
+    def ocr(self, image):
+        """Return OCR result."""
+        api = tesseract.TessBaseAPI()
+        api.Init(".","big",tesseract.OEM_DEFAULT)
+        api.SetPageSegMode(tesseract.PSM_SINGLE_BLOCK)
+        h,w = image.shape
+        w_step = w*image.dtype.itemsize
+        iplimage = cv.CreateImageHeader((w,h), cv.IPL_DEPTH_8U, 1)
+        cv.SetData(iplimage, image.tostring(),image.dtype.itemsize * (w))
+        tesseract.SetCvImage(iplimage,api)
+        hocr = api.GetHOCRText(0)
+        return hocr
+    
+    def hocrToList(self, input, scale_factor=1):
+        """Converts HOCR HTML data from Tesseract OCR into easily usable objects."""
+        soup = BeautifulSoup(input)
+        linelist = []
+        for line in soup.findAll("span", { "class" : "ocr_line" }):
+            wordlist = ""
+            not_empty = False
+            for word in line.findAll("span", { "class" : "ocrx_word" }):
+                if word.getText().strip() != '':
+                    new_word = word.getText()
+                    wordlist += new_word +" "
+                    not_empty = True
+            if not_empty:
+                linelist.append(wordlist.strip())
+        return linelist
+        
 class TesseractMarket1:
     def __init__(self, image, area):
         self.image = image
@@ -213,75 +297,57 @@ class TesseractMarket1:
                 linelist.append(newline)
         return linelist
 
-class TesseractMarket2:
-    def __init__(self, image, ocr_data):
-        self.image = self.generateNewImage(image, ocr_data)
-        self.result = self.readMarketTable()
+class Levenshtein:
+    def __init__(self, ocr_data, path):
+        self.levels = ['LOW', 'MED', 'HIGH']
+        try:
+            file = open(path + "\\commodities.json", 'r')
+            self.comm_list = json.loads(file.read())
+            self.comm_list.sort(key = len)
+        except:
+            self.comm_list = ['BEER']
+            
+        self.result = self.cleanCommodities(ocr_data)
         
-    def generateNewImage(self, image, lines):
-        """Generate image for an additional OCR run"""
-        h, w = image.shape
-        vis = np.zeros((h, w), np.uint8)
-        vis = (255 - vis)
-        currenty = 20
-        currentx = 20
-        for line in lines:
-            for item in line.items:
-                if item != None:
-                    snippet = image[item.y1-1:item.y2+1, item.x1-1:item.x2+1]
-                    height, width = snippet.shape
-                    vis[currenty:currenty+height, currentx:currentx+width] = snippet
-                    currentx = currentx+width+20
-            currentx = 20
-            currenty += 40
-        return vis
-        
-    def readMarketTable(self):
-        image = self.image
-        h, w = image.shape
-        factor = 1.0
-        if int(w*100.0/h) == 160:
-            #16:10 screen ratio
-            factor = 2400.0/h
-            new_size = (int(w*factor), int(h*factor))
-            image = cv2.resize(image, new_size, 0, 0, cv2.INTER_CUBIC)
-        else:
-        #if int(w*100.0/h) == 177:
-            #16:9 screen ratio and others
-            factor = 2160.0/h
-            new_size = (int(w*factor), int(h*factor))
-            image = cv2.resize(image, new_size, 0, 0, cv2.INTER_CUBIC)
-
-        result = self.ocr(image, factor)
-        return result
-        
-    def ocr(self, image, factor):
-        api = tesseract.TessBaseAPI()
-        api.Init(".","big",tesseract.OEM_DEFAULT)
-        api.SetPageSegMode(tesseract.PSM_SINGLE_BLOCK)
-        h,w = image.shape
-        w_step = w*image.dtype.itemsize
-        iplimage = cv.CreateImageHeader((w,h), cv.IPL_DEPTH_8U, 1)
-        cv.SetData(iplimage, image.tostring(),image.dtype.itemsize * (w))
-        tesseract.SetCvImage(iplimage,api)
-        res = self.hocrToList(api.GetHOCRText(0), factor)
-        return res
-        
-    def hocrToList(self, input, scale_factor=1):
-        """Converts HOCR HTML data from Tesseract OCR into easily usable objects."""
-        soup = BeautifulSoup(input)
-        linelist = []
-        for line in soup.findAll("span", { "class" : "ocr_line" }):
-            wordlist = []
-            not_empty = False
-            for word in line.findAll("span", { "class" : "ocrx_word" }):
-                if word.getText().strip() != '':
-                    new_word = OCRbox(word['title'], word.getText(), scale_factor)
-                    wordlist.append(new_word)
-                    not_empty = True
-            if not_empty:
-                linelist.append(wordlist)
-        return linelist
+    def cleanCommodities(self, data):
+        for i in xrange(len(data)):
+            if not data[i][0] is None:
+                topratio = 0.0
+                topcomm = ""
+                for comm in self.comm_list:
+                    rat = ratio(data[i][0].value, unicode(comm))
+                    if rat > topratio:
+                        topratio = rat
+                        topcomm = comm
+                    if rat == 1.0:
+                        data[i][0].value = topcomm
+                        data[i][0].confidence = 1.0
+                        break
+                if topratio > 0.8:
+                    data[i][0].value = topcomm
+                    data[i][0].confidence = 1.0
+                    data[i][0].optional_values = [data[i][0].value, topcomm]
+                else:
+                    data[i][0].confidence = 0.0
+                    data[i][0].optional_values = [data[i][0].value, topcomm]
+            if not data[i][4] is None:
+                topratio = 0.0
+                toplev = ""
+                for lev in self.levels:
+                    rat = ratio(data[i][4].value, unicode(lev))
+                    if rat > topratio:
+                        topratio = rat
+                        toplev = lev
+                data[i][4].value = toplev
+            if not data[i][6] is None:
+                topratio = 0.0
+                toplev = ""
+                for lev in self.levels:
+                    rat = ratio(data[i][6].value, unicode(lev))
+                    if rat > topratio:
+                        topratio = rat
+                        toplev = lev
+                data[i][6].value = toplev
 
 class NNMethod:
     def __init__(self, image, ocr_data, path):
@@ -301,6 +367,7 @@ class NNMethod:
                         snippet = image[data[i][j].y1-2:data[i][j].y2+2,
                                         data[i][j].x1-2:data[i][j].x2+2]
                         snippet = cv2.cvtColor(snippet,cv2.COLOR_GRAY2RGB)
+                        snippet = cv2.copyMakeBorder(snippet, 5, 5, 5, 5,cv2.BORDER_CONSTANT,value=(255,255,255)) 
                         res = train.doDigitPrediction(snippet)
                         data[i][j].value = "{:,}".format(int(res))
 

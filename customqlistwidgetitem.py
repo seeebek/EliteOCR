@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import cv2
 import re
 import numpy as np
@@ -14,8 +15,6 @@ class CustomQListWidgetItem(QListWidgetItem):
         QListWidgetItem.__init__(self, text)
         self.settings = settings
         self.hiddentext = hiddentext
-        #self.color_image = self.addImage(hiddentext)
-        #self.preview_image = self.addPreviewImage()
         
         self.timestamp = self.getTimeStamp()
         self.filetime = self.getFileTime()
@@ -29,7 +28,7 @@ class CustomQListWidgetItem(QListWidgetItem):
         return self.addPreviewImage(color_image)
     
     def addImage(self,imagepath):
-        image = cv2.imread(unicode(imagepath))
+        image = cv2.imread(imagepath)
         h, w, c = image.shape
         #cut image if too long to prevent memory errors
         aspect_ratio = float(w) / (h)
@@ -58,13 +57,13 @@ class CustomQListWidgetItem(QListWidgetItem):
         
     def getTimeStamp(self):
         """Return timestamp for selected file."""
-        tmstmp = gmtime(getctime(unicode(self.hiddentext)))
+        tmstmp = gmtime(getctime(self.hiddentext))
         file_tmstmp = unicode(strftime("%Y-%m-%dT%H:%M", tmstmp))
         return file_tmstmp
     
     def getFileTime(self):
         """Return creation time as an array, for searching in logs"""
-        tmstmp = localtime(getctime(unicode(self.hiddentext)))
+        tmstmp = localtime(getctime(self.hiddentext))
         year = strftime("%y", tmstmp)
         month = strftime("%m", tmstmp)
         day = strftime("%d", tmstmp)

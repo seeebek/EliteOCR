@@ -84,6 +84,13 @@ pip install lxml
 
 [https://pypi.python.org/pypi/lxml](https://pypi.python.org/pypi/lxml)
 
+###### python-Levenshtein
+
+pip install python-Levenshtein
+
+[https://pypi.python.org/pypi/python-Levenshtein/](https://pypi.python.org/pypi/python-Levenshtein/)
+
+
 Run EliteOCR.py
 
 To create a standalone exe file
@@ -91,4 +98,4 @@ To create a standalone exe file
 
 pip install pyinstaller
 
-pyinstaller --onefile EliteOCR.py
+pyinstaller --onedir EliteOCR.py

@@ -1,6 +1,8 @@
+# -*- coding: utf-8 -*-
 import random
 import sys
 import time
+import json
 from datetime import datetime
 from os.path import split, isfile, dirname, realpath, exists
 from os import makedirs
@@ -60,9 +62,8 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
 
         #set up required items for nn
         self.training_image_dir = self.settings.app_path +"\\nn_training_images\\"
-    
-        self.loadPlugins()
         
+        self.loadPlugins()
     
     def loadPlugins(self):
         """Load known plugins"""
@@ -70,7 +71,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         if isfile(self.settings.app_path+"\\plugins\\TD_Export\\TD_Export.py"):
             plugin2 = imp.load_source('TD_Export', self.settings.app_path+\
                                      "\\plugins\\TD_Export\\TD_Export.py")
-            self.tdexport = plugin2.TD_Export(self, self.settings.app_path)
+            self.tdexport = plugin2.TD_Export(self, self.settings.app_path.decode('windows-1252'))
             self.tdexport_button = QPushButton(self.centralwidget)
             self.tdexport_button.setText("Trade Dangerous Export")
             self.tdexport_button.setEnabled(False)
@@ -96,12 +97,10 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
             "screenshot you can "+\
             "click on the next file on the list and click the ORC Button again. Should there be r"+\
             "epeated entry, you can click \"Skip\" to continue to next line without adding curren"+\
-            "t one to the list.\n\nWhen finished click on \"Export\" to save your results to a cs"+\
-            "v-file(separated by ; ). CSV can be opened by most spreadsheet editors like Excel, L"+\
-            "ibreOffice Calc etc.")
+            "t one to the list.\n\nWhen finished click on \"Export\" to save your results.")
 
     def About(self):
-        QMessageBox.about(self,"About", "EliteOCR\nVersion 0.3.4\n\n"+\
+        QMessageBox.about(self,"About", "EliteOCR\nVersion 0.3.5\n\n"+\
         "Contributors:\n"+\
         "Seeebek, CapCap\n\n"+\
         "EliteOCR is capable of reading the entries in Elite: Dangerous markets screenshots.\n\n"+\
@@ -132,7 +131,8 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
             return
         first_item = None
         for file in files:
-            item = CustomQListWidgetItem(split(unicode(file))[1], file, self.settings)
+            file1 = unicode(file).encode('windows-1252')
+            item = CustomQListWidgetItem(split(file1)[1], file1, self.settings)
             if first_item == None:
                 first_item = item
             self.file_list.addItem(item)
@@ -174,6 +174,10 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.color_image = item.loadColorImage()
         self.preview_image = item.loadPreviewImage(self.color_image)
         self.ocr_all_set = False
+        font = QFont()
+        font.setPointSize(11)
+        self.system_name.setText(item.system)
+        self.system_name.setFont(font)
         self.file_list.setCurrentItem(item)
         self.file_label.setText(item.text())
         self.setPreviewImage(self.preview_image)
@@ -250,6 +254,8 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                     duplicate = True
         
         if not duplicate:
+            if self.current_result.commodities[self.OCRline].items[0].confidence < 0.8:
+                self.addCommodityToDictionary(self.name.currentText())
             self.current_result.station.name.value = self.station_name.currentText()
             tab.insertRow(row_count)
             newitem = QTableWidgetItem(unicode(res_station).title())
@@ -266,7 +272,22 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
             if self.settings['create_nn_images']:
                 self.saveValuesForTraining()
         self.nextLine()
-
+    
+    def addCommodityToDictionary(self, text):
+        try:
+            file = open(self.settings.app_path + "\\commodities.json", 'r')
+            file_content = file.read()
+            comm_list = json.loads(file_content)
+            file.close()
+        except:
+            comm_list = ['BEER']
+        comm_list.append(unicode(text))
+        comm_list = list(set(comm_list))
+        comm_list.sort()
+        file = open(self.settings.app_path + "\\commodities.json", 'w')
+        file.write(json.dumps(comm_list,indent=2, separators=(',', ': ')))
+        file.close()
+    
     def saveValuesForTraining(self):
         """Get OCR image/user values and save them away for later processing, and training
         neural net"""
@@ -311,6 +332,11 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
             self.preview_image = self.file_list.currentItem().loadPreviewImage(self.color_image)
             self.performOCR()
             if self.OCRline == 0:
+                if len(self.file_list.currentItem().system) > 0:
+                    font = QFont()
+                    font.setPointSize(11)
+                    self.system_name.setText(self.file_list.currentItem().system)
+                    self.system_name.setFont(font)
                 self.system_name.setFocus()
                 self.system_name.selectAll()
             
@@ -335,8 +361,8 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                 for item in res.items:
                     if item == None:
                         continue
-                    #if not item.confidence > 0.84:
-                    #    autofill = False
+                    if not item.confidence > 0.83:
+                        autofill = False
                         
             for field, canvas, item in zip(self.fields, self.canvases, res.items):
                 if item != None:
@@ -345,7 +371,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                     field.setEditText(item.value)
                     field.lineEdit().setFont(font)
                     if not(self.settings["auto_fill"] and autofill):
-                        #self.setConfidenceColor(field, item)
+                        self.setConfidenceColor(field, item)
                         self.drawSnippet(canvas, item)
                 else:
                     self.cleanSnippet(canvas)
@@ -356,9 +382,9 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
     
     def setConfidenceColor(self, field, item):
         c = item.confidence
-        if c > 0.84:
+        if c > 0.83:
             color  = "#ffffff"
-        if c <= 0.84 and c >0.67:
+        if c <= 0.83 and c >0.67:
             color = "#ffffbf"
         if c <= 0.67 and c >0.5:
             color = "#fff2bf"
@@ -437,7 +463,12 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         """Draw station name snippet to station_name_img"""
         res = self.current_result
         name = res.station.name
+        self.station_name.addItems(name.optional_values)
         self.station_name.setEditText(name.value)
+        font = QFont()
+        font.setPointSize(11)
+        self.station_name.lineEdit().setFont(font)
+        self.setConfidenceColor(self.station_name, name)
         img = self.cutImage(res.contrast_station_img, name)
         processedimage = array2qimage(img)
         pix = QPixmap()

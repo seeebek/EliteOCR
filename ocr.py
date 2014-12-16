@@ -9,7 +9,7 @@ from imageprocessing import *
 from settings import Settings
 
 #OCR engines:
-from ocrmethods import OCRAreasFinder, TesseractStation, TesseractMarket1, TesseractMarket2, NNMethod
+from ocrmethods import OCRAreasFinder, TesseractStation, TesseractStationMulti, TesseractMarket1, Levenshtein, NNMethod
 
 class OCR():
     def __init__(self, color_image):
@@ -24,6 +24,7 @@ class OCR():
         
     def readStationName(self):
         station_name = TesseractStation(self.contrast_station_img, self.ocr_areas.station_name)
+        station_name1 = TesseractStationMulti(self.image, station_name.result[0])
         if len(station_name.result) > 0:
             return station_name.result[0]
         else:
@@ -31,7 +32,7 @@ class OCR():
         
     def readMarket(self):
         market_table = TesseractMarket1(self.contrast_commodities_img, self.ocr_areas.market_table)
-        #market_table2 = TesseractMarket2(self.contrast_commodities_img, market_table.result)
+        clean_commodities = Levenshtein(market_table.result, self.settings.app_path)
         clean_numbers = NNMethod(self.contrast_commodities_img, market_table.result, self.settings.app_path)
         
         #return self.compareResults(market_table.result,[market_table2.result])

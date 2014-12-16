@@ -50,3 +50,6 @@ Executable is generated using pyinstaller and contains following components:
     
 * lxml is licensed under BSD license
     - http://lxml.de/
+    
+* python-Levenshtein is licensed under GNU GPL
+    - https://github.com/ztane/python-Levenshtein
