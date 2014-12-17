@@ -41,3 +41,15 @@ Executable is generated using pyinstaller and contains following components:
 * qimage2ndarray is released following license:
     - https://github.com/hmeine/qimage2ndarray/blob/master/LICENSE.txt
     - https://github.com/hmeine/qimage2ndarray
+    
+* openpyxl is licansed under MIT/Expat Licanse
+    - https://pypi.python.org/pypi/openpyxl 
+    
+* ezodf is licensed under MIT License
+    - https://pypi.python.org/pypi/ezodf
+    
+* lxml is licensed under BSD license
+    - http://lxml.de/
+    
+* python-Levenshtein is licensed under GNU GPL
+    - https://github.com/ztane/python-Levenshtein

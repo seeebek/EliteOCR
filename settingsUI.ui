@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>540</width>
-    <height>262</height>
+    <width>526</width>
+    <height>312</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -51,6 +51,13 @@
       </layout>
      </item>
      <item>
+      <widget class="Line" name="line_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QLabel" name="label_3">
        <property name="text">
         <string>Log Directory (for system names):</string>
@@ -70,6 +77,13 @@
         </widget>
        </item>
       </layout>
+     </item>
+     <item>
+      <widget class="Line" name="line_3">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QLabel" name="label_2">
@@ -93,6 +107,20 @@
       </layout>
      </item>
      <item>
+      <widget class="QCheckBox" name="horizontal_exp">
+       <property name="text">
+        <string>Horizontal export</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="Line" name="line">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QCheckBox" name="auto_fill">
        <property name="text">
         <string>Automatically add results with high confidence</string>
@@ -109,7 +137,7 @@
      <item>
       <widget class="QCheckBox" name="create_nn_images">
        <property name="text">
-        <string>Save digits from processed images for machine learning (will improve accuracy in the future versions)</string>
+        <string>Save images for machine learning</string>
        </property>
        <property name="checked">
         <bool>false</bool>

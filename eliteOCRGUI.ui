@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1131</width>
+    <width>1197</width>
     <height>788</height>
    </rect>
   </property>
@@ -238,6 +238,35 @@
           </widget>
          </item>
          <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_6">
+           <property name="spacing">
+            <number>10</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="label_9">
+             <property name="text">
+              <string>System Name</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="system_name">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>25</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>11</pointsize>
+              </font>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
           <widget class="QLabel" name="label_5">
            <property name="minimumSize">
             <size>
@@ -306,7 +335,7 @@
              <property name="minimumSize">
               <size>
                <width>0</width>
-               <height>20</height>
+               <height>25</height>
               </size>
              </property>
              <property name="maximumSize">
@@ -314,6 +343,11 @@
                <width>16777215</width>
                <height>16777215</height>
               </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>11</pointsize>
+              </font>
              </property>
              <property name="acceptDrops">
               <bool>false</bool>
@@ -672,7 +706,7 @@
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
-                   <height>20</height>
+                   <height>25</height>
                   </size>
                  </property>
                  <property name="maximumSize">
@@ -680,6 +714,11 @@
                    <width>16777215</width>
                    <height>16777215</height>
                   </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>11</pointsize>
+                  </font>
                  </property>
                  <property name="styleSheet">
                   <string notr="true"/>
@@ -700,7 +739,7 @@
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
-                   <height>20</height>
+                   <height>25</height>
                   </size>
                  </property>
                  <property name="maximumSize">
@@ -708,6 +747,11 @@
                    <width>16777215</width>
                    <height>16777215</height>
                   </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>11</pointsize>
+                  </font>
                  </property>
                  <property name="styleSheet">
                   <string notr="true"/>
@@ -728,7 +772,7 @@
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
-                   <height>20</height>
+                   <height>25</height>
                   </size>
                  </property>
                  <property name="maximumSize">
@@ -736,6 +780,11 @@
                    <width>16777215</width>
                    <height>16777215</height>
                   </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>11</pointsize>
+                  </font>
                  </property>
                  <property name="styleSheet">
                   <string notr="true"/>
@@ -756,7 +805,7 @@
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
-                   <height>20</height>
+                   <height>25</height>
                   </size>
                  </property>
                  <property name="maximumSize">
@@ -764,6 +813,11 @@
                    <width>16777215</width>
                    <height>16777215</height>
                   </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>11</pointsize>
+                  </font>
                  </property>
                  <property name="styleSheet">
                   <string notr="true"/>
@@ -784,7 +838,7 @@
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
-                   <height>20</height>
+                   <height>25</height>
                   </size>
                  </property>
                  <property name="maximumSize">
@@ -792,6 +846,11 @@
                    <width>16777215</width>
                    <height>16777215</height>
                   </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>11</pointsize>
+                  </font>
                  </property>
                  <property name="styleSheet">
                   <string notr="true"/>
@@ -812,7 +871,7 @@
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
-                   <height>20</height>
+                   <height>25</height>
                   </size>
                  </property>
                  <property name="maximumSize">
@@ -820,6 +879,11 @@
                    <width>16777215</width>
                    <height>16777215</height>
                   </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>11</pointsize>
+                  </font>
                  </property>
                  <property name="styleSheet">
                   <string notr="true"/>
@@ -840,7 +904,7 @@
                  <property name="minimumSize">
                   <size>
                    <width>0</width>
-                   <height>20</height>
+                   <height>25</height>
                   </size>
                  </property>
                  <property name="maximumSize">
@@ -848,6 +912,11 @@
                    <width>16777215</width>
                    <height>16777215</height>
                   </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>11</pointsize>
+                  </font>
                  </property>
                  <property name="styleSheet">
                   <string notr="true"/>
@@ -990,7 +1059,7 @@
          </size>
         </property>
         <property name="text">
-         <string>CSV Export</string>
+         <string>Export</string>
         </property>
        </widget>
       </item>
@@ -1006,7 +1075,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1131</width>
+     <width>1197</width>
      <height>21</height>
     </rect>
    </property>
@@ -1028,7 +1097,6 @@
     <property name="title">
      <string>Settings</string>
     </property>
-    <addaction name="actionCalibrate"/>
     <addaction name="actionPreferences"/>
    </widget>
    <addaction name="menuFile"/>
@@ -1063,6 +1131,11 @@
   <action name="actionPreferences">
    <property name="text">
     <string>Preferences</string>
+   </property>
+  </action>
+  <action name="actionTest">
+   <property name="text">
+    <string>Test</string>
    </property>
   </action>
  </widget>
