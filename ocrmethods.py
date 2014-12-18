@@ -19,6 +19,7 @@ class OCRAreasFinder:
         
     def findAreas(self, image):
         img = image
+        imgheight, imgwidth, xcolor = img.shape
         b,g,r  = cv2.split(img)
         b = np.add(b, 0.0) 
         new = np.divide(np.multiply(b, g), 255.0)
@@ -33,19 +34,18 @@ class OCRAreasFinder:
         cnt = contours
         y_pos = []
         for c in cnt:
-            if cv2.contourArea(c) > 40:
+            if cv2.contourArea(c) > 200:
                 x,y,w,h = cv2.boundingRect(c)
-                y_pos.append([y,h])
+                y_pos.append([y,h,x])
         
         r = np.add(r, 0.0) 
         new = np.absolute(np.subtract(r, b))
         new = np.subtract(np.add(new,g), 128.0)
         value = np.clip(new, 0, 255)
         value = value.astype(np.uint8)
-
         h, w = value.shape
         ret,thresh1 = cv2.threshold(255 - value,128,255,cv2.THRESH_BINARY)
-        lines = cv2.HoughLinesP((255 - thresh1), 1, math.pi/2, 2, None, h, 1);
+        lines = cv2.HoughLinesP((255 - thresh1), 1, math.pi/2, 2, None, h/2, 1);
         counter = 0
         x1 = []
         y1 = []
@@ -64,14 +64,13 @@ class OCRAreasFinder:
             self.station_name = [[0,0],[0,0]]
             self.market_table = [[0,0],[0,0]]
             return
-
         x1 = min(x1)
         y1 = min(y1)
         x2 = max(x2)
         y2 = max(y2)
         
         for pos in y_pos:
-            if pos[0] < y1:
+            if pos[0] < y1 and (pos[2]>(x1-0.02*imgwidth) and pos[2]<(x1+0.02*imgwidth)):
                 y1_station = pos[0]
                 y2_station = (pos[0]+pos[1])
                 break
@@ -191,8 +190,11 @@ class TesseractStationMulti:
         results.append(data.name.value)
         most_common = Counter(results).most_common()
         if len(most_common) > 0:
+            if len(most_common) == 1:
+                item.confidence = 1.0
+            else:
+                item.confidence = 0.5
             item.value = most_common[0][0]
-            item.confidence = most_common[0][1]/(repeats+1.0)
             item.optional_values = self.sortAlternatives(most_common)
 
     def sortAlternatives(self, alt):
@@ -312,24 +314,37 @@ class Levenshtein:
     def cleanCommodities(self, data):
         for i in xrange(len(data)):
             if not data[i][0] is None:
-                topratio = 0.0
+                mindist = 100
                 topcomm = ""
+                alternatives = []
                 for comm in self.comm_list:
-                    rat = ratio(data[i][0].value, unicode(comm))
-                    if rat > topratio:
-                        topratio = rat
+                    dist = distance(data[i][0].value, unicode(comm))
+                    if dist < 5:
+                        alternatives.append((unicode(comm), dist))
+                    if dist < mindist:
+                        mindist = dist
                         topcomm = comm
-                    if rat == 1.0:
+                    if dist == 0:
                         data[i][0].value = topcomm
                         data[i][0].confidence = 1.0
                         break
-                if topratio > 0.8:
+                        
+                alternatives.sort(key=lambda x: x[1])
+                optional_values = [j[0] for j in alternatives]
+                
+                maxdist = 4
+                if len(data[i][0].value) < 5:
+                    maxdist = 3
+
+                if mindist < maxdist:
                     data[i][0].value = topcomm
                     data[i][0].confidence = 1.0
-                    data[i][0].optional_values = [data[i][0].value, topcomm]
+                    if mindist != 0:
+                        data[i][0].optional_values = [data[i][0].value] + optional_values
                 else:
                     data[i][0].confidence = 0.0
-                    data[i][0].optional_values = [data[i][0].value, topcomm]
+                    data[i][0].optional_values = [data[i][0].value] + optional_values
+            # LOW MED HIGH
             if not data[i][4] is None:
                 topratio = 0.0
                 toplev = ""
@@ -369,7 +384,10 @@ class NNMethod:
                         snippet = cv2.cvtColor(snippet,cv2.COLOR_GRAY2RGB)
                         snippet = cv2.copyMakeBorder(snippet, 5, 5, 5, 5,cv2.BORDER_CONSTANT,value=(255,255,255)) 
                         res = train.doDigitPrediction(snippet)
-                        data[i][j].value = "{:,}".format(int(res))
+                        try:
+                            data[i][j].value = "{:,}".format(int(res))
+                        except:
+                            pass
 
 class OCRline():
     """Class providing a recognised line of text as an object, 

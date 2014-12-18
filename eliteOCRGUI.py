@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'eliteOCRGUI.ui'
 #
-# Created: Sun Dec 14 22:56:08 2014
+# Created: Thu Dec 18 14:15:28 2014
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -116,6 +116,11 @@ class Ui_MainWindow(object):
         self.line.setFrameShadow(QtGui.QFrame.Sunken)
         self.line.setObjectName(_fromUtf8("line"))
         self.verticalLayout_2.addWidget(self.line)
+        self.system_not_found = QtGui.QLabel(self.widget)
+        self.system_not_found.setStyleSheet(_fromUtf8("QLabel {color: red; }"))
+        self.system_not_found.setText(_fromUtf8(""))
+        self.system_not_found.setObjectName(_fromUtf8("system_not_found"))
+        self.verticalLayout_2.addWidget(self.system_not_found)
         self.horizontalLayout_6 = QtGui.QHBoxLayout()
         self.horizontalLayout_6.setSpacing(10)
         self.horizontalLayout_6.setObjectName(_fromUtf8("horizontalLayout_6"))
@@ -448,6 +453,21 @@ class Ui_MainWindow(object):
         self.line_2.setFrameShadow(QtGui.QFrame.Sunken)
         self.line_2.setObjectName(_fromUtf8("line_2"))
         self.verticalLayout_5.addWidget(self.line_2)
+        self.horizontalLayout_10 = QtGui.QHBoxLayout()
+        self.horizontalLayout_10.setObjectName(_fromUtf8("horizontalLayout_10"))
+        self.factor = QtGui.QDoubleSpinBox(self.centralwidget)
+        self.factor.setMinimum(1.0)
+        self.factor.setMaximum(5.0)
+        self.factor.setSingleStep(0.25)
+        self.factor.setObjectName(_fromUtf8("factor"))
+        self.horizontalLayout_10.addWidget(self.factor)
+        self.zoom_button = QtGui.QPushButton(self.centralwidget)
+        self.zoom_button.setEnabled(False)
+        self.zoom_button.setObjectName(_fromUtf8("zoom_button"))
+        self.horizontalLayout_10.addWidget(self.zoom_button)
+        spacerItem2 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_10.addItem(spacerItem2)
+        self.verticalLayout_5.addLayout(self.horizontalLayout_10)
         self.horizontalLayout_4 = QtGui.QHBoxLayout()
         self.horizontalLayout_4.setObjectName(_fromUtf8("horizontalLayout_4"))
         self.splitter = QtGui.QSplitter(self.centralwidget)
@@ -467,6 +487,7 @@ class Ui_MainWindow(object):
         self.preview.setSizePolicy(sizePolicy)
         self.preview.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.preview.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.preview.setDragMode(QtGui.QGraphicsView.ScrollHandDrag)
         self.preview.setObjectName(_fromUtf8("preview"))
         self.result_table = CustomQTableWidget(self.splitter)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
@@ -482,8 +503,8 @@ class Ui_MainWindow(object):
         self.verticalLayout_5.addLayout(self.horizontalLayout_4)
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
-        spacerItem2 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_2.addItem(spacerItem2)
+        spacerItem3 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem3)
         self.clear_table = QtGui.QPushButton(self.centralwidget)
         self.clear_table.setEnabled(False)
         self.clear_table.setObjectName(_fromUtf8("clear_table"))
@@ -519,11 +540,14 @@ class Ui_MainWindow(object):
         self.actionPreferences.setObjectName(_fromUtf8("actionPreferences"))
         self.actionTest = QtGui.QAction(MainWindow)
         self.actionTest.setObjectName(_fromUtf8("actionTest"))
+        self.actionCommodity_Editor = QtGui.QAction(MainWindow)
+        self.actionCommodity_Editor.setObjectName(_fromUtf8("actionCommodity_Editor"))
         self.menuHelp.addAction(self.actionHow_to_use)
         self.menuHelp.addAction(self.actionAbout)
         self.menuFile.addAction(self.actionOpen)
         self.menuFile.addAction(self.actionExit)
         self.menuSettings.addAction(self.actionPreferences)
+        self.menuSettings.addAction(self.actionCommodity_Editor)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuSettings.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
@@ -550,6 +574,7 @@ class Ui_MainWindow(object):
         self.label_6.setText(_translate("MainWindow", "supply", None))
         self.skip_button.setText(_translate("MainWindow", "Skip", None))
         self.save_button.setText(_translate("MainWindow", "Add and Next", None))
+        self.zoom_button.setText(_translate("MainWindow", "Zoom", None))
         self.clear_table.setText(_translate("MainWindow", "Clear Table", None))
         self.export_button.setText(_translate("MainWindow", "Export", None))
         self.menuHelp.setTitle(_translate("MainWindow", "Help", None))
@@ -562,6 +587,7 @@ class Ui_MainWindow(object):
         self.actionCalibrate.setText(_translate("MainWindow", "Calibrate", None))
         self.actionPreferences.setText(_translate("MainWindow", "Preferences", None))
         self.actionTest.setText(_translate("MainWindow", "Test", None))
+        self.actionCommodity_Editor.setText(_translate("MainWindow", "Commodity Editor", None))
 
 from customqtablewidget import CustomQTableWidget
 import res_rc

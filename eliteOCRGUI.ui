@@ -238,6 +238,16 @@
           </widget>
          </item>
          <item>
+          <widget class="QLabel" name="system_not_found">
+           <property name="styleSheet">
+            <string notr="true">QLabel {color: red; }</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
           <layout class="QHBoxLayout" name="horizontalLayout_6">
            <property name="spacing">
             <number>10</number>
@@ -975,6 +985,46 @@
      </widget>
     </item>
     <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_10">
+      <item>
+       <widget class="QDoubleSpinBox" name="factor">
+        <property name="minimum">
+         <double>1.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>5.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>0.250000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="zoom_button">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>Zoom</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_4">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+    <item>
      <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0">
       <item>
        <widget class="QSplitter" name="splitter">
@@ -1002,6 +1052,9 @@
          </property>
          <property name="horizontalScrollBarPolicy">
           <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="dragMode">
+          <enum>QGraphicsView::ScrollHandDrag</enum>
          </property>
         </widget>
         <widget class="CustomQTableWidget" name="result_table">
@@ -1098,6 +1151,7 @@
      <string>Settings</string>
     </property>
     <addaction name="actionPreferences"/>
+    <addaction name="actionCommodity_Editor"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuSettings"/>
@@ -1136,6 +1190,11 @@
   <action name="actionTest">
    <property name="text">
     <string>Test</string>
+   </property>
+  </action>
+  <action name="actionCommodity_Editor">
+   <property name="text">
+    <string>Commodity Editor</string>
    </property>
   </action>
  </widget>

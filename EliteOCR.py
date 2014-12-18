@@ -8,7 +8,7 @@ from os.path import split, isfile, dirname, realpath, exists
 from os import makedirs
 from PyQt4.QtGui import QApplication, QMainWindow, QFileDialog, QGraphicsScene, QMessageBox,\
                         QPixmap, QPen, QTableWidgetItem, QPushButton, QAction, QFont
-from PyQt4.QtCore import Qt, QObject, SIGNAL
+from PyQt4.QtCore import Qt, QObject, QSize, SIGNAL
 import cv2
 
 from eliteOCRGUI import Ui_MainWindow
@@ -16,6 +16,7 @@ from customqlistwidgetitem import CustomQListWidgetItem
 from calibrate import CalibrateDialog
 from busydialog import BusyDialog
 from settingsdialog import SettingsDialog
+from editordialog import EditorDialog
 from settings import Settings
 from ocr import OCR
 from qimage2ndarray import array2qimage
@@ -36,6 +37,8 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.ocr_all_set = False
         self.color_image = None
         self.preview_image = None
+        self.current_result = None
+        self.zoom = False
         self.fields = [self.name, self.sell, self.buy, self.demand_num, self.demand,
                        self.supply_num, self.supply]
         self.canvases = [self.name_img, self.sell_img, self.buy_img, self.demand_img,
@@ -49,11 +52,14 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.ocr_all.clicked.connect(self.runOCRAll)
         self.export_button.clicked.connect(self.export)
         self.clear_table.clicked.connect(self.clearTable)
+        self.zoom_button.clicked.connect(self.drawOCRPreview)
         
         QObject.connect(self.actionHow_to_use, SIGNAL('triggered()'), self.howToUse)
         QObject.connect(self.actionAbout, SIGNAL('triggered()'), self.About)
         QObject.connect(self.actionOpen, SIGNAL('triggered()'), self.addFiles)
         QObject.connect(self.actionPreferences, SIGNAL('triggered()'), self.openSettings)
+        QObject.connect(self.actionCommodity_Editor, SIGNAL('triggered()'), self.openEditor)
+        
         self.error_close = False
         if not isfile("./tessdata/big.traineddata"):
             QMessageBox.critical(self,"Error", "OCR training data not found!\n"+\
@@ -100,9 +106,9 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
             "t one to the list.\n\nWhen finished click on \"Export\" to save your results.")
 
     def About(self):
-        QMessageBox.about(self,"About", "EliteOCR\nVersion 0.3.5\n\n"+\
+        QMessageBox.about(self,"About", "EliteOCR\nVersion 0.3.6\n\n"+\
         "Contributors:\n"+\
-        "Seeebek, CapCap\n\n"+\
+        "Seeebek, CapCap, Gazelle\n\n"+\
         "EliteOCR is capable of reading the entries in Elite: Dangerous markets screenshots.\n\n"+\
         "Best results are achieved with screenshots of 3840 by 2160 pixel (4K) or more. "+\
         "You can make screenshots in game by pressing F10. You find them usually in\n"+\
@@ -123,6 +129,10 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         """Open settings dialog and reload settings"""
         settingsDialog = SettingsDialog(self.settings)
         settingsDialog.exec_()
+    
+    def openEditor(self):
+        editorDialog = EditorDialog(self.settings)
+        editorDialog.exec_()
         
     def addFiles(self):
         """Add files to the file list."""
@@ -166,6 +176,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         if self.file_list.count() == 0:
             self.remove_button.setEnabled(False)
             self.ocr_button.setEnabled(False)
+            self.zoom_button.setEnabled(False)
         if self.file_list.count() < 2:
             self.ocr_all.setEnabled(False)
     
@@ -176,21 +187,27 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.ocr_all_set = False
         font = QFont()
         font.setPointSize(11)
+        self.system_not_found.setText("")
+        if len(item.system) == 0:
+            self.system_not_found.setText("System name not found in log files. Make sure log directory path is set up correctly or add system name manually in the field below. Note: System name is necessary for BPC import!")
         self.system_name.setText(item.system)
         self.system_name.setFont(font)
         self.file_list.setCurrentItem(item)
         self.file_label.setText(item.text())
         self.setPreviewImage(self.preview_image)
         if not item.valid_market:
+            self.system_not_found.setText("File was not recognized as a valid market screenshot. If the file is valid please report the issue in the forum.")
             return
         self.remove_button.setEnabled(True)
         self.ocr_button.setEnabled(True)
+        self.zoom_button.setEnabled(True)
         if self.file_list.count() > 1:
             self.ocr_all.setEnabled(True)
     
     def setPreviewImage(self, image):
         """Show image in self.preview."""
-        pix = image.scaled(self.preview.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        factor = self.factor.value()
+        pix = image.scaled(QSize(self.preview.size().width()*factor,self.preview.size().height()*factor), Qt.KeepAspectRatio, Qt.SmoothTransformation)
         scene = QGraphicsScene()
         scene.addPixmap(pix)
         self.previewSetScene(scene)
@@ -254,11 +271,12 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                     duplicate = True
         
         if not duplicate:
-            if self.current_result.commodities[self.OCRline].items[0].confidence < 0.8:
-                self.addCommodityToDictionary(self.name.currentText())
+            if not self.current_result.commodities[self.OCRline].items[0] is None:
+                if self.current_result.commodities[self.OCRline].items[0].confidence < 0.8:
+                    self.addCommodityToDictionary(self.name.currentText())
             self.current_result.station.name.value = self.station_name.currentText()
             tab.insertRow(row_count)
-            newitem = QTableWidgetItem(unicode(res_station).title())
+            newitem = QTableWidgetItem(unicode(res_station).title().replace("'S", "'s"))
             tab.setItem(row_count, 0, newitem)
             for n, field in enumerate(self.fields):
                 newitem = QTableWidgetItem(unicode(field.currentText()).replace(',', '').title())
@@ -331,12 +349,17 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
             self.color_image = self.file_list.currentItem().loadColorImage()
             self.preview_image = self.file_list.currentItem().loadPreviewImage(self.color_image)
             self.performOCR()
+            font = QFont()
+            font.setPointSize(11)
             if self.OCRline == 0:
                 if len(self.file_list.currentItem().system) > 0:
-                    font = QFont()
-                    font.setPointSize(11)
+                    self.system_not_found.setText("")
                     self.system_name.setText(self.file_list.currentItem().system)
                     self.system_name.setFont(font)
+                else:
+                    self.system_name.setText("")
+                    self.system_name.setFont(font)
+                    self.system_not_found.setText("System name not found in log files. Make sure log directory path is set up correctly or add system name manually in the field below. Note: System name is necessary for BPC import!")
                 self.system_name.setFocus()
                 self.system_name.selectAll()
             
@@ -363,6 +386,10 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                         continue
                     if not item.confidence > 0.83:
                         autofill = False
+                if res.items[0] is None:
+                    autofill = False
+                if res.items[1] is None:
+                    autofill = False
                         
             for field, canvas, item in zip(self.fields, self.canvases, res.items):
                 if item != None:
@@ -396,7 +423,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
             color = "#ffccbf"
         field.lineEdit().setStyleSheet("QLineEdit{background: "+color+";}")
 
-    def drawOCRPreview(self):
+    def xdrawOCRPreview(self):
         """Draw processed file preview and show recognised areas."""
         res = self.current_result
         name = res.station
@@ -405,6 +432,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         old_h = img.height()
         old_w = img.width()
         
+        #pix = img.scaled(QSize(self.preview.size().width()*2,self.preview.size().height()*2), Qt.KeepAspectRatio, Qt.SmoothTransformation)
         pix = img.scaled(self.preview.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
         
         new_h = pix.height()
@@ -422,8 +450,63 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         rect = self.addRect(self.scene, name, ratio_w, ratio_h, pen)
         
         pen = QPen(Qt.yellow)
+        redpen = QPen(Qt.red)
         for line in res.commodities:
-            rect = self.addRect(self.scene, line, ratio_w, ratio_h, pen)
+            if line.w < (0.02*old_w):
+                rect = self.addRect(self.scene, line, ratio_w, ratio_h, redpen)
+            else:
+                rect = self.addRect(self.scene, line, ratio_w, ratio_h, pen)
+            self.previewRects.append(rect)
+            
+        self.previewSetScene(self.scene)
+        
+    def drawOCRPreview(self):
+        if self.current_result is None:
+            self.setPreviewImage(self.preview_image)
+            return
+        factor = self.factor.value()
+        res = self.current_result
+        name = res.station
+        img = self.preview_image
+        
+        old_h = img.height()
+        old_w = img.width()
+        
+        pix = img.scaled(QSize(self.preview.size().width()*factor,self.preview.size().height()*factor), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        #pix = img.scaled(self.preview.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        
+        new_h = pix.height()
+        new_w = pix.width()
+        
+        ratio_h = old_h/float(new_h)
+        ratio_w = old_w/float(new_w)
+        
+        self.scene = QGraphicsScene()
+        self.scene.addPixmap(pix)
+        #self.scene.addPixmap(img)
+        
+        self.previewRects = []
+
+        pen = QPen(Qt.yellow)
+        redpen = QPen(Qt.red)
+        bluepen = QPen(Qt.blue)
+        greenpen = QPen(Qt.green)
+        
+        rect = self.addRect(self.scene, name, ratio_w, ratio_h, greenpen)
+        
+        counter = 0
+        for line in res.commodities:
+            if counter < self.OCRline:
+                rect = self.addRect(self.scene, line, ratio_w, ratio_h, greenpen)
+            elif counter == self.OCRline:
+                rect = self.addRect(self.scene, line, ratio_w, ratio_h, bluepen)
+            else:
+                if line.w < (0.02*old_w):
+                    rect = self.addRect(self.scene, line, ratio_w, ratio_h, redpen)
+                else:
+                    rect = self.addRect(self.scene, line, ratio_w, ratio_h, pen)
+            
+            counter += 1
             self.previewRects.append(rect)
             
         self.previewSetScene(self.scene)
@@ -529,6 +612,10 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
             return unicode(input)
     
     def exportToCsv(self, result, file):
+        for row in result:
+            if len(row[0]) == 0:
+                QMessageBox.warning(self,"No System Name", "There are rows missing system name! \nThe exported CSV file is incompatible with some tools like BPC.")
+                break
         towrite = ""
         for row in result:
             for cell in row:
@@ -559,7 +646,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
             
     def export(self):
         if self.settings['last_export_format'] == "":
-            self.settings.setValue('last_export_format', "xlsx")
+            self.settings.setValue('last_export_format', "csv")
             self.settings.sync()
             
         if self.settings['last_export_format'] == "xlsx":
@@ -570,7 +657,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
             filter = "CSV-File (*.csv)"
             
         name = self.current_result.station.name.value
-        dir = self.settings["export_dir"]+"/"+name+'.'+self.settings['last_export_format']+'"'
+        dir = self.settings["export_dir"]+"/"+unicode(name).title().replace("'S", "'s")+'.'+self.settings['last_export_format']+'"'
         file = QFileDialog.getSaveFileName(self, 'Save', dir, "CSV-File (*.csv);;OpenDocument Spreadsheet (*.ods);;Excel Workbook (*.xlsx)", filter)
         if not file:
             return
