@@ -1,0 +1,59 @@
+<html>
+<head>
+<style>
+html {
+    font-family: Arial;
+}
+a {
+    color: #0000aa;
+    font-weight: bold;
+    text-decoration: none;
+}
+</style>
+</head>
+<body>
+<a href="./index.html">-Back-</a>
+<h3>Settings</h3>
+
+<p>
+<b>Screenshot directory</b><br>
+This is the directory which will open every time you click on the + to add screenshots to file list.
+<br><br>
+<b>Log directory</b><br>
+This is the directory which contains log files. It is important to properly set this location in order
+to automatically obtain system names for the screenshots.
+<br><br>
+<b>Export directory</b><br>
+This location will always open when you click on "Export". Trade Dangerous Export uses this location 
+to save the import.prices file.
+<br><br>
+<b>Horizontal Export</b><br>
+Check this box if you want your xlsx, csv or ods data to be horizontally aligned. This means the
+column names of the result table will be listed in the first column under each other.
+<br><br>
+<b>Automatically add results with high confidence</b><br>
+Check this box if you want to automatically add results with hight confidence to the table. This is 
+only recommended for screenshots with height of 1080 pixel or more. Lower resolutions will result in 
+many errors.
+<br><br>
+<b>Remove duplicates</b><br>
+This option removes duplicate entries in the table. Duplicates are recognized by the same station 
+and commodity name. Don't use it if you scan differently old screenshots of the same station at 
+the same time.
+<br><br>
+<b>Save images for machine learning</b><br>
+This option will save every processed image in "nn_training_images" directory. EliteOCR is not learning
+on the fly because it is taking too long. Instead you can provide the images to user zxctypo 
+(on elite dangerous forum). He performs the learning process and improves the OCR engine.
+<br><br>
+<b>Commodities Editor</b><br>
+Commodities editor shows the list of commodities "known" to EliteOCR. Every time a unknown commodity 
+is recognized by the OCR process, it is added to this list. If the user is not careful it can 
+contain misspelled entries and therefore result in frequent errors. The commodities editor can be 
+used to add, remove or edit entries. Upon saving the entries are sorted alphabetically and 
+duplicates are removed.
+<br><br>
+</p>
+</body>
+
+</html>

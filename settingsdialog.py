@@ -2,6 +2,8 @@ from PyQt4.QtGui import QDialog, QFileDialog
 from PyQt4.QtCore import QSettings
 from settingsUI import Ui_Settings
 from settings import Settings
+from os.path import isdir
+from os import listdir
 
 class SettingsDialog(QDialog, Ui_Settings):
     def __init__(self, settings):
@@ -21,11 +23,40 @@ class SettingsDialog(QDialog, Ui_Settings):
         self.lg_dir.setText(self.logdir)
         self.auto_fill.setChecked(self.settings['auto_fill'])
         self.remove_dupli.setChecked(self.settings['remove_dupli'])
+        self.delete_files.setChecked(self.settings['delete_files'])
+        self.pause_at_end.setChecked(self.settings['pause_at_end'])
         self.create_nn_images.setChecked(self.settings['create_nn_images'])
         self.browse.clicked.connect(self.browseDir)
         
         self.lg_browse.clicked.connect(self.browseLogDir)
+        
+        self.fillUILang()
+        self.fillOCRLang()
     
+    def fillUILang(self):
+        self.ui_language.addItem("en")
+        path = unicode(self.settings.app_path.decode('windows-1252')+"/translations/")#.encode('windows-1252')
+        if isdir(path):
+            dir = listdir(path)
+            dir.remove("ocr")
+            self.ui_language.addItems(dir)
+        index = self.ui_language.findText(self.settings['ui_language'])
+        if index == -1:
+            index = 0
+        self.ui_language.setCurrentIndex(index)
+        
+    def fillOCRLang(self):
+        self.ocr_language.addItem("eng")
+        path = unicode(self.settings.app_path.decode('windows-1252')+"/translations/ocr/")
+        if isdir(path):
+            dir = listdir(path)
+            dir = [d[:3] for d in dir]
+            self.ocr_language.addItems(dir)
+        index = self.ocr_language.findText(self.settings['ocr_language'])
+        if index == -1:
+            index = 0
+        self.ocr_language.setCurrentIndex(index)
+            
     def browseDir(self):
         new_dir = QFileDialog.getExistingDirectory(self, "Choose", self.screenshotdir)
         if new_dir != "":
@@ -54,6 +85,10 @@ class SettingsDialog(QDialog, Ui_Settings):
         self.settings.setValue('log_dir', self.logdir)
         self.settings.setValue('auto_fill', self.auto_fill.isChecked())
         self.settings.setValue('remove_dupli', self.remove_dupli.isChecked())
+        self.settings.setValue('delete_files', self.delete_files.isChecked())
+        self.settings.setValue('pause_at_end', self.pause_at_end.isChecked())
+        self.settings.setValue('ui_language', self.ui_language.currentText())
+        self.settings.setValue('ocr_language', self.ocr_language.currentText())
         self.settings.setValue('create_nn_images', self.create_nn_images.isChecked())
         self.settings.sync()
         self.close()

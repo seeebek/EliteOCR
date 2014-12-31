@@ -1,0 +1,50 @@
+<html>
+<head>
+<style>
+html {
+    font-family: Arial;
+}
+a {
+    color: #0000aa;
+    font-weight: bold;
+    text-decoration: none;
+}
+</style>
+</head>
+<body>
+<a href="./index.html">-Back-</a>
+<h3>Processing OCR results</h3>
+
+<p>
+Once the OCR process is finished the preview images will show recognized elements. Additionally 
+you will see image snippets and the corresponding recognized text.
+<br><br>
+<b>
+At this point you should make sure the system name field contains the right system name. If not please 
+fill it manually. Also make sure the station name was recognized without errors. Station names 
+containing letter "D" are especially error prone.
+</b>
+<br><br>
+Now check if the commodity name and values are recognized properly. Commodity name is being double checked
+with a list of known commodities which you can find in menu bar under Settings > Commodity editor.
+Commodities not found in the commodity list will be marked in red and added to the dictionary after
+the you click on "Add and Next".
+Commodity prices and quantities are recognized by two OCR engines which work best on screenshots 
+which are at least 1080 pixel high. Screenshots which have lower resolution will frequently contain errors.
+<br><br>
+After you made sure all values are correct you may click on "Add and Next" to add the values to the table.
+You can click on "Skip" if the processed line contains scrambled, partial or unwanted data.
+<br><br>
+Double entries will be skipped if you have the option "Remove duplicates" enabled in settings. 
+This option is enabled by default.
+<br><br>
+You cannot go back in your OCR results once you clicked on "Add and Next" or "Skip". However you can 
+edit the data in the result table directly by double clicking on the cell you want to edit.
+You can remove a full line in the result table by selecting the line or any cell in the line and pressing
+DELETE.
+<br><br>
+You can remove all entries in the result table by clicking on "Clear Table"
+</p>
+</body>
+
+</html>

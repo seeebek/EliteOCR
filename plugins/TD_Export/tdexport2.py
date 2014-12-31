@@ -99,7 +99,7 @@ class Item(object):
         self.supply      = int(supply or 0)
         self.supplyLevel = dictLevels.get(supplyLevel.upper(), 0)
         if timeStamp:
-            self.timeStamp = datetime.datetime.strptime(timeStamp, "%Y-%m-%dT%H:%M:%S+00:00").isoformat(b" ")
+            self.timeStamp = datetime.datetime.strptime(timeStamp, "%Y-%m-%dT%H:%M").isoformat(b" ")
         else:
             self.timeStamp = "now"
 
@@ -125,7 +125,6 @@ class TD_Export():
         self.mapOCR2TD["ADVANCED CATALYSERS"] = [ "Advanced Catalysers", "Technology" ]
         self.mapOCR2TD["AGRI-MEDICINES"] = [ "Agri-Medicines", "Medicines" ]
         self.mapOCR2TD["ALGAE"] = [ "Algae", "Foods" ]
-
         self.mapOCR2TD["ALUMINIUM"] = [ "Aluminium", "Metals" ]
         self.mapOCR2TD["ANIMAL MEAT"] = [ "Animal Meat", "Foods" ]
         self.mapOCR2TD["ANIMAL MONITORS"] = [ "Animal Monitors", "Technology" ]
@@ -150,7 +149,6 @@ class TD_Export():
         self.mapOCR2TD["CONSUMER TECH"] = [ "Consumer Technology", "Consumer Items" ]
         self.mapOCR2TD["CONSUMER TECHNOLOGY"] = [ "Consumer Technology", "Consumer Items" ]
         self.mapOCR2TD["COPPER"] = [ "Copper", "Metals" ]
-
         self.mapOCR2TD["CROP HARVESTERS"] = [ "Crop Harvesters", "Machinery" ]
         self.mapOCR2TD["DOM. APPLIANCES"] = [ "Domestic Appliances", "Consumer Items" ]
         self.mapOCR2TD["DOMESTIC APPLIANCES"] = [ "Domestic Appliances", "Consumer Items" ]
@@ -184,7 +182,6 @@ class TD_Export():
         self.mapOCR2TD["PERFORMANCE ENHANCERS"] = [ "Performance Enhancers", "Medicines" ]
         self.mapOCR2TD["PERSONAL WEAPONS"] = [ "Personal Weapons", "Weapons" ]
         self.mapOCR2TD["PESTICIDES"] = [ "Pesticides", "Chemicals" ]
-
         self.mapOCR2TD["PLATINUM"] = [ "Platinum", "Metals" ]
         self.mapOCR2TD["POLYMERS"] = [ "Polymers", "Industrial Materials" ]
         self.mapOCR2TD["POWER GENERATORS"] = [ "Power Generators", "Machinery" ]

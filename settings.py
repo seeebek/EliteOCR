@@ -1,4 +1,5 @@
 import sys
+import random
 from os import environ
 from os.path import isdir, dirname, split, realpath
 from PyQt4.QtCore import QSettings, QString
@@ -12,9 +13,15 @@ class Settings():
         self.values = {}
         self.reg = QSettings('seeebek', 'eliteOCR')
         if self.reg.contains('settings_version'):
-            if float(self.reg.value('settings_version', type=QString)) < 1.1:
-                self.setDefaultExportOptions()
-                self.setSettingsVersion()
+            if float(self.reg.value('settings_version', type=QString)) < 1.3:
+                self.setDefaultLanguage()
+                self.setDefaultDelete()
+                self.setDefaultPause()
+                self.reg.setValue('settings_version', "1.3")
+                self.reg.sync()
+            if float(self.reg.value('settings_version', type=QString)) < 1.2:
+                self.cleanReg()
+                self.setAllDefaults()
                 self.reg.sync()
                 self.values = self.loadSettings()
             else:
@@ -54,6 +61,11 @@ class Settings():
                'log_dir': self.reg.value('log_dir', type=QString),
                'auto_fill': self.reg.value('auto_fill', type=bool),
                'remove_dupli': self.reg.value('remove_dupli', type=bool),
+               'userID': self.reg.value('userID', type=QString),
+               'ui_language': self.reg.value('ui_language', type=QString),
+               'ocr_language': self.reg.value('ocr_language', type=QString),
+               'delete_files': self.reg.value('delete_files', type=bool),
+               'pause_at_end': self.reg.value('pause_at_end', type=bool),
                'create_nn_images': self.reg.value('create_nn_images', type=bool)}
         return set
         
@@ -62,13 +74,20 @@ class Settings():
         self.setDefaultAutoFill()
         self.setDefaultRemoveDupli()
         self.setDefaultCreateNNImg()
+        self.setDefaultDelete()
+        self.setDefaultPause()
         self.setDefaultScreenshotDir()
         self.setDefaultLogDir()
         self.setDefaultExportDir()
+        self.setDefaultLanguage()
+        self.setUserID()
         self.setSettingsVersion()
         
     def setSettingsVersion(self):
-        self.reg.setValue('settings_version', "1.1")
+        self.reg.setValue('settings_version', "1.2")
+        
+    def setUserID(self):
+        self.reg.setValue('userID', "EO"+''.join(random.choice('0123456789abcdef') for i in range(8)))
         
     def setDefaultExportOptions(self):
         self.setValue('horizontal_exp', False)
@@ -79,9 +98,19 @@ class Settings():
         
     def setDefaultRemoveDupli(self):
         self.reg.setValue('remove_dupli', True)
+    
+    def setDefaultLanguage(self):
+        self.reg.setValue('ui_language', "en")
+        self.reg.setValue('ocr_language', "eng")
         
     def setDefaultCreateNNImg(self):
-        self.reg.setValue('create_nn_images', False) # opt-in
+        self.reg.setValue('create_nn_images', False)
+        
+    def setDefaultDelete(self):
+        self.reg.setValue('delete_files', False)
+    
+    def setDefaultPause(self):
+        self.reg.setValue('pause_at_end', True)
         
     def setDefaultScreenshotDir(self):
         if isdir(environ['USERPROFILE']+'\\Pictures\\Frontier Developments\\Elite Dangerous'):
