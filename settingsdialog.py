@@ -41,15 +41,10 @@ class SettingsDialog(QDialog, Ui_Settings):
         path = unicode(self.settings.app_path.decode('windows-1252')+"/translations/")#.encode('windows-1252')
         if isdir(path):
             dir = listdir(path)
-<<<<<<< HEAD
             options = []
             for file in dir:
                 options.append(file[-5:-3])
             self.ui_language.addItems(options)
-=======
-            dir.remove("ocr")
-            self.ui_language.addItems(dir)
->>>>>>> origin/dev
         index = self.ui_language.findText(self.settings['ui_language'])
         if index == -1:
             index = 0
@@ -57,7 +52,6 @@ class SettingsDialog(QDialog, Ui_Settings):
         
     def fillOCRLang(self):
         self.ocr_language.addItem("eng")
-<<<<<<< HEAD
         path = ""
         if isdir(unicode(self.settings.app_path.decode('windows-1252')+"\\..\\tessdata\\")):
             path = unicode(self.settings.app_path.decode('windows-1252')+"\\..\\tessdata\\")
@@ -66,11 +60,6 @@ class SettingsDialog(QDialog, Ui_Settings):
         if isdir(path):
             dir = listdir(path)
             dir.remove("big.traineddata")
-=======
-        path = unicode(self.settings.app_path.decode('windows-1252')+"/translations/ocr/")
-        if isdir(path):
-            dir = listdir(path)
->>>>>>> origin/dev
             dir = [d[:3] for d in dir]
             self.ocr_language.addItems(dir)
         index = self.ocr_language.findText(self.settings['ocr_language'])
@@ -110,10 +99,7 @@ class SettingsDialog(QDialog, Ui_Settings):
         self.settings.setValue('remove_dupli', self.remove_dupli.isChecked())
         self.settings.setValue('delete_files', self.delete_files.isChecked())
         self.settings.setValue('pause_at_end', self.pause_at_end.isChecked())
-<<<<<<< HEAD
         self.settings.setValue('updates_check', self.updates_check.isChecked())
-=======
->>>>>>> origin/dev
         self.settings.setValue('ui_language', self.ui_language.currentText())
         self.settings.setValue('ocr_language', self.ocr_language.currentText())
         self.settings.setValue('create_nn_images', self.create_nn_images.isChecked())

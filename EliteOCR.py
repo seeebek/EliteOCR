@@ -3,10 +3,7 @@ import random
 import sys
 #import time
 import json
-<<<<<<< HEAD
 from functools import partial
-=======
->>>>>>> origin/dev
 from datetime import datetime, timedelta
 from time import strftime, strptime, time
 from calendar import timegm
@@ -14,15 +11,7 @@ from os.path import split, splitext, isfile, isdir, dirname, realpath, exists, j
 from os import makedirs, listdir, remove
 from PyQt4.QtGui import QApplication, QMainWindow, QFileDialog, QGraphicsScene, QMessageBox,\
                         QPixmap, QPen, QTableWidgetItem, QPushButton, QAction, QFont
-<<<<<<< HEAD
-<<<<<<< HEAD
 from PyQt4.QtCore import Qt, QObject, QSize, QPoint, QSettings, QString, QTranslator, QTimer, SIGNAL
-=======
-from PyQt4.QtCore import Qt, QObject, QSize, QPoint, QSettings, QString, QTranslator, SIGNAL
->>>>>>> origin/dev
-=======
-from PyQt4.QtCore import Qt, QObject, QSize, SIGNAL
->>>>>>> master
 import cv2
 
 from eliteOCRGUI import Ui_MainWindow
@@ -37,11 +26,8 @@ from ocr import OCR
 from qimage2ndarray import array2qimage
 from eddnexport import EDDNExport
 from threadworker import Worker
-<<<<<<< HEAD
 from export import Export
 from info import InfoDialog
-=======
->>>>>>> origin/dev
 
 from openpyxl import Workbook
 from ezodf import newdoc, Sheet
@@ -63,11 +49,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
     def __init__(self):            
         QMainWindow.__init__(self) #QMainWindow.__init__(self, None, Qt.FramelessWindowHint)
         self.setupUi(self)
-<<<<<<< HEAD
         self.appversion = "0.4.1.1"
-=======
-        self.appversion = "0.3.9"
->>>>>>> origin/dev
         self.setupTable()
         self.settings = Settings(self)
         self.export = Export(self)
@@ -79,13 +61,9 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.color_image = None
         self.preview_image = None
         self.current_result = None
-<<<<<<< HEAD
         self.newupd = None
         self.zoom = False
         self.minres = 0
-=======
-        self.zoom = False
->>>>>>> master
         self.fields = [self.name, self.sell, self.buy, self.demand_num, self.demand,
                        self.supply_num, self.supply]
         self.canvases = [self.name_img, self.sell_img, self.buy_img, self.demand_img,
@@ -100,14 +78,9 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.continue_button.clicked.connect(self.continueOCR)
         self.ocr_button.clicked.connect(self.performOCR)
         self.ocr_all.clicked.connect(self.runOCRAll)
-<<<<<<< HEAD
         self.export_button.clicked.connect(self.export.exportToFile)
         self.bpc_button.clicked.connect(self.export.bpcExport)
         self.eddn_button.clicked.connect(self.export.eddnExport)
-=======
-        self.export_button.clicked.connect(self.export)
-        self.eddn_button.clicked.connect(self.eddnExport)
->>>>>>> origin/dev
         self.clear_table.clicked.connect(self.clearTable)
         self.zoom_button.clicked.connect(self.drawOCRPreview)
         
@@ -116,13 +89,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         QObject.connect(self.actionAbout, SIGNAL('triggered()'), self.About)
         QObject.connect(self.actionOpen, SIGNAL('triggered()'), self.addFiles)
         QObject.connect(self.actionPreferences, SIGNAL('triggered()'), self.openSettings)
-<<<<<<< HEAD
-<<<<<<< HEAD
         QObject.connect(self.actionPublic_Mode, SIGNAL('triggered()'), self.toggleMode)
-=======
->>>>>>> origin/dev
-=======
->>>>>>> master
         QObject.connect(self.actionCommodity_Editor, SIGNAL('triggered()'), self.openEditor)
         
         self.error_close = False
@@ -134,22 +101,14 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.restorePos()
         
         self.eddnthread = EDDNExport(self)
-<<<<<<< HEAD
         QObject.connect(self.eddnthread, SIGNAL('finished(QString)'), self.export.eddnFinished)
         QObject.connect(self.eddnthread, SIGNAL('update(int,int)'), self.export.eddnUpdate)
         
         self.checkupadte = self.settings["updates_check"]
-=======
-        QObject.connect(self.eddnthread, SIGNAL('finished(QString)'), self.eddnFinished)
-        QObject.connect(self.eddnthread, SIGNAL('update(int,int)'), self.eddnUpdate)
-        
-        self.checkupadte = False
->>>>>>> origin/dev
         self.thread = Worker()
         self.connect(self.thread, SIGNAL("output(QString, QString)"), self.showUpdateAvailable)
         if self.checkupadte:
             self.thread.check(self.appversion)
-<<<<<<< HEAD
             
         if not self.settings.reg.contains('info_accepted'):
             self.infoDialog = InfoDialog()
@@ -162,12 +121,6 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
     def showUpdateAvailable(self, dir, appversion):
         self.newupd = (dir, appversion)
         self.statusbar.showMessage(unicode(_translate("EliteOCR","New version of EliteOCR available: %s To download it go to Help > Update", None)) % appversion, 0)
-=======
-    
-    def showUpdateAvailable(self, dir, appversion):
-        self.newupd = (dir, appversion)
-        self.statusbar.showMessage("New version of EliteOCR available: "+appversion+" To download it go to Help > Update", 0)
->>>>>>> origin/dev
     
     def restorePos(self):
         self.settings.reg.beginGroup("MainWindow")
@@ -180,7 +133,6 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.settings.reg.setValue("size", self.size())
         self.settings.reg.setValue("pos", self.pos())
         self.settings.reg.endGroup()
-<<<<<<< HEAD
         self.settings.reg.setValue("public_mode", self.actionPublic_Mode.isChecked())
         self.settings.reg.setValue("zoom_factor", self.factor.value())
         self.settings.reg.sync()
@@ -206,11 +158,6 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                 self.eddn_button.setEnabled(False)
             else:    
                 self.actionPublic_Mode.setChecked(True)
-=======
-        self.settings.reg.sync()
-        event.accept()
-    
->>>>>>> origin/dev
     
     def loadPlugins(self):
         """Load known plugins"""
@@ -236,29 +183,10 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                 self.tdexport_button.setEnabled(False)
 
     def About(self):
-<<<<<<< HEAD
-<<<<<<< HEAD
         QMessageBox.about(self,"About", "EliteOCR\nVersion "+self.appversion+"\n\n"+\
         "Contributors:\n"+\
         "Seeebek, CapCap, Gazelle, GMib, Ph.Baumann\n\n"+\
-=======
-        QMessageBox.about(self,"About", "EliteOCR\nVersion 0.3.8.1\n\n"+\
-        "Contributors:\n"+\
-        "Seeebek, CapCap, Gazelle\n\n"+\
->>>>>>> origin/dev
         "EliteOCR is capable of reading the entries in Elite: Dangerous markets screenshots.\n\n")
-=======
-        QMessageBox.about(self,"About", "EliteOCR\nVersion 0.3.6\n\n"+\
-        "Contributors:\n"+\
-        "Seeebek, CapCap, Gazelle\n\n"+\
-        "EliteOCR is capable of reading the entries in Elite: Dangerous markets screenshots.\n\n"+\
-        "Best results are achieved with screenshots of 3840 by 2160 pixel (4K) or more. "+\
-        "You can make screenshots in game by pressing F10. You find them usually in\n"+\
-        "C:\Users\USERNAME\Pictures\Frontier Developments\Elite Dangerous\n"+\
-        "Screenshots made with ALT+F10 have lower recognition rate!\n\n"+\
-        "Owners of Nvidia video cards can use DSR technology to increase the resolution "+\
-        "for screenshots and revert it back to normal without leaving the game.")
->>>>>>> master
         
     def setupTable(self):
         """Add columns and column names to the table"""
@@ -278,15 +206,9 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.helpDialog = HelpDialog(self.settings.app_path.decode('windows-1252'))
         self.helpDialog.setModal(False)
         self.helpDialog.show()
-<<<<<<< HEAD
         
     def openUpdate(self):
         
-=======
-        
-    def openUpdate(self):
-        
->>>>>>> origin/dev
         self.updateDialog = UpdateDialog(self.settings.app_path.decode('windows-1252'), self.appversion, self.newupd)
         self.updateDialog.setModal(False)
         self.updateDialog.show()
@@ -299,39 +221,26 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
     def openEditor(self):
         editorDialog = EditorDialog(self.settings)
         editorDialog.exec_()
-<<<<<<< HEAD
 
     def addAllScreenshots(self):
         dir = unicode(self.settings['screenshot_dir']).encode('windows-1252')
-<<<<<<< HEAD
         #gen = (join(dir, file).decode('windows-1252') for file in listdir(dir) if isfile(join(dir, file)))
         gen = [join(dir, file).decode('windows-1252') for file in listdir(dir) if file.endswith('.bmp')]
         files = []
         for file in gen:
             files.append(file)
-=======
-        files = [join(dir, f) for f in listdir(dir)]
->>>>>>> origin/dev
         self.addFiles(files)
     
     def addFiles(self, screenshots = None):
-=======
-        
-    def addFiles(self):
->>>>>>> master
         """Add files to the file list."""
         if screenshots:
             files = screenshots
         else:
-<<<<<<< HEAD
             if self.settings["native_dialog"]:
                 files = QFileDialog.getOpenFileNames(self, "Open", self.settings['screenshot_dir'])
             else:
                 files = QFileDialog.getOpenFileNames(self, "Open", self.settings['screenshot_dir'], options = QFileDialog.DontUseNativeDialog)
 
-=======
-            files = QFileDialog.getOpenFileNames(self, "Open", self.settings['screenshot_dir'], options = QFileDialog.DontUseNativeDialog)
->>>>>>> origin/dev
         if files == []:
             return
         first_item = None
@@ -421,15 +330,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         font.setPointSize(11)
         self.system_not_found.setText("")
         if len(item.system) == 0:
-<<<<<<< HEAD
-<<<<<<< HEAD
             self.system_not_found.setText(_translate("EliteOCR","System name not found in log files. Make sure log directory path is set up correctly or add system name manually in the field below. Note: System name is necessary for BPC import!", None))
-=======
-            self.system_not_found.setText("System name not found in log files. Make sure log directory path is set up correctly or add system name manually in the field below. Note: System name is necessary for BPC import!")
->>>>>>> origin/dev
-=======
-            self.system_not_found.setText("System name not found in log files. Make sure log directory path is set up correctly or add system name manually in the field below. Note: System name is necessary for BPC import!")
->>>>>>> master
         self.system_name.setText(item.system)
         self.system_name.setFont(font)
         self.file_list.setCurrentItem(item)
@@ -439,16 +340,8 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.remove_all_button.setEnabled(True)
         self.continue_button.setEnabled(False)
         if not item.valid_market:
-<<<<<<< HEAD
-<<<<<<< HEAD
             self.system_not_found.setText(_translate("EliteOCR","File was not recognized as a valid market screenshot. If the file is valid please report the issue in the forum.", None))
-=======
-            self.system_not_found.setText("File was not recognized as a valid market screenshot. If the file is valid please report the issue in the forum.")
->>>>>>> origin/dev
             self.progress_bar.setValue(0)
-=======
-            self.system_not_found.setText("File was not recognized as a valid market screenshot. If the file is valid please report the issue in the forum.")
->>>>>>> master
             return
         self.ocr_button.setEnabled(True)
         self.zoom_button.setEnabled(True)
@@ -480,11 +373,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         busyDialog.show()
         QApplication.processEvents()
         if self.file_list.currentItem().valid_market:
-<<<<<<< HEAD
             self.current_result = OCR(self, self.color_image, self.file_list.currentItem().ocr_areas, self.settings["ocr_language"])
-=======
-            self.current_result = OCR(self, self.color_image, self.file_list.currentItem().ocr_areas)
->>>>>>> origin/dev
             """
             try:
                 self.current_result = OCR(self.color_image)
@@ -514,13 +403,9 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         res_station = unicode(self.station_name.currentText()).title()
         row_count = tab.rowCount()
         self.export_button.setEnabled(True)
-<<<<<<< HEAD
         if self.actionPublic_Mode.isChecked():
             self.bpc_button.setEnabled(True)
             self.eddn_button.setEnabled(True)
-=======
-        self.eddn_button.setEnabled(True)
->>>>>>> origin/dev
         self.enablePluginButtons()
         self.clear_table.setEnabled(True)
         #check for duplicates
@@ -534,18 +419,6 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                     duplicate = True
         
         if not duplicate:
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-            if not self.current_result.commodities[self.OCRline].items[0] is None:
-                if self.current_result.commodities[self.OCRline].items[0].confidence < 0.8:
-                    self.addCommodityToDictionary(self.name.currentText())
->>>>>>> origin/dev
-=======
-            if not self.current_result.commodities[self.OCRline].items[0] is None:
-                if self.current_result.commodities[self.OCRline].items[0].confidence < 0.8:
-                    self.addCommodityToDictionary(self.name.currentText())
->>>>>>> master
             self.current_result.station.name.value = self.station_name.currentText()
             tab.insertRow(row_count)
             newitem = QTableWidgetItem(unicode(res_station).title().replace("'S", "'s"))
@@ -557,11 +430,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
             tab.setItem(row_count, 8, newitem)
             newitem = QTableWidgetItem(self.system_name.text())
             tab.setItem(row_count, 9, newitem)
-<<<<<<< HEAD
             newitem = QTableWidgetItem(unicode(self.file_list.currentItem().market_width))
-=======
-            newitem = QTableWidgetItem(unicode(self.file_list.currentItem().img_height))
->>>>>>> origin/dev
             tab.setItem(row_count, 10, newitem)
             tab.resizeColumnsToContents()
             tab.resizeRowsToContents()
@@ -595,11 +464,8 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
             self.nextFile()
         else:
             if self.settings['delete_files']:
-<<<<<<< HEAD
                 print "Deleted (continueOCR 458):"
                 print self.file_list.currentItem().text()
-=======
->>>>>>> origin/dev
                 remove(self.file_list.currentItem().hiddentext)
                 self.removeFile()
         self.continue_button.setEnabled(False)
@@ -626,11 +492,8 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                     if self.settings['pause_at_end']:
                         self.continue_button.setEnabled(True)
                     else:
-<<<<<<< HEAD
                         print "Deleted (nextLine 486):"
                         print self.file_list.currentItem().text()
-=======
->>>>>>> origin/dev
                         remove(self.file_list.currentItem().hiddentext)
                         self.removeFile()
                 
@@ -639,11 +502,8 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         """OCR next file"""
         if self.file_list.currentRow() < self.file_list.count()-1:
             if self.settings['delete_files']:
-<<<<<<< HEAD
                 print "Deleted (nextFile 496):"
                 print self.file_list.currentItem().text()
-=======
->>>>>>> origin/dev
                 remove(self.file_list.currentItem().hiddentext)
                 self.softRemoveFile()
             else:
@@ -661,15 +521,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                 else:
                     self.system_name.setText("")
                     self.system_name.setFont(font)
-<<<<<<< HEAD
-<<<<<<< HEAD
                     self.system_not_found.setText(_translate("EliteOCR","System name not found in log files. Make sure log directory path is set up correctly or add system name manually in the field below. Note: System name is necessary for BPC import!",None))
-=======
-                    self.system_not_found.setText("System name not found in log files. Make sure log directory path is set up correctly or add system name manually in the field below. Note: System name is necessary for BPC import!")
->>>>>>> origin/dev
-=======
-                    self.system_not_found.setText("System name not found in log files. Make sure log directory path is set up correctly or add system name manually in the field below. Note: System name is necessary for BPC import!")
->>>>>>> master
                 self.system_name.setFocus()
                 self.system_name.selectAll()
         else:
@@ -684,10 +536,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.result_table.setRowCount(0)
         self.clear_table.setEnabled(False)
         self.export_button.setEnabled(False)
-<<<<<<< HEAD
         self.bpc_button.setEnabled(False)
-=======
->>>>>>> origin/dev
         self.eddn_button.setEnabled(False)
         self.disablePluginButtons()
     
@@ -711,18 +560,12 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                     autofill = False
                 if res.items[1] is None:
                     autofill = False
-<<<<<<< HEAD
-<<<<<<< HEAD
             if self.file_list.currentItem().market_width < 1180 and self.actionPublic_Mode.isChecked():
                 autofill = False
                 self.save_button.setEnabled(False)
                 self.skip_button.setEnabled(False)
                 QTimer.singleShot(1500, partial(self.save_button.setEnabled, True));
                 QTimer.singleShot(1500, partial(self.skip_button.setEnabled, True));
-=======
->>>>>>> origin/dev
-=======
->>>>>>> master
                         
             for field, canvas, item in zip(self.fields, self.canvases, res.items):
                 if item != None:
@@ -756,63 +599,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
             color = "#ffccbf"
         field.lineEdit().setStyleSheet("QLineEdit{background: "+color+";}")
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 
-        
-    def drawOCRPreview(self):
-        if self.current_result is None:
-            self.setPreviewImage(self.preview_image)
-            return
-        factor = self.factor.value()
-=======
-=======
->>>>>>> master
-    def xdrawOCRPreview(self):
-        """Draw processed file preview and show recognised areas."""
->>>>>>> origin/dev
-        res = self.current_result
-        name = res.station
-        img = self.preview_image
-        
-        old_h = img.height()
-        old_w = img.width()
-        
-<<<<<<< HEAD
-<<<<<<< HEAD
-        pix = img.scaled(QSize(self.preview.size().width()*factor,self.preview.size().height()*factor), Qt.KeepAspectRatio, Qt.SmoothTransformation)
-        #pix = img.scaled(self.preview.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
-=======
-=======
->>>>>>> master
-        #pix = img.scaled(QSize(self.preview.size().width()*2,self.preview.size().height()*2), Qt.KeepAspectRatio, Qt.SmoothTransformation)
-        pix = img.scaled(self.preview.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
->>>>>>> origin/dev
-        
-        new_h = pix.height()
-        new_w = pix.width()
-        
-        ratio_h = old_h/float(new_h)
-        ratio_w = old_w/float(new_w)
-        
-        self.scene = QGraphicsScene()
-        self.scene.addPixmap(pix)
-        #self.scene.addPixmap(img)
-        
-        self.previewRects = []
-
-        pen = QPen(Qt.yellow)
-        redpen = QPen(Qt.red)
-<<<<<<< HEAD
-=======
-        for line in res.commodities:
-            if line.w < (0.02*old_w):
-                rect = self.addRect(self.scene, line, ratio_w, ratio_h, redpen)
-            else:
-                rect = self.addRect(self.scene, line, ratio_w, ratio_h, pen)
-            self.previewRects.append(rect)
-            
-        self.previewSetScene(self.scene)
         
     def drawOCRPreview(self):
         if self.current_result is None:
@@ -843,48 +630,6 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
 
         pen = QPen(Qt.yellow)
         redpen = QPen(Qt.red)
-<<<<<<< HEAD
->>>>>>> origin/dev
-=======
-        for line in res.commodities:
-            if line.w < (0.02*old_w):
-                rect = self.addRect(self.scene, line, ratio_w, ratio_h, redpen)
-            else:
-                rect = self.addRect(self.scene, line, ratio_w, ratio_h, pen)
-            self.previewRects.append(rect)
-            
-        self.previewSetScene(self.scene)
-        
-    def drawOCRPreview(self):
-        if self.current_result is None:
-            self.setPreviewImage(self.preview_image)
-            return
-        factor = self.factor.value()
-        res = self.current_result
-        name = res.station
-        img = self.preview_image
-        
-        old_h = img.height()
-        old_w = img.width()
-        
-        pix = img.scaled(QSize(self.preview.size().width()*factor,self.preview.size().height()*factor), Qt.KeepAspectRatio, Qt.SmoothTransformation)
-        #pix = img.scaled(self.preview.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
-        
-        new_h = pix.height()
-        new_w = pix.width()
-        
-        ratio_h = old_h/float(new_h)
-        ratio_w = old_w/float(new_w)
-        
-        self.scene = QGraphicsScene()
-        self.scene.addPixmap(pix)
-        #self.scene.addPixmap(img)
-        
-        self.previewRects = []
-
-        pen = QPen(Qt.yellow)
-        redpen = QPen(Qt.red)
->>>>>>> master
         bluepen = QPen(Qt.blue)
         greenpen = QPen(Qt.green)
         
@@ -983,7 +728,6 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
     def cleanSnippet(self, graphicsview):
         scene = QGraphicsScene()
         graphicsview.setScene(scene)
-<<<<<<< HEAD
 
 def translateApp(app, qtTranslator):
     if getattr(sys, 'frozen', False):
@@ -1016,229 +760,6 @@ def main():
     app = QApplication(sys.argv)
     qtTranslator = QTranslator()
     translateApp(app, qtTranslator)
-=======
-        
-    def tableToList(self, allow_horizontal = False):
-        all_rows = self.result_table.rowCount()
-        all_cols = self.result_table.columnCount()
-        result_list = [["System","Station","Commodity","Sell","Buy","Demand","","Supply","","Date"]]
-        for row in xrange(0, all_rows):
-            line = [self.safeStrToList(self.result_table.item(row,9).text()),
-                    self.safeStrToList(self.result_table.item(row,0).text()),
-                    self.safeStrToList(self.result_table.item(row,1).text()),
-                    self.safeStrToList(self.result_table.item(row,2).text()),
-                    self.safeStrToList(self.result_table.item(row,3).text()),
-                    self.safeStrToList(self.result_table.item(row,4).text()),
-                    self.safeStrToList(self.result_table.item(row,5).text()),
-                    self.safeStrToList(self.result_table.item(row,6).text()),
-                    self.safeStrToList(self.result_table.item(row,7).text()),
-                    self.safeStrToList(self.result_table.item(row,8).text())]
-            result_list.append(line)
-        if self.settings['horizontal_exp'] and allow_horizontal:
-            result_list = map(list, zip(*result_list))
-        return result_list
-    
-    def safeStrToList(self, input):
-        try:
-            return int(input)
-        except:
-            return unicode(input)
-    
-    def exportToCsv(self, result, file):
-        for row in result:
-            if len(row[0]) == 0:
-                QMessageBox.warning(self,"No System Name", "There are rows missing system name! \nThe exported CSV file is incompatible with some tools like BPC.")
-                break
-        towrite = ""
-        for row in result:
-            for cell in row:
-                towrite += unicode(cell)+";"
-            towrite += "\n"
-        file = unicode(file).encode('windows-1252')
-        csv_file = open(file, "w")
-        csv_file.write(towrite)
-        csv_file.close()
-
-    def exportToOds(self, result, file):
-        file = unicode(file).encode('windows-1252')
-        ods = newdoc(doctype='ods', filename=unicode(file))
-        sheet = Sheet('Sheet 1', size=(len(result)+1, len(result[0])+1))
-        ods.sheets += sheet
-        
-        for i in xrange(len(result)):
-            for j in xrange(len(result[0])):
-                sheet[i,j].set_value(result[i][j])
-        ods.save()
-
-    def exportToXlsx(self, result, file):
-        wb = Workbook()
-        ws = wb.active
-
-        for i in xrange(1,len(result)+1):
-            for j in xrange(1,len(result[0])+1):
-                ws.cell(row = i, column = j).value = result[i-1][j-1]
-                
-        file = unicode(file).encode('windows-1252')
-        wb.save(unicode(file))
-        
-    def exportToBPC(self, result, file):
-        all_rows = self.result_table.rowCount()
-        for row in xrange(0, all_rows):
-            if int(self.result_table.item(row,10).text()) < 1080:
-                QMessageBox.warning(self,"Screenshots too small", "You used screenshots under 1080 pixel height. Those are frequent reason for mistakes and are not allowed to be exported to BPC.")
-                return
-    
-        id = self.settings['userID']
-        bpc_format = [["userID","System","Station","Commodity","Sell","Buy","Demand","","Supply","","Date"]]
-        allowedtime = datetime.utcnow() - timedelta(hours = 2)
-        for row in result[1:]:
-            if len(row[0]) == 0:
-                QMessageBox.warning(self,"No System Name", "There are rows missing system name! Could not export to BPC format.")
-                return
-            if row[0].upper() == row[1].upper():
-                QMessageBox.warning(self,"System and station names identical", "There are rows where system and station names are identical. Export aborted.")
-                return
-            timescreenshot = datetime.strptime(row[9],"%Y-%m-%dT%H:%M:%S+00:00")
-            if allowedtime > timescreenshot:
-                QMessageBox.warning(self,"Too old for BPC", "You have been using at least one screenshot which is too old. BPC format only allows screenshots younger than 2 hours. Export aborted.")
-                return
-            bpc_format.append([unicode(id)]+row)
-            
-        self.exportToCsv(bpc_format, file)
-        
-    def eddnExport(self):
-        all_rows = self.result_table.rowCount()
-        allowedtime = datetime.utcnow() - timedelta(hours = 2)
-        to_send = []
-        sent_rows = []
-        for row in xrange(0, all_rows):
-            if int(self.result_table.item(row,10).text()) < 1080:
-                newitem = QTableWidgetItem("Too small resolution")
-                self.result_table.setItem(row, 11, newitem)
-                continue
-            if len(self.result_table.item(row,9).text()) == 0:
-                newitem = QTableWidgetItem("No system name")
-                self.result_table.setItem(row, 11, newitem)
-                continue
-            timescreenshot = datetime.strptime(str(self.result_table.item(row,8).text()),"%Y-%m-%dT%H:%M:%S+00:00")
-            if allowedtime > timescreenshot:
-                newitem = QTableWidgetItem("Data too old")
-                self.result_table.setItem(row, 11, newitem)
-                continue
-            if not self.result_table.item(row,11) is None:
-                if str(self.result_table.item(row,11).text()) == "True":
-                    continue
-            
-            line = [self.safeStrToList(self.result_table.item(row,9).text()),
-                    self.safeStrToList(self.result_table.item(row,0).text()),
-                    self.safeStrToList(self.result_table.item(row,1).text()),
-                    self.safeStrToList(self.result_table.item(row,2).text()),
-                    self.safeStrToList(self.result_table.item(row,3).text()),
-                    self.safeStrToList(self.result_table.item(row,4).text()),
-                    self.safeStrToList(self.result_table.item(row,5).text()),
-                    self.safeStrToList(self.result_table.item(row,6).text()),
-                    self.safeStrToList(self.result_table.item(row,7).text()),
-                    self.safeStrToList(self.result_table.item(row,8).text())]
-            to_send.append(line)
-            newitem = QTableWidgetItem("True")
-            self.result_table.setItem(row, 11, newitem)
-            sent_rows.append(row)
-        
-        notsent = list(set(range(all_rows))-set(sent_rows))
-
-        if len(to_send) < all_rows:
-            QMessageBox.warning(self,"Warning", "Following rows will not be exported to EDDN:\n "+\
-            str(notsent)+"\n"+\
-            "Possible reasons:\n"+\
-            "- Rows were sent already once before\n"+\
-            "- Rows contain no system name\n"+\
-            "- Rows contain data older than two hours\n"+\
-            "- Rows contain data from too small screenshots(lower than 1080 pixel in hight)\n")
-        if len(to_send) > 0:
-            self.eddn_button.setEnabled(False)
-            self.statusbar.clearMessage()
-            self.eddnthread.execute(to_send, unicode(self.settings["userID"]))
-    
-    def eddnFinished(self, result):
-        self.statusbar.showMessage("EDDN Export finished: "+result)
-        self.eddn_button.setEnabled(True)
-        
-    def eddnUpdate(self, done, outof):
-        self.statusbar.showMessage("EDDN Export processed "+str(done)+" out of "+str(outof))
-    
-    def export(self):
-        if self.settings['last_export_format'] == "":
-            self.settings.setValue('last_export_format', "csv")
-            self.settings.sync()
-            
-        if self.settings['last_export_format'] == "xlsx":
-            filter = "Excel Workbook (*.xlsx)"
-        elif self.settings['last_export_format'] == "ods":
-            filter = "OpenDocument Spreadsheet (*.ods)"
-        elif self.settings['last_export_format'] == "csv":
-            filter = "CSV-File (*.csv)"
-        elif self.settings['last_export_format'] == "bpc":
-            filter = "Slopey's Best Price Calculator CSV-File (*.bpc)"
-            
-<<<<<<< HEAD
-        name = unicode(self.current_result.station.name.value).title().replace("'S", "'s")
-        system = unicode(self.result_table.item(0,9).text())
-        time = strftime("%Y-%m-%dT%H.%M.%S")
-        dir = self.settings["export_dir"]+"\\"+system+"."+name+"."+time+"."+self.settings['last_export_format']+'"'
-        file = QFileDialog.getSaveFileName(None, 'Save', dir, "Slopey's Best Price Calculator CSV-File (*.bpc);;CSV-File (*.csv);;OpenDocument Spreadsheet (*.ods);;Excel Workbook (*.xlsx)",
-                                          filter, QFileDialog.DontUseNativeDialog)
-=======
-        name = self.current_result.station.name.value
-        dir = self.settings["export_dir"]+"/"+unicode(name).title().replace("'S", "'s")+'.'+self.settings['last_export_format']+'"'
-        file = QFileDialog.getSaveFileName(self, 'Save', dir, "CSV-File (*.csv);;OpenDocument Spreadsheet (*.ods);;Excel Workbook (*.xlsx)", filter)
->>>>>>> master
-        if not file:
-            return
-            
-        if file.split(".")[-1] == "csv":
-            self.settings.setValue('last_export_format', "csv")
-            self.settings.sync()
-            self.exportToCsv(self.tableToList(True), file)
-        elif file.split(".")[-1] == "ods":
-            self.settings.setValue('last_export_format', "ods")
-            self.settings.sync()
-            self.exportToOds(self.tableToList(True), file)
-        elif file.split(".")[-1] == "bpc":
-            self.settings.setValue('last_export_format', "bpc")
-            self.settings.sync()
-            self.exportToBPC(self.tableToList(False), file)
-        elif file.split(".")[-1] == "xlsx":
-            self.settings.setValue('last_export_format', "xlsx")
-            self.settings.sync()
-            self.exportToXlsx(self.tableToList(True), file)
-
-def translateApp(app, translator_list):
-    if getattr(sys, 'frozen', False):
-        application_path = dirname(sys.executable)
-    elif __file__:
-        application_path = dirname(__file__)
-    else:
-        application_path = "./"
-    settings = QSettings('seeebek', 'eliteOCR')
-    ui_language = settings.value('ui_language', 'en', type=QString)
-    
-    if not ui_language == 'en':
-        path = unicode(application_path+"/translations/"+ui_language+"/").encode('windows-1252')
-        if isdir(path):
-            dir = listdir(path)
-            translators = translator_list
-            for file in dir:
-                qtTranslator = QTranslator()
-                if qtTranslator.load(application_path+"/translations/de/"+splitext(file)[0]):
-                    translators.append(qtTranslator)
-            for translator in translators:
-                app.installTranslator(translator)
-            
-def main():
-    app = QApplication(sys.argv)
-    translators = []
-    translateApp(app, translators)
->>>>>>> origin/dev
           
     window = EliteOCR()
     if window.error_close:

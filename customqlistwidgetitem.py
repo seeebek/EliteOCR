@@ -25,10 +25,7 @@ class CustomQListWidgetItem(QListWidgetItem):
         self.system = self.getSystemName()
         self.valid_market = False
         self.img_height = 0
-<<<<<<< HEAD
         self.market_width = 0
-=======
->>>>>>> origin/dev
         self.ocr_areas = None
         
     def loadColorImage(self):
@@ -57,10 +54,7 @@ class CustomQListWidgetItem(QListWidgetItem):
         h, w = image.shape
         self.img_height = h
         self.ocr_areas = OCRAreasFinder(color_image)
-<<<<<<< HEAD
         self.market_width = self.ocr_areas.market_width 
-=======
->>>>>>> origin/dev
         if not parent is None:
             parent.progress_bar.setValue(14)
         points = self.ocr_areas.market_table
@@ -110,15 +104,9 @@ class CustomQListWidgetItem(QListWidgetItem):
         system_name = self.parseLogFile(path, dir, self.filetime[0], self.filetime[1], self.filetime[2],
                                  self.filetime[3], self.filetime[4])
         if system_name == "" and int(self.filetime[3]) < 8:
-<<<<<<< HEAD
             newdate = datetime(int(self.filetime[0]), int(self.filetime[1]), int(self.filetime[2]),
                                  int(self.filetime[3]), int(self.filetime[4])) - timedelta(days=1)
             system_name = self.parseLogFile(path, dir, str(newdate.year), str(newdate.month), str(newdate.day),
-=======
-            newdate = datetime(self.filetime[0], self.filetime[1], self.filetime[2],
-                                 self.filetime[3], self.filetime[4]) - timedelta(days=1)
-            system_name = self.parseLogFile(path, dir, newdate.year, newdate.month, newdate.day,
->>>>>>> origin/dev
                                  self.filetime[3], self.filetime[4])
         return system_name
         

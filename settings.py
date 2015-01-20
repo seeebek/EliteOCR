@@ -12,15 +12,6 @@ class Settings():
         self.values = {}
         self.reg = QSettings('seeebek', 'eliteOCR')
         if self.reg.contains('settings_version'):
-<<<<<<< HEAD
-=======
-            if float(self.reg.value('settings_version', type=QString)) < 1.3:
-                self.setDefaultLanguage()
-                self.setDefaultDelete()
-                self.setDefaultPause()
-                self.reg.setValue('settings_version', "1.3")
-                self.reg.sync()
->>>>>>> origin/dev
             if float(self.reg.value('settings_version', type=QString)) < 1.2:
                 self.cleanReg()
                 self.setAllDefaults()
@@ -77,7 +68,6 @@ class Settings():
                'ui_language': self.reg.value('ui_language', type=QString),
                'ocr_language': self.reg.value('ocr_language', type=QString),
                'delete_files': self.reg.value('delete_files', type=bool),
-<<<<<<< HEAD
                'translate_results': self.reg.value('translate_results', type=bool),
                'pause_at_end': self.reg.value('pause_at_end', type=bool),
                'updates_check': self.reg.value('updates_check', type=bool),
@@ -86,10 +76,6 @@ class Settings():
                'create_nn_images': self.reg.value('create_nn_images', type=bool),
                'zoom_factor': self.reg.value('zoom_factor', 1.0, type=float),
                'info_accepted': self.reg.value('info_accepted', False, type=bool),}
-=======
-               'pause_at_end': self.reg.value('pause_at_end', type=bool),
-               'create_nn_images': self.reg.value('create_nn_images', type=bool)}
->>>>>>> origin/dev
         return set
         
     def setAllDefaults(self):
@@ -98,15 +84,11 @@ class Settings():
         self.setDefaultRemoveDupli()
         self.setDefaultCreateNNImg()
         self.setDefaultDelete()
-<<<<<<< HEAD
         self.setDefaultTranslateResults()
         self.setDefaultPause()
         self.setDefaultUpdatesCheck()
         self.setDefaultPublicMode()
         self.setDefaultNativeDialog()
-=======
-        self.setDefaultPause()
->>>>>>> origin/dev
         self.setDefaultScreenshotDir()
         self.setDefaultLogDir()
         self.setDefaultExportDir()
@@ -139,7 +121,6 @@ class Settings():
         
     def setDefaultDelete(self):
         self.reg.setValue('delete_files', False)
-<<<<<<< HEAD
         
     def setDefaultUpdatesCheck(self):
         self.reg.setValue('updates_check', True)
@@ -155,11 +136,6 @@ class Settings():
     
     def setDefaultNativeDialog(self):
         self.reg.setValue('native_dialog', False)
-=======
-    
-    def setDefaultPause(self):
-        self.reg.setValue('pause_at_end', True)
->>>>>>> origin/dev
         
     def setDefaultScreenshotDir(self):
         if isdir(environ['USERPROFILE']+'\\Pictures\\Frontier Developments\\Elite Dangerous'):
