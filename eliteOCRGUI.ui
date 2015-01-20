@@ -85,12 +85,15 @@
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+<<<<<<< HEAD
              <property name="minimumSize">
               <size>
                <width>70</width>
                <height>0</height>
               </size>
              </property>
+=======
+>>>>>>> origin/dev
              <property name="maximumSize">
               <size>
                <width>50</width>
@@ -1073,6 +1076,19 @@
         </property>
        </spacer>
       </item>
+<<<<<<< HEAD
+=======
+      <item>
+       <widget class="QPushButton" name="continue_button">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>Continue</string>
+        </property>
+       </widget>
+      </item>
+>>>>>>> origin/dev
      </layout>
     </item>
     <item>
@@ -1231,6 +1247,7 @@
        </widget>
       </item>
       <item>
+<<<<<<< HEAD
        <widget class="QPushButton" name="bpc_button">
         <property name="enabled">
          <bool>false</bool>
@@ -1241,6 +1258,8 @@
        </widget>
       </item>
       <item>
+=======
+>>>>>>> origin/dev
        <widget class="QPushButton" name="eddn_button">
         <property name="enabled">
          <bool>false</bool>
@@ -1307,7 +1326,10 @@
     </property>
     <addaction name="actionPreferences"/>
     <addaction name="actionCommodity_Editor"/>
+<<<<<<< HEAD
     <addaction name="actionPublic_Mode"/>
+=======
+>>>>>>> origin/dev
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuSettings"/>
@@ -1330,6 +1352,7 @@
    </property>
   </action>
   <action name="actionPreferences">
+<<<<<<< HEAD
    <property name="text">
     <string>Preferences</string>
    </property>
@@ -1355,6 +1378,25 @@
    </property>
    <property name="text">
     <string>Public Mode</string>
+=======
+   <property name="text">
+    <string>Preferences</string>
+   </property>
+  </action>
+  <action name="actionCommodity_Editor">
+   <property name="text">
+    <string>Commodity Editor</string>
+   </property>
+  </action>
+  <action name="actionHelp">
+   <property name="text">
+    <string>Help</string>
+   </property>
+  </action>
+  <action name="actionUpdate">
+   <property name="text">
+    <string>Update</string>
+>>>>>>> origin/dev
    </property>
   </action>
  </widget>

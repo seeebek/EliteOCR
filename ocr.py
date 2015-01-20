@@ -12,8 +12,12 @@ from settings import Settings
 from ocrmethods import TesseractStation, TesseractStationMulti, TesseractMarket1, Levenshtein, NNMethod
 
 class OCR():
+<<<<<<< HEAD
     def __init__(self, parent, color_image, ocr_areas, language = "big"):
         self.lang = language
+=======
+    def __init__(self, parent, color_image, ocr_areas):
+>>>>>>> origin/dev
         self.settings = Settings()
         self.repeats = 1
         self.image = color_image
@@ -43,9 +47,15 @@ class OCR():
             return None
         
     def readMarket(self, parent):
+<<<<<<< HEAD
         market_table = TesseractMarket1(parent, self.contrast_commodities_img, self.ocr_areas.market_table, self.lang)
         parent.progress_bar.setValue(50)
         clean_commodities = Levenshtein(market_table.result, self.settings.app_path, self.lang)
+=======
+        market_table = TesseractMarket1(parent, self.contrast_commodities_img, self.ocr_areas.market_table)
+        parent.progress_bar.setValue(50)
+        clean_commodities = Levenshtein(market_table.result, self.settings.app_path)
+>>>>>>> origin/dev
         clean_numbers = NNMethod(parent,self.contrast_commodities_img, market_table.result, self.settings.app_path)
         parent.progress_bar.setValue(60)
         

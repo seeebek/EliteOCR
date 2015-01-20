@@ -7,7 +7,10 @@ from os.path import isdir, isfile
 import requests
 import time
 import sys
+<<<<<<< HEAD
 import subprocess
+=======
+>>>>>>> origin/dev
 
 class UpdateDialog(QDialog, Ui_Update):
     def __init__(self, path, appversion, newupd):
@@ -60,8 +63,11 @@ class UpdateDialog(QDialog, Ui_Update):
         self.progress_bar.setMaximum(1)
         self.progress_bar.setValue(0)
         self.label.setText("Download finished. You can find it in the update directory.")
+<<<<<<< HEAD
         
         subprocess.Popen(r'explorer /select,"'+unicode(self.app_path).encode('windows-1252')+'\\..\\update\\EliteOCR.'+unicode(self.newupd[1]).encode('windows-1252')+'.zip"')
+=======
+>>>>>>> origin/dev
     
     def downloadFinishedError(self):
         self.progress_bar.setMaximum(1)

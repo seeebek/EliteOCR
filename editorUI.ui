@@ -6,8 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
+<<<<<<< HEAD
     <width>728</width>
     <height>577</height>
+=======
+    <width>529</width>
+    <height>642</height>
+>>>>>>> origin/dev
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,13 +20,25 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
+<<<<<<< HEAD
     <widget class="QTableWidget" name="table">
      <property name="alternatingRowColors">
+=======
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Here you can add, remove or edit commodities. Duplicates will be removed and the entries will be automatically sorted once you click on Save. Please make sure there is only one commodity per line.</string>
+     </property>
+     <property name="textFormat">
+      <enum>Qt::AutoText</enum>
+     </property>
+     <property name="wordWrap">
+>>>>>>> origin/dev
       <bool>true</bool>
      </property>
     </widget>
    </item>
    <item>
+<<<<<<< HEAD
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QPushButton" name="add_button">
@@ -38,6 +55,13 @@
       </widget>
      </item>
      <item>
+=======
+    <widget class="QPlainTextEdit" name="commodity_list"/>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+>>>>>>> origin/dev
       <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>

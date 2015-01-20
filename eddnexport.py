@@ -26,9 +26,14 @@ class EDDNExport(QThread):
             try:
                 postdata = json.dumps(self.createRequest(line, userID))
 
+<<<<<<< HEAD
                 r = requests.post("http://eddn-gateway.elite-markets.net:8080/upload/", data=postdata)
                 #print postdata
                 #time.sleep(1)
+=======
+                #r = requests.post("http://eddn-gateway.elite-markets.net:8080/upload/", data=postdata)
+                time.sleep(1)
+>>>>>>> origin/dev
                 if r.text.strip() == "OK":
                     outcomeok.append("OK")
                 else:
@@ -51,7 +56,11 @@ class EDDNExport(QThread):
                     "header": {
                         "uploaderID": userID,
                         "softwareName": "EliteOCR",
+<<<<<<< HEAD
                         "softwareVersion": self.parent.appversion
+=======
+                        "softwareVersion": "0.3.8"
+>>>>>>> origin/dev
                     },
                     "message": self.makeDict(line)
                    }

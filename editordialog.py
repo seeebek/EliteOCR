@@ -1,7 +1,13 @@
+<<<<<<< HEAD
 from PyQt4.QtGui import QDialog, QTableWidgetItem
 from editorUI import Ui_Editor
 import json
 import codecs
+=======
+from PyQt4.QtGui import QDialog
+from editorUI import Ui_Editor
+import json
+>>>>>>> origin/dev
 
 class EditorDialog(QDialog, Ui_Editor):
     def __init__(self, settings):
@@ -9,6 +15,7 @@ class EditorDialog(QDialog, Ui_Editor):
         self.setupUi(self)
         self.settings = settings
         self.save.clicked.connect(self.saveCommodities)
+<<<<<<< HEAD
         self.add_button.clicked.connect(self.addCommodity)
         self.delete_button.clicked.connect(self.deleteCommodity)
 
@@ -71,3 +78,27 @@ class EditorDialog(QDialog, Ui_Editor):
         
         self.close()
         
+=======
+        try:
+            file = open(self.settings.app_path + "\\commodities.json", 'r')
+            file_content = file.read()
+            comm_list = json.loads(file_content)
+            file.close()
+        except:
+            comm_list = ['BEER']
+        text = ""
+        for line in comm_list:
+            text += line+"\n"
+        self.commodity_list.setPlainText(text)
+        
+    def saveCommodities(self):
+        commodities = unicode(self.commodity_list.toPlainText()).upper().strip().split("\n")
+        commodities = list(set(commodities))
+        commodities.sort()
+        #print commodities
+        commodities = filter(None, commodities)
+        file = open(self.settings.app_path + "\\commodities.json", 'w')
+        file.write(json.dumps(commodities,indent=2, separators=(',', ': ')))
+        file.close()
+        self.close()
+>>>>>>> origin/dev

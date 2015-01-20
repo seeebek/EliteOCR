@@ -38,7 +38,11 @@ class Worker(QThread):
         versions.sort(reverse=True)
 
         r2 = requests.get('http://sourceforge.net/projects/eliteocr/files/'+versions[0]+"/")
+<<<<<<< HEAD
         #print "got files"
+=======
+        print "got files"
+>>>>>>> origin/dev
         result2 = r2.text.encode('utf-8')
 
         files = []

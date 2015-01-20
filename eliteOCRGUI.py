@@ -2,8 +2,13 @@
 
 # Form implementation generated from reading ui file 'eliteOCRGUI.ui'
 #
+<<<<<<< HEAD
 # Created: Tue Jan 20 13:59:55 2015
 #      by: PyQt4 UI code generator 4.11.2
+=======
+# Created: Mon Dec 29 06:59:16 2014
+#      by: PyQt4 UI code generator 4.11.3
+>>>>>>> origin/dev
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -64,7 +69,10 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.add_all_button.sizePolicy().hasHeightForWidth())
         self.add_all_button.setSizePolicy(sizePolicy)
+<<<<<<< HEAD
         self.add_all_button.setMinimumSize(QtCore.QSize(70, 0))
+=======
+>>>>>>> origin/dev
         self.add_all_button.setMaximumSize(QtCore.QSize(50, 16777215))
         self.add_all_button.setObjectName(_fromUtf8("add_all_button"))
         self.horizontalLayout_7.addWidget(self.add_all_button)
@@ -486,6 +494,13 @@ class Ui_MainWindow(object):
         self.horizontalLayout_10.addWidget(self.zoom_button)
         spacerItem2 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_10.addItem(spacerItem2)
+<<<<<<< HEAD
+=======
+        self.continue_button = QtGui.QPushButton(self.centralwidget)
+        self.continue_button.setEnabled(False)
+        self.continue_button.setObjectName(_fromUtf8("continue_button"))
+        self.horizontalLayout_10.addWidget(self.continue_button)
+>>>>>>> origin/dev
         self.verticalLayout_5.addLayout(self.horizontalLayout_10)
         self.horizontalLayout_4 = QtGui.QHBoxLayout()
         self.horizontalLayout_4.setObjectName(_fromUtf8("horizontalLayout_4"))
@@ -557,10 +572,13 @@ class Ui_MainWindow(object):
         self.export_button.setMaximumSize(QtCore.QSize(16777215, 25))
         self.export_button.setObjectName(_fromUtf8("export_button"))
         self.horizontalLayout_2.addWidget(self.export_button)
+<<<<<<< HEAD
         self.bpc_button = QtGui.QPushButton(self.centralwidget)
         self.bpc_button.setEnabled(False)
         self.bpc_button.setObjectName(_fromUtf8("bpc_button"))
         self.horizontalLayout_2.addWidget(self.bpc_button)
+=======
+>>>>>>> origin/dev
         self.eddn_button = QtGui.QPushButton(self.centralwidget)
         self.eddn_button.setEnabled(False)
         self.eddn_button.setObjectName(_fromUtf8("eddn_button"))
@@ -601,9 +619,12 @@ class Ui_MainWindow(object):
         self.actionHelp.setObjectName(_fromUtf8("actionHelp"))
         self.actionUpdate = QtGui.QAction(MainWindow)
         self.actionUpdate.setObjectName(_fromUtf8("actionUpdate"))
+<<<<<<< HEAD
         self.actionPublic_Mode = QtGui.QAction(MainWindow)
         self.actionPublic_Mode.setCheckable(True)
         self.actionPublic_Mode.setObjectName(_fromUtf8("actionPublic_Mode"))
+=======
+>>>>>>> origin/dev
         self.menuHelp.addAction(self.actionHelp)
         self.menuHelp.addAction(self.actionUpdate)
         self.menuHelp.addAction(self.actionAbout)
@@ -611,7 +632,10 @@ class Ui_MainWindow(object):
         self.menuFile.addAction(self.actionExit)
         self.menuSettings.addAction(self.actionPreferences)
         self.menuSettings.addAction(self.actionCommodity_Editor)
+<<<<<<< HEAD
         self.menuSettings.addAction(self.actionPublic_Mode)
+=======
+>>>>>>> origin/dev
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuSettings.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
@@ -638,10 +662,17 @@ class Ui_MainWindow(object):
         self.label_3.setText(_translate("MainWindow", "Buy", None))
         self.label_4.setText(_translate("MainWindow", "Demand", None))
         self.label_6.setText(_translate("MainWindow", "Supply", None))
+<<<<<<< HEAD
         self.skip_button.setText(_translate("MainWindow", "&Skip", None))
         self.save_button.setText(_translate("MainWindow", "&Add and Next", None))
         self.continue_button.setText(_translate("MainWindow", "&Continue to next file", None))
         self.zoom_button.setText(_translate("MainWindow", "Zoom", None))
+=======
+        self.skip_button.setText(_translate("MainWindow", "Skip", None))
+        self.save_button.setText(_translate("MainWindow", "Add and Next", None))
+        self.zoom_button.setText(_translate("MainWindow", "Zoom", None))
+        self.continue_button.setText(_translate("MainWindow", "Continue", None))
+>>>>>>> origin/dev
         item = self.result_table.horizontalHeaderItem(0)
         item.setText(_translate("MainWindow", "Station", None))
         item = self.result_table.horizontalHeaderItem(1)
@@ -668,7 +699,10 @@ class Ui_MainWindow(object):
         item.setText(_translate("MainWindow", "EDDN Sent", None))
         self.clear_table.setText(_translate("MainWindow", "Clear Table", None))
         self.export_button.setText(_translate("MainWindow", "Export", None))
+<<<<<<< HEAD
         self.bpc_button.setText(_translate("MainWindow", "Export to BPC", None))
+=======
+>>>>>>> origin/dev
         self.eddn_button.setText(_translate("MainWindow", "Export to EDDN", None))
         self.menuHelp.setTitle(_translate("MainWindow", "Help", None))
         self.menuFile.setTitle(_translate("MainWindow", "File", None))
@@ -680,7 +714,10 @@ class Ui_MainWindow(object):
         self.actionCommodity_Editor.setText(_translate("MainWindow", "Commodity Editor", None))
         self.actionHelp.setText(_translate("MainWindow", "Help", None))
         self.actionUpdate.setText(_translate("MainWindow", "Update", None))
+<<<<<<< HEAD
         self.actionPublic_Mode.setText(_translate("MainWindow", "Public Mode", None))
+=======
+>>>>>>> origin/dev
 
 from customqtablewidget import CustomQTableWidget
 import res_rc

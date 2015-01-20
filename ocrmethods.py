@@ -30,10 +30,15 @@ class OCRAreasFinder:
         value = np.clip(new, 0, 255)
         value = value.astype(np.uint8)
         h, w = value.shape
+<<<<<<< HEAD
         ret,thresh1 = cv2.threshold(255 - value,160,255,cv2.THRESH_BINARY)
         #cv2.imshow("xx", thresh1)
         #cv2.waitKey(0)
         lines = cv2.HoughLinesP((255 - thresh1), 1, math.pi/2, 2, None, h/2, 1)
+=======
+        ret,thresh1 = cv2.threshold(255 - value,128,255,cv2.THRESH_BINARY)
+        lines = cv2.HoughLinesP((255 - thresh1), 1, math.pi/2, 2, None, h/2, 1);
+>>>>>>> origin/dev
 
         loi = []
         if not (lines is None):
@@ -47,9 +52,14 @@ class OCRAreasFinder:
             self.station_name = [[0,0],[0,0]]
             self.market_table = [[0,0],[0,0]]
             return
+<<<<<<< HEAD
         
         longestline = max(loi,key=itemgetter(2))
         self.market_width = longestline[2]
+=======
+            
+        longestline = max(loi,key=itemgetter(2))
+>>>>>>> origin/dev
         #print "start: " + str(longestline)
         
         #validate:
@@ -58,12 +68,19 @@ class OCRAreasFinder:
         confirmed = [False,False]
         for line in loi:
             if line[1] < tolerance1[0] and line[1] > tolerance1[1]:
+<<<<<<< HEAD
                 if line[2] > longestline[2]*0.70:
                     #print "one"
                     confirmed[0] = True
             if line[1] < tolerance2[0] and line[1] > tolerance2[1]:
                 if line[2] > longestline[2]*0.70:
                     #print "two"
+=======
+                if line[2] > longestline[2]*0.97:
+                    confirmed[0] = True
+            if line[1] < tolerance2[0] and line[1] > tolerance2[1]:
+                if line[2] > longestline[2]*0.97:
+>>>>>>> origin/dev
                     confirmed[1] = True
         if all(item for item in confirmed):
             self.valid = True
@@ -264,8 +281,12 @@ class TesseractStationMulti:
         return linelist
         
 class TesseractMarket1:
+<<<<<<< HEAD
     def __init__(self, parent, image, area, language = "big"):
         self.lang = language
+=======
+    def __init__(self, parent, image, area):
+>>>>>>> origin/dev
         self.image = image
         self.result = self.readMarketTable(area)
         
@@ -352,7 +373,11 @@ class Levenshtein:
                 alternatives = []
                 for comm in self.comm_list:
                     dist = distance(data[i][0].value, unicode(comm))
+<<<<<<< HEAD
                     if dist < 7:
+=======
+                    if dist < 5:
+>>>>>>> origin/dev
                         alternatives.append((unicode(comm), dist))
                     if dist < mindist:
                         mindist = dist
@@ -361,9 +386,13 @@ class Levenshtein:
                         data[i][0].value = topcomm
                         data[i][0].confidence = 1.0
                         break
+<<<<<<< HEAD
                 #print unicode(data[i][0].value)
                 #print topcomm
                 #print
+=======
+                        
+>>>>>>> origin/dev
                 alternatives.sort(key=lambda x: x[1])
                 optional_values = [j[0] for j in alternatives]
                 
@@ -413,10 +442,14 @@ class NNMethod:
         self.cleanNumbers(parent, self.result, train, image)
         
     def cleanNumbers(self, parent, data, train, image):
+<<<<<<< HEAD
         try:
             step = 10.0/len(data)
         except:
             step = 10.0
+=======
+        step = 10.0/len(data)
+>>>>>>> origin/dev
         for i in xrange(len(data)):
             parent.progress_bar.setValue(50+int(i*step))
             for j in xrange(len(data[i].items)):
@@ -542,7 +575,11 @@ class OCRline():
     def addPart(self, word, to_add):
         bbox = "bbox " + unicode(word.x1) + " " + unicode(word.y1) + " " + unicode(to_add.x2) +\
                " " + unicode(to_add.y2)
+<<<<<<< HEAD
         new_word = OCRbox(bbox, word.value + "" + to_add.value, self.area, 1.0)
+=======
+        new_word = OCRbox(bbox, word.value + " " + to_add.value, self.area, 1.0)
+>>>>>>> origin/dev
         
         return new_word
         
@@ -586,7 +623,11 @@ class OCRbox():
 
     def calculateConfidence(self, area, height):
         area_h = area[1][1]-area[0][1]
+<<<<<<< HEAD
         allowed_h = (int(0.7*(area_h/48)), int(1.3*(area_h/48)))
+=======
+        allowed_h = (int(0.6*(area_h/48)), int(1.4*(area_h/48)))
+>>>>>>> origin/dev
         if height>=allowed_h[0] and height<=allowed_h[1]:
             return 1.0
         else:
