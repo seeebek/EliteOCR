@@ -3,7 +3,11 @@
 # Form implementation generated from reading ui file 'eliteOCRGUI.ui'
 #
 <<<<<<< HEAD
+<<<<<<< HEAD
 # Created: Tue Jan 20 13:59:55 2015
+=======
+# Created: Thu Dec 18 14:15:28 2014
+>>>>>>> master
 #      by: PyQt4 UI code generator 4.11.2
 =======
 # Created: Mon Dec 29 06:59:16 2014
@@ -495,12 +499,15 @@ class Ui_MainWindow(object):
         spacerItem2 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_10.addItem(spacerItem2)
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
         self.continue_button = QtGui.QPushButton(self.centralwidget)
         self.continue_button.setEnabled(False)
         self.continue_button.setObjectName(_fromUtf8("continue_button"))
         self.horizontalLayout_10.addWidget(self.continue_button)
 >>>>>>> origin/dev
+=======
+>>>>>>> master
         self.verticalLayout_5.addLayout(self.horizontalLayout_10)
         self.horizontalLayout_4 = QtGui.QHBoxLayout()
         self.horizontalLayout_4.setObjectName(_fromUtf8("horizontalLayout_4"))
@@ -613,6 +620,7 @@ class Ui_MainWindow(object):
         self.actionExit.setObjectName(_fromUtf8("actionExit"))
         self.actionPreferences = QtGui.QAction(MainWindow)
         self.actionPreferences.setObjectName(_fromUtf8("actionPreferences"))
+<<<<<<< HEAD
         self.actionCommodity_Editor = QtGui.QAction(MainWindow)
         self.actionCommodity_Editor.setObjectName(_fromUtf8("actionCommodity_Editor"))
         self.actionHelp = QtGui.QAction(MainWindow)
@@ -627,15 +635,25 @@ class Ui_MainWindow(object):
 >>>>>>> origin/dev
         self.menuHelp.addAction(self.actionHelp)
         self.menuHelp.addAction(self.actionUpdate)
+=======
+        self.actionTest = QtGui.QAction(MainWindow)
+        self.actionTest.setObjectName(_fromUtf8("actionTest"))
+        self.actionCommodity_Editor = QtGui.QAction(MainWindow)
+        self.actionCommodity_Editor.setObjectName(_fromUtf8("actionCommodity_Editor"))
+        self.menuHelp.addAction(self.actionHow_to_use)
+>>>>>>> master
         self.menuHelp.addAction(self.actionAbout)
         self.menuFile.addAction(self.actionOpen)
         self.menuFile.addAction(self.actionExit)
         self.menuSettings.addAction(self.actionPreferences)
         self.menuSettings.addAction(self.actionCommodity_Editor)
 <<<<<<< HEAD
+<<<<<<< HEAD
         self.menuSettings.addAction(self.actionPublic_Mode)
 =======
 >>>>>>> origin/dev
+=======
+>>>>>>> master
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuSettings.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
@@ -671,6 +689,7 @@ class Ui_MainWindow(object):
         self.skip_button.setText(_translate("MainWindow", "Skip", None))
         self.save_button.setText(_translate("MainWindow", "Add and Next", None))
         self.zoom_button.setText(_translate("MainWindow", "Zoom", None))
+<<<<<<< HEAD
         self.continue_button.setText(_translate("MainWindow", "Continue", None))
 >>>>>>> origin/dev
         item = self.result_table.horizontalHeaderItem(0)
@@ -697,6 +716,8 @@ class Ui_MainWindow(object):
         item.setText(_translate("MainWindow", "Img. Height", None))
         item = self.result_table.horizontalHeaderItem(11)
         item.setText(_translate("MainWindow", "EDDN Sent", None))
+=======
+>>>>>>> master
         self.clear_table.setText(_translate("MainWindow", "Clear Table", None))
         self.export_button.setText(_translate("MainWindow", "Export", None))
 <<<<<<< HEAD
@@ -711,6 +732,7 @@ class Ui_MainWindow(object):
         self.actionOpen.setText(_translate("MainWindow", "Open", None))
         self.actionExit.setText(_translate("MainWindow", "Exit", None))
         self.actionPreferences.setText(_translate("MainWindow", "Preferences", None))
+<<<<<<< HEAD
         self.actionCommodity_Editor.setText(_translate("MainWindow", "Commodity Editor", None))
         self.actionHelp.setText(_translate("MainWindow", "Help", None))
         self.actionUpdate.setText(_translate("MainWindow", "Update", None))
@@ -718,6 +740,10 @@ class Ui_MainWindow(object):
         self.actionPublic_Mode.setText(_translate("MainWindow", "Public Mode", None))
 =======
 >>>>>>> origin/dev
+=======
+        self.actionTest.setText(_translate("MainWindow", "Test", None))
+        self.actionCommodity_Editor.setText(_translate("MainWindow", "Commodity Editor", None))
+>>>>>>> master
 
 from customqtablewidget import CustomQTableWidget
 import res_rc

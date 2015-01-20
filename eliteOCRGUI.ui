@@ -1077,6 +1077,7 @@
        </spacer>
       </item>
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
       <item>
        <widget class="QPushButton" name="continue_button">
@@ -1089,6 +1090,8 @@
        </widget>
       </item>
 >>>>>>> origin/dev
+=======
+>>>>>>> master
      </layout>
     </item>
     <item>
@@ -1327,9 +1330,12 @@
     <addaction name="actionPreferences"/>
     <addaction name="actionCommodity_Editor"/>
 <<<<<<< HEAD
+<<<<<<< HEAD
     <addaction name="actionPublic_Mode"/>
 =======
 >>>>>>> origin/dev
+=======
+>>>>>>> master
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuSettings"/>
@@ -1397,6 +1403,11 @@
    <property name="text">
     <string>Update</string>
 >>>>>>> origin/dev
+   </property>
+  </action>
+  <action name="actionCommodity_Editor">
+   <property name="text">
+    <string>Commodity Editor</string>
    </property>
   </action>
  </widget>

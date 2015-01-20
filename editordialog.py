@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 from PyQt4.QtGui import QDialog, QTableWidgetItem
 from editorUI import Ui_Editor
 import json
@@ -8,6 +9,11 @@ from PyQt4.QtGui import QDialog
 from editorUI import Ui_Editor
 import json
 >>>>>>> origin/dev
+=======
+from PyQt4.QtGui import QDialog
+from editorUI import Ui_Editor
+import json
+>>>>>>> master
 
 class EditorDialog(QDialog, Ui_Editor):
     def __init__(self, settings):
@@ -15,6 +21,7 @@ class EditorDialog(QDialog, Ui_Editor):
         self.setupUi(self)
         self.settings = settings
         self.save.clicked.connect(self.saveCommodities)
+<<<<<<< HEAD
 <<<<<<< HEAD
         self.add_button.clicked.connect(self.addCommodity)
         self.delete_button.clicked.connect(self.deleteCommodity)
@@ -79,6 +86,8 @@ class EditorDialog(QDialog, Ui_Editor):
         self.close()
         
 =======
+=======
+>>>>>>> master
         try:
             file = open(self.settings.app_path + "\\commodities.json", 'r')
             file_content = file.read()
@@ -100,5 +109,9 @@ class EditorDialog(QDialog, Ui_Editor):
         file = open(self.settings.app_path + "\\commodities.json", 'w')
         file.write(json.dumps(commodities,indent=2, separators=(',', ': ')))
         file.close()
+<<<<<<< HEAD
         self.close()
 >>>>>>> origin/dev
+=======
+        self.close()
+>>>>>>> master

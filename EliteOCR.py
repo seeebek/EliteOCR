@@ -15,10 +15,14 @@ from os import makedirs, listdir, remove
 from PyQt4.QtGui import QApplication, QMainWindow, QFileDialog, QGraphicsScene, QMessageBox,\
                         QPixmap, QPen, QTableWidgetItem, QPushButton, QAction, QFont
 <<<<<<< HEAD
+<<<<<<< HEAD
 from PyQt4.QtCore import Qt, QObject, QSize, QPoint, QSettings, QString, QTranslator, QTimer, SIGNAL
 =======
 from PyQt4.QtCore import Qt, QObject, QSize, QPoint, QSettings, QString, QTranslator, SIGNAL
 >>>>>>> origin/dev
+=======
+from PyQt4.QtCore import Qt, QObject, QSize, SIGNAL
+>>>>>>> master
 import cv2
 
 from eliteOCRGUI import Ui_MainWindow
@@ -75,9 +79,13 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.color_image = None
         self.preview_image = None
         self.current_result = None
+<<<<<<< HEAD
         self.newupd = None
         self.zoom = False
         self.minres = 0
+=======
+        self.zoom = False
+>>>>>>> master
         self.fields = [self.name, self.sell, self.buy, self.demand_num, self.demand,
                        self.supply_num, self.supply]
         self.canvases = [self.name_img, self.sell_img, self.buy_img, self.demand_img,
@@ -109,9 +117,12 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         QObject.connect(self.actionOpen, SIGNAL('triggered()'), self.addFiles)
         QObject.connect(self.actionPreferences, SIGNAL('triggered()'), self.openSettings)
 <<<<<<< HEAD
+<<<<<<< HEAD
         QObject.connect(self.actionPublic_Mode, SIGNAL('triggered()'), self.toggleMode)
 =======
 >>>>>>> origin/dev
+=======
+>>>>>>> master
         QObject.connect(self.actionCommodity_Editor, SIGNAL('triggered()'), self.openEditor)
         
         self.error_close = False
@@ -226,6 +237,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
 
     def About(self):
 <<<<<<< HEAD
+<<<<<<< HEAD
         QMessageBox.about(self,"About", "EliteOCR\nVersion "+self.appversion+"\n\n"+\
         "Contributors:\n"+\
         "Seeebek, CapCap, Gazelle, GMib, Ph.Baumann\n\n"+\
@@ -235,6 +247,18 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         "Seeebek, CapCap, Gazelle\n\n"+\
 >>>>>>> origin/dev
         "EliteOCR is capable of reading the entries in Elite: Dangerous markets screenshots.\n\n")
+=======
+        QMessageBox.about(self,"About", "EliteOCR\nVersion 0.3.6\n\n"+\
+        "Contributors:\n"+\
+        "Seeebek, CapCap, Gazelle\n\n"+\
+        "EliteOCR is capable of reading the entries in Elite: Dangerous markets screenshots.\n\n"+\
+        "Best results are achieved with screenshots of 3840 by 2160 pixel (4K) or more. "+\
+        "You can make screenshots in game by pressing F10. You find them usually in\n"+\
+        "C:\Users\USERNAME\Pictures\Frontier Developments\Elite Dangerous\n"+\
+        "Screenshots made with ALT+F10 have lower recognition rate!\n\n"+\
+        "Owners of Nvidia video cards can use DSR technology to increase the resolution "+\
+        "for screenshots and revert it back to normal without leaving the game.")
+>>>>>>> master
         
     def setupTable(self):
         """Add columns and column names to the table"""
@@ -275,6 +299,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
     def openEditor(self):
         editorDialog = EditorDialog(self.settings)
         editorDialog.exec_()
+<<<<<<< HEAD
 
     def addAllScreenshots(self):
         dir = unicode(self.settings['screenshot_dir']).encode('windows-1252')
@@ -290,6 +315,10 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.addFiles(files)
     
     def addFiles(self, screenshots = None):
+=======
+        
+    def addFiles(self):
+>>>>>>> master
         """Add files to the file list."""
         if screenshots:
             files = screenshots
@@ -393,10 +422,14 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.system_not_found.setText("")
         if len(item.system) == 0:
 <<<<<<< HEAD
+<<<<<<< HEAD
             self.system_not_found.setText(_translate("EliteOCR","System name not found in log files. Make sure log directory path is set up correctly or add system name manually in the field below. Note: System name is necessary for BPC import!", None))
 =======
             self.system_not_found.setText("System name not found in log files. Make sure log directory path is set up correctly or add system name manually in the field below. Note: System name is necessary for BPC import!")
 >>>>>>> origin/dev
+=======
+            self.system_not_found.setText("System name not found in log files. Make sure log directory path is set up correctly or add system name manually in the field below. Note: System name is necessary for BPC import!")
+>>>>>>> master
         self.system_name.setText(item.system)
         self.system_name.setFont(font)
         self.file_list.setCurrentItem(item)
@@ -407,11 +440,15 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.continue_button.setEnabled(False)
         if not item.valid_market:
 <<<<<<< HEAD
+<<<<<<< HEAD
             self.system_not_found.setText(_translate("EliteOCR","File was not recognized as a valid market screenshot. If the file is valid please report the issue in the forum.", None))
 =======
             self.system_not_found.setText("File was not recognized as a valid market screenshot. If the file is valid please report the issue in the forum.")
 >>>>>>> origin/dev
             self.progress_bar.setValue(0)
+=======
+            self.system_not_found.setText("File was not recognized as a valid market screenshot. If the file is valid please report the issue in the forum.")
+>>>>>>> master
             return
         self.ocr_button.setEnabled(True)
         self.zoom_button.setEnabled(True)
@@ -498,11 +535,17 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         
         if not duplicate:
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
             if not self.current_result.commodities[self.OCRline].items[0] is None:
                 if self.current_result.commodities[self.OCRline].items[0].confidence < 0.8:
                     self.addCommodityToDictionary(self.name.currentText())
 >>>>>>> origin/dev
+=======
+            if not self.current_result.commodities[self.OCRline].items[0] is None:
+                if self.current_result.commodities[self.OCRline].items[0].confidence < 0.8:
+                    self.addCommodityToDictionary(self.name.currentText())
+>>>>>>> master
             self.current_result.station.name.value = self.station_name.currentText()
             tab.insertRow(row_count)
             newitem = QTableWidgetItem(unicode(res_station).title().replace("'S", "'s"))
@@ -619,10 +662,14 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                     self.system_name.setText("")
                     self.system_name.setFont(font)
 <<<<<<< HEAD
+<<<<<<< HEAD
                     self.system_not_found.setText(_translate("EliteOCR","System name not found in log files. Make sure log directory path is set up correctly or add system name manually in the field below. Note: System name is necessary for BPC import!",None))
 =======
                     self.system_not_found.setText("System name not found in log files. Make sure log directory path is set up correctly or add system name manually in the field below. Note: System name is necessary for BPC import!")
 >>>>>>> origin/dev
+=======
+                    self.system_not_found.setText("System name not found in log files. Make sure log directory path is set up correctly or add system name manually in the field below. Note: System name is necessary for BPC import!")
+>>>>>>> master
                 self.system_name.setFocus()
                 self.system_name.selectAll()
         else:
@@ -665,6 +712,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                 if res.items[1] is None:
                     autofill = False
 <<<<<<< HEAD
+<<<<<<< HEAD
             if self.file_list.currentItem().market_width < 1180 and self.actionPublic_Mode.isChecked():
                 autofill = False
                 self.save_button.setEnabled(False)
@@ -673,6 +721,8 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                 QTimer.singleShot(1500, partial(self.skip_button.setEnabled, True));
 =======
 >>>>>>> origin/dev
+=======
+>>>>>>> master
                         
             for field, canvas, item in zip(self.fields, self.canvases, res.items):
                 if item != None:
@@ -707,6 +757,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         field.lineEdit().setStyleSheet("QLineEdit{background: "+color+";}")
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
         
     def drawOCRPreview(self):
@@ -715,6 +766,8 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
             return
         factor = self.factor.value()
 =======
+=======
+>>>>>>> master
     def xdrawOCRPreview(self):
         """Draw processed file preview and show recognised areas."""
 >>>>>>> origin/dev
@@ -726,9 +779,12 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         old_w = img.width()
         
 <<<<<<< HEAD
+<<<<<<< HEAD
         pix = img.scaled(QSize(self.preview.size().width()*factor,self.preview.size().height()*factor), Qt.KeepAspectRatio, Qt.SmoothTransformation)
         #pix = img.scaled(self.preview.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
 =======
+=======
+>>>>>>> master
         #pix = img.scaled(QSize(self.preview.size().width()*2,self.preview.size().height()*2), Qt.KeepAspectRatio, Qt.SmoothTransformation)
         pix = img.scaled(self.preview.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
 >>>>>>> origin/dev
@@ -787,7 +843,48 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
 
         pen = QPen(Qt.yellow)
         redpen = QPen(Qt.red)
+<<<<<<< HEAD
 >>>>>>> origin/dev
+=======
+        for line in res.commodities:
+            if line.w < (0.02*old_w):
+                rect = self.addRect(self.scene, line, ratio_w, ratio_h, redpen)
+            else:
+                rect = self.addRect(self.scene, line, ratio_w, ratio_h, pen)
+            self.previewRects.append(rect)
+            
+        self.previewSetScene(self.scene)
+        
+    def drawOCRPreview(self):
+        if self.current_result is None:
+            self.setPreviewImage(self.preview_image)
+            return
+        factor = self.factor.value()
+        res = self.current_result
+        name = res.station
+        img = self.preview_image
+        
+        old_h = img.height()
+        old_w = img.width()
+        
+        pix = img.scaled(QSize(self.preview.size().width()*factor,self.preview.size().height()*factor), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        #pix = img.scaled(self.preview.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        
+        new_h = pix.height()
+        new_w = pix.width()
+        
+        ratio_h = old_h/float(new_h)
+        ratio_w = old_w/float(new_w)
+        
+        self.scene = QGraphicsScene()
+        self.scene.addPixmap(pix)
+        #self.scene.addPixmap(img)
+        
+        self.previewRects = []
+
+        pen = QPen(Qt.yellow)
+        redpen = QPen(Qt.red)
+>>>>>>> master
         bluepen = QPen(Qt.blue)
         greenpen = QPen(Qt.green)
         
@@ -1083,12 +1180,18 @@ def main():
         elif self.settings['last_export_format'] == "bpc":
             filter = "Slopey's Best Price Calculator CSV-File (*.bpc)"
             
+<<<<<<< HEAD
         name = unicode(self.current_result.station.name.value).title().replace("'S", "'s")
         system = unicode(self.result_table.item(0,9).text())
         time = strftime("%Y-%m-%dT%H.%M.%S")
         dir = self.settings["export_dir"]+"\\"+system+"."+name+"."+time+"."+self.settings['last_export_format']+'"'
         file = QFileDialog.getSaveFileName(None, 'Save', dir, "Slopey's Best Price Calculator CSV-File (*.bpc);;CSV-File (*.csv);;OpenDocument Spreadsheet (*.ods);;Excel Workbook (*.xlsx)",
                                           filter, QFileDialog.DontUseNativeDialog)
+=======
+        name = self.current_result.station.name.value
+        dir = self.settings["export_dir"]+"/"+unicode(name).title().replace("'S", "'s")+'.'+self.settings['last_export_format']+'"'
+        file = QFileDialog.getSaveFileName(self, 'Save', dir, "CSV-File (*.csv);;OpenDocument Spreadsheet (*.ods);;Excel Workbook (*.xlsx)", filter)
+>>>>>>> master
         if not file:
             return
             
