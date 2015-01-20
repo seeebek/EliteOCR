@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1197</width>
-    <height>788</height>
+    <height>822</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -78,6 +78,31 @@
             </widget>
            </item>
            <item>
+            <widget class="QPushButton" name="add_all_button">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>70</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>50</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>Add all</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QToolButton" name="remove_button">
              <property name="enabled">
               <bool>false</bool>
@@ -94,6 +119,22 @@
              <property name="icon">
               <iconset resource="res.qrc">
                <normaloff>:/ico/minus.png</normaloff>:/ico/minus.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="remove_all_button">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>70</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>Remove all</string>
              </property>
             </widget>
            </item>
@@ -649,7 +690,7 @@
                   </sizepolicy>
                  </property>
                  <property name="text">
-                  <string>commodity</string>
+                  <string>Commodity</string>
                  </property>
                 </widget>
                </item>
@@ -662,7 +703,7 @@
                   </sizepolicy>
                  </property>
                  <property name="text">
-                  <string>sell</string>
+                  <string>Sell</string>
                  </property>
                 </widget>
                </item>
@@ -675,7 +716,7 @@
                   </sizepolicy>
                  </property>
                  <property name="text">
-                  <string>buy</string>
+                  <string>Buy</string>
                  </property>
                 </widget>
                </item>
@@ -688,7 +729,7 @@
                   </sizepolicy>
                  </property>
                  <property name="text">
-                  <string>demand</string>
+                  <string>Demand</string>
                  </property>
                 </widget>
                </item>
@@ -701,7 +742,7 @@
                   </sizepolicy>
                  </property>
                  <property name="text">
-                  <string>supply</string>
+                  <string>Supply</string>
                  </property>
                 </widget>
                </item>
@@ -951,7 +992,7 @@
                 <bool>false</bool>
                </property>
                <property name="text">
-                <string>Skip</string>
+                <string>&amp;Skip</string>
                </property>
               </widget>
              </item>
@@ -961,7 +1002,17 @@
                 <bool>false</bool>
                </property>
                <property name="text">
-                <string>Add and Next</string>
+                <string>&amp;Add and Next</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="continue_button">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string>&amp;Continue to next file</string>
                </property>
               </widget>
              </item>
@@ -1070,6 +1121,69 @@
            <height>16777215</height>
           </size>
          </property>
+         <property name="columnCount">
+          <number>12</number>
+         </property>
+         <column>
+          <property name="text">
+           <string>Station</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Commodity</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Sell</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Buy</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Demand</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Dem. Level</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Supply</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Sup. Level</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Timestamp</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>System</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Img. Height</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>EDDN Sent</string>
+          </property>
+         </column>
         </widget>
        </widget>
       </item>
@@ -1116,12 +1230,52 @@
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QPushButton" name="bpc_button">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>Export to BPC</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="eddn_button">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>Export to EDDN</string>
+        </property>
+       </widget>
+      </item>
      </layout>
+    </item>
+    <item>
+     <widget class="QProgressBar" name="progress_bar">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>10</height>
+       </size>
+      </property>
+      <property name="maximum">
+       <number>1</number>
+      </property>
+      <property name="value">
+       <number>0</number>
+      </property>
+      <property name="textVisible">
+       <bool>false</bool>
+      </property>
+     </widget>
     </item>
    </layout>
    <zorder>widget</zorder>
    <zorder>line_2</zorder>
    <zorder></zorder>
+   <zorder>progress_bar</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -1136,7 +1290,8 @@
     <property name="title">
      <string>Help</string>
     </property>
-    <addaction name="actionHow_to_use"/>
+    <addaction name="actionHelp"/>
+    <addaction name="actionUpdate"/>
     <addaction name="actionAbout"/>
    </widget>
    <widget class="QMenu" name="menuFile">
@@ -1152,16 +1307,13 @@
     </property>
     <addaction name="actionPreferences"/>
     <addaction name="actionCommodity_Editor"/>
+    <addaction name="actionPublic_Mode"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuSettings"/>
    <addaction name="menuHelp"/>
   </widget>
-  <action name="actionHow_to_use">
-   <property name="text">
-    <string>How to use</string>
-   </property>
-  </action>
+  <widget class="QStatusBar" name="statusbar"/>
   <action name="actionAbout">
    <property name="text">
     <string>About</string>
@@ -1177,24 +1329,32 @@
     <string>Exit</string>
    </property>
   </action>
-  <action name="actionCalibrate">
-   <property name="text">
-    <string>Calibrate</string>
-   </property>
-  </action>
   <action name="actionPreferences">
    <property name="text">
     <string>Preferences</string>
    </property>
   </action>
-  <action name="actionTest">
-   <property name="text">
-    <string>Test</string>
-   </property>
-  </action>
   <action name="actionCommodity_Editor">
    <property name="text">
     <string>Commodity Editor</string>
+   </property>
+  </action>
+  <action name="actionHelp">
+   <property name="text">
+    <string>Help</string>
+   </property>
+  </action>
+  <action name="actionUpdate">
+   <property name="text">
+    <string>Update</string>
+   </property>
+  </action>
+  <action name="actionPublic_Mode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Public Mode</string>
    </property>
   </action>
  </widget>

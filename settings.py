@@ -1,9 +1,9 @@
 import sys
+import random
 from os import environ
 from os.path import isdir, dirname, split, realpath
 from PyQt4.QtCore import QSettings, QString
 from PyQt4.QtGui import QMessageBox, QFileDialog
-from calibrate import CalibrateDialog
 
 class Settings():
     def __init__(self, parent=None):
@@ -12,11 +12,21 @@ class Settings():
         self.values = {}
         self.reg = QSettings('seeebek', 'eliteOCR')
         if self.reg.contains('settings_version'):
-            if float(self.reg.value('settings_version', type=QString)) < 1.1:
-                self.setDefaultExportOptions()
-                self.setSettingsVersion()
+            if float(self.reg.value('settings_version', type=QString)) < 1.2:
+                self.cleanReg()
+                self.setAllDefaults()
                 self.reg.sync()
                 self.values = self.loadSettings()
+            if float(self.reg.value('settings_version', type=QString)) < 1.4:
+                self.setDefaultLanguage()
+                self.setDefaultDelete()
+                self.setDefaultTranslateResults()
+                self.setDefaultPause()
+                self.setDefaultUpdatesCheck()
+                self.setDefaultPublicMode()
+                self.setDefaultNativeDialog()
+                self.reg.setValue('settings_version', "1.4")
+                self.reg.sync()
             else:
                 self.values = self.loadSettings()
         else:
@@ -54,7 +64,18 @@ class Settings():
                'log_dir': self.reg.value('log_dir', type=QString),
                'auto_fill': self.reg.value('auto_fill', type=bool),
                'remove_dupli': self.reg.value('remove_dupli', type=bool),
-               'create_nn_images': self.reg.value('create_nn_images', type=bool)}
+               'userID': self.reg.value('userID', type=QString),
+               'ui_language': self.reg.value('ui_language', type=QString),
+               'ocr_language': self.reg.value('ocr_language', type=QString),
+               'delete_files': self.reg.value('delete_files', type=bool),
+               'translate_results': self.reg.value('translate_results', type=bool),
+               'pause_at_end': self.reg.value('pause_at_end', type=bool),
+               'updates_check': self.reg.value('updates_check', type=bool),
+               'public_mode': self.reg.value('public_mode', type=bool),
+               'native_dialog': self.reg.value('native_dialog', type=bool),
+               'create_nn_images': self.reg.value('create_nn_images', type=bool),
+               'zoom_factor': self.reg.value('zoom_factor', 1.0, type=float),
+               'info_accepted': self.reg.value('info_accepted', False, type=bool),}
         return set
         
     def setAllDefaults(self):
@@ -62,13 +83,24 @@ class Settings():
         self.setDefaultAutoFill()
         self.setDefaultRemoveDupli()
         self.setDefaultCreateNNImg()
+        self.setDefaultDelete()
+        self.setDefaultTranslateResults()
+        self.setDefaultPause()
+        self.setDefaultUpdatesCheck()
+        self.setDefaultPublicMode()
+        self.setDefaultNativeDialog()
         self.setDefaultScreenshotDir()
         self.setDefaultLogDir()
         self.setDefaultExportDir()
+        self.setDefaultLanguage()
+        self.setUserID()
         self.setSettingsVersion()
         
     def setSettingsVersion(self):
-        self.reg.setValue('settings_version', "1.1")
+        self.reg.setValue('settings_version', "1.2")
+        
+    def setUserID(self):
+        self.reg.setValue('userID', "EO"+''.join(random.choice('0123456789abcdef') for i in range(8)))
         
     def setDefaultExportOptions(self):
         self.setValue('horizontal_exp', False)
@@ -79,9 +111,31 @@ class Settings():
         
     def setDefaultRemoveDupli(self):
         self.reg.setValue('remove_dupli', True)
+    
+    def setDefaultLanguage(self):
+        self.reg.setValue('ui_language', "en")
+        self.reg.setValue('ocr_language', "eng")
         
     def setDefaultCreateNNImg(self):
-        self.reg.setValue('create_nn_images', False) # opt-in
+        self.reg.setValue('create_nn_images', False)
+        
+    def setDefaultDelete(self):
+        self.reg.setValue('delete_files', False)
+        
+    def setDefaultUpdatesCheck(self):
+        self.reg.setValue('updates_check', True)
+        
+    def setDefaultTranslateResults(self):
+        self.reg.setValue('translate_results', False)
+    
+    def setDefaultPause(self):
+        self.reg.setValue('pause_at_end', True)
+        
+    def setDefaultPublicMode(self):
+        self.reg.setValue('public_mode', True)
+    
+    def setDefaultNativeDialog(self):
+        self.reg.setValue('native_dialog', False)
         
     def setDefaultScreenshotDir(self):
         if isdir(environ['USERPROFILE']+'\\Pictures\\Frontier Developments\\Elite Dangerous'):

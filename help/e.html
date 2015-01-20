@@ -1,0 +1,92 @@
+<html>
+<head>
+<style>
+html {
+    font-family: Arial;
+}
+a {
+    color: #0000aa;
+    font-weight: bold;
+    text-decoration: none;
+}
+</style>
+</head>
+<body>
+<a href="./index.html">-Back-</a>
+<h3>Settings</h3>
+
+<p>
+<b>General</b><br><br>
+Interface language<br>
+This option allows you to use EliteOCR in a different language than English. More languages will 
+be added in the future.
+<br><br>
+OCR language<br>
+This option allows you to choose which language should be used to recognize the text in the schreenshots.
+It is crucial to choose here the right language.
+<br><br>
+Translate results<br>
+If checked all the results will be translated to English upon exporting. Export to BPC and EDDN is
+always translated.
+<br><br>
+Automatically add results with high confidence<br>
+Check this box if you want to automatically add results with hight confidence to the table. This is 
+only recommended for screenshots with height of 1080 pixel or more. Lower resolutions will result in 
+many errors.
+<br><br>
+Remove duplicates<br>
+This option removes duplicate entries in the table. Duplicates are recognized by the same station 
+and commodity name. Don't use it if you scan differently old screenshots of the same station at 
+the same time.
+<br><br>
+Pause "OCR All"<br>
+The OCR process waits until the user clicks on "Continue to next file" at the end of a file. This is
+recomended if using the high confidence option and deleting files option.
+<br><br>
+Delete processes images<br>
+Processed images will be deletes after being processed. The file will be only removed if the user 
+clicks on "Continue to next file".
+<br><br>
+<b>Paths</b><br><br>
+Screenshot directory<br>
+This is the directory which will open every time you click on the + to add screenshots to file list.
+<br><br>
+Log directory<br>
+This is the directory which contains log files. It is important to properly set this location in order
+to automatically obtain system names for the screenshots.
+<br><br>
+Export directory<br>
+This location will always open when you click on "Export". Trade Dangerous Export uses this location 
+to save the import.prices file.
+<br><br>
+<b>Misc</b><br><br>
+Use native file dialog<br>
+Forces EliteOCR to use Windows' native file dialog. This dialog might ignore the paths set in the settings.
+<br><br>
+Horizontal Export<br>
+Check this box if you want your xlsx, csv or ods data to be horizontally aligned. This means the
+column names of the result table will be listed in the first column under each other.
+<br><br>
+Check for updates on startup<br>
+EliteOCR checks if there is a new version of the program available on Sourceforge on every start.
+If a new version is available you will receive a notification in the status bar.
+<br><br>
+Save images for machine learning<br>
+This option will save every processed image in "nn_training_images" directory. EliteOCR is not learning
+on the fly because it is taking too long. Instead you can provide the images to user zxctypo 
+(on elite dangerous forum). He performs the learning process and improves the OCR engine.
+<br><br>
+<b>Commodities Editor</b><br>
+Commodities editor shows the list of commodities "known" to EliteOCR. The commodities editor can be 
+used to add, remove or edit entries.
+<br><br>
+<b>Public Mode</b><br>
+If the public mode is set you will be able to export to BPC and EDDN. There are limitations in this mode.
+If you use screenshots with low resolution you will be forced to wait 1,5 seconds before you can add every
+line you process to the result table. If you switch between the modes the result table will be cleared.
+<br><br>
+</p>
+<br><a href="./index.html">-Back-</a>
+</body>
+
+</html>

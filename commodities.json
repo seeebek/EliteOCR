@@ -1,76 +1,402 @@
-[
-  "ADVANCED CATALYSERS",
-  "AGRI-MEDICINES",
-  "ALGAE",
-  "ALUMINIUM",
-  "ANIMAL MEAT",
-  "ANIMAL MONITORS",
-  "AQUAPONIC SYSTEMS",
-  "ATMOSPHERIC PROCESSORS",
-  "AUTO-FABRICATORS",
-  "BASIC MEDICINES",
-  "BAUXITE",
-  "BEER",
-  "BERTRANDITE",
-  "BERYLLIUM",
-  "BIOREDUCING LICHEN",
-  "BIOWASTE",
-  "CHEMICAL WASTE",
-  "CLOTHING",
-  "COBALT",
-  "COFFEE",
-  "COLTAN",
-  "COMBAT STABILISERS",
-  "COMPUTER COMPONENTS",
-  "CONSUMER TECHNOLOGY",
-  "CROP HARVESTERS",
-  "DOMESTIC APPLIANCES",
-  "EXPLOSIVES",
-  "FISH",
-  "FOOD CARTRIDGES",
-  "FRUIT AND VEGETABLES",
-  "GOLD",
-  "GRAIN",
-  "H.E. SUITS",
-  "HYDROGEN FUEL",
-  "IMPERIAL SLAVES",
-  "INDITE",
-  "LAND ENRICHMENT SYSTEMS",
-  "LEATHER",
-  "LEPIDOLITE",
-  "LIQUOR",
-  "LITHIUM",
-  "MARINE EQUIPMENT",
-  "MICROBIAL FURNACES",
-  "MINERAL EXTRACTORS",
-  "MINERAL OIL",
-  "NARCOTICS",
-  "NATURAL FABRICS",
-  "NON-LETHAL WEAPONS",
-  "PALLADIUM",
-  "PERFORMANCE ENHANCERS",
-  "PERSONAL WEAPONS",
-  "PESTICIDES",
-  "PLATINUM",
-  "POLYMERS",
-  "POWER GENERATORS",
-  "PROGENITOR CELLS",
-  "REACTIVE ARMOUR",
-  "RESONATING SEPARATORS",
-  "ROBOTICS",
-  "RUTILE",
-  "SCRAP",
-  "SEMICONDUCTORS",
-  "SLAVES",
-  "SUPERCONDUCTORS",
-  "SYNTHETIC FABRICS",
-  "SYNTHETIC MEAT",
-  "TANTALUM",
-  "TEA",
-  "TITANIUM",
-  "TOBACCO",
-  "URANINITE",
-  "URANIUM",
-  "WATER PURIFIERS",
-  "WINE"
-]
+{
+  "TOBACCO": {
+    "fra": "TABAC",
+    "rare": "False",
+    "deu": "TABAK"
+  },
+  "COFFEE": {
+    "fra": "CAFÉ",
+    "rare": "False",
+    "deu": "KAFFEE"
+  },
+  "BERTRANDITE": {
+    "fra": "BERTRANDITE",
+    "rare": "False",
+    "deu": "BERTRANDIT"
+  },
+  "GOLD": {
+    "fra": "OR",
+    "rare": "False",
+    "deu": "GOLD"
+  },
+  "BAUXITE": {
+    "fra": "BAUXITE",
+    "rare": "False",
+    "deu": "BAUXIT"
+  },
+  "ADVANCED CATALYSERS": {
+    "fra": "CATALYSEURS COMPLEXES",
+    "rare": "False",
+    "deu": "FORTSCHR. KATALYSATOREN"
+  },
+  "SUPERCONDUCTORS": {
+    "fra": "SUPRACONDUCTEURS",
+    "rare": "False",
+    "deu": "SUPRALEITER"
+  },
+  "FISH": {
+    "fra": "POISSON",
+    "rare": "False",
+    "deu": "FISCH"
+  },
+  "GALLITE": {
+    "fra": "GALLITE",
+    "rare": "False",
+    "deu": "GALLIT"
+  },
+  "ATMOSPHERIC PROCESSORS": {
+    "fra": "PROCESSEURS ATMOSPHÉRIQUES",
+    "rare": "False",
+    "deu": "ATMOSPHÄRENPROZESSOREN"
+  },
+  "FOOD CARTRIDGES": {
+    "fra": "CARTOUCHES ALIMENTAIRES",
+    "rare": "False",
+    "deu": "NAHRUNGSKARTUSCHEN"
+  },
+  "TITANIUM": {
+    "fra": "TITANE",
+    "rare": "False",
+    "deu": "TITAN"
+  },
+  "COBALT": {
+    "fra": "COBALT",
+    "rare": "False",
+    "deu": "COBALT"
+  },
+  "BATTLE WEAPONS": {
+    "fra": "ARMES MILITAIRES",
+    "rare": "False",
+    "deu": "KRIEGSWAFFEN"
+  },
+  "BIOREDUCING LICHEN": {
+    "fra": "LICHEN BIORÉDUCTEUR",
+    "rare": "False",
+    "deu": "BIOREDUZIERENDE FLECHTEN"
+  },
+  "WINE": {
+    "fra": "VIN",
+    "rare": "False",
+    "deu": "WEIN"
+  },
+  "PROGENITOR CELLS": {
+    "fra": "CELLULES SOUCHES",
+    "rare": "False",
+    "deu": "VORLÄUFERZELLEN"
+  },
+  "CLOTHING": {
+    "fra": "MAQUILLAGE",
+    "rare": "False",
+    "deu": "KLEIDUNG"
+  },
+  "WATER PURIFIERS": {
+    "fra": "PURIFICATEURS D'EAU",
+    "rare": "False",
+    "deu": "WASSERREINIGER"
+  },
+  "BASIC MEDICINES": {
+    "fra": "MÉDICAMENTS SIMPLES",
+    "rare": "False",
+    "deu": "ALLGEMEINE MEDIKAMENTE"
+  },
+  "PLATINUM": {
+    "fra": "PLATINE",
+    "rare": "False",
+    "deu": "PLATIN"
+  },
+  "ALUMINIUM": {
+    "fra": "ALUMINIUM",
+    "rare": "False",
+    "deu": "ALUMINIUM"
+  },
+  "AUTO-FABRICATORS": {
+    "fra": "DISPOSITIFS D'AUTOFABRICATION",
+    "rare": "False",
+    "deu": "FABRIKATOREN"
+  },
+  "NATURAL FABRICS": {
+    "fra": "FIBRE TEXTILE NATURELLE",
+    "rare": "False",
+    "deu": "NATURFASERN"
+  },
+  "RUTILE": {
+    "fra": "RUTILE",
+    "rare": "False",
+    "deu": "RUTIL"
+  },
+  "POLYMERS": {
+    "fra": "POLYMÈRES",
+    "rare": "False",
+    "deu": "POLYMERE"
+  },
+  "URANINITE": {
+    "fra": "URANINITE",
+    "rare": "False",
+    "deu": "URANINIT"
+  },
+  "EXPLOSIVES": {
+    "fra": "EXPLOSIFS",
+    "rare": "False",
+    "deu": "SPRENGSTOFFE"
+  },
+  "REACTIVE ARMOUR": {
+    "fra": "PROTECTION RÉACTIVE",
+    "rare": "False",
+    "deu": "REAKTIVRÜSTUNG"
+  },
+  "MICROBIAL FURNACES": {
+    "fra": "HAUTS FOURNEAUX MICROBIENS",
+    "rare": "False",
+    "deu": "MIKROBIELLE ÖFEN"
+  },
+  "TANTALUM": {
+    "fra": "TANTALE",
+    "rare": "False",
+    "deu": "TANTAL"
+  },
+  "PERFORMANCE ENHANCERS": {
+    "fra": "PRODUITS DOPANTS",
+    "rare": "False",
+    "deu": "LEISTUNGSSTEIGERER"
+  },
+  "COMPUTER COMPONENTS": {
+    "fra": "COMBINAISONS HAZMAT",
+    "rare": "False",
+    "deu": "COMPUTERTEILE"
+  },
+  "COLTAN": {
+    "fra": "COLTAN",
+    "rare": "False",
+    "deu": "COLTAN"
+  },
+  "CHEMICAL WASTE": {
+    "fra": "MATÉRIAUX RADIOACTIFS",
+    "rare": "False",
+    "deu": "CHEMIEMÜLL"
+  },
+  "PESTICIDES": {
+    "fra": "PESTICIDES",
+    "rare": "False",
+    "deu": "PESTIZIDE"
+  },
+  "ANIMAL MEAT": {
+    "fra": "VIANDE",
+    "rare": "False",
+    "deu": "TIERFLEISCH"
+  },
+  "BIOWASTE": {
+    "fra": "DÉCHETS ORGANIQUES",
+    "rare": "False",
+    "deu": "BIOMÜLL"
+  },
+  "LIQUOR": {
+    "fra": "SPIRITUEUX",
+    "rare": "False",
+    "deu": "SPIRITUOSEN"
+  },
+  "ROBOTICS": {
+    "fra": "ROBOTS",
+    "rare": "False",
+    "deu": "ROBOTER"
+  },
+  "COPPER": {
+    "fra": "CUIVRE",
+    "rare": "False",
+    "deu": "KUPFER"
+  },
+  "SYNTHETIC FABRICS": {
+    "fra": "TISSU SYNTHÉTIQUE",
+    "rare": "False",
+    "deu": "CHEMIEFASERN"
+  },
+  "RESONATING SEPARATORS": {
+    "fra": "SÉPARATEURS À RÉSONANCE",
+    "rare": "False",
+    "deu": "RESONANZABGRENZER"
+  },
+  "HYDROGEN FUEL": {
+    "fra": "CARBURANT À BASE D'HYDROGÈNE",
+    "rare": "False",
+    "deu": "WASSERSTOFF-TREIBSTOFF"
+  },
+  "PERSONAL WEAPONS": {
+    "fra": "ARMES DE POING",
+    "rare": "False",
+    "deu": "PERSÖNLICHE WAFFEN"
+  },
+  "LEATHER": {
+    "fra": "CUIR",
+    "rare": "False",
+    "deu": "LEDER"
+  },
+  "AGRI-MEDICINES": {
+    "fra": "AGRI-MÉDICAMENTS",
+    "rare": "False",
+    "deu": "AGRAR-MEDIKAMENTE"
+  },
+  "SCRAP": {
+    "fra": "FERRAILLE",
+    "rare": "False",
+    "deu": "SCHROTT"
+  },
+  "INDITE": {
+    "fra": "INDITE",
+    "rare": "False",
+    "deu": "INDIT"
+  },
+  "GALLIUM": {
+    "fra": "GALLIUM",
+    "rare": "False",
+    "deu": "GALLIUM"
+  },
+  "LEPIDOLITE": {
+    "fra": "LÉPIDOLITE",
+    "rare": "False",
+    "deu": "LEPIDOLITH"
+  },
+  "IMPERIAL SLAVES": {
+    "fra": "EMPIRE ESCLAVES",
+    "rare": "False",
+    "deu": "IMPERIALE SKLAVEN"
+  },
+  "NARCOTICS": {
+    "fra": "NARCOTIQUES",
+    "rare": "False",
+    "deu": "DROGEN"
+  },
+  "SEMICONDUCTORS": {
+    "fra": "SEMI-CONDUCTEURS",
+    "rare": "False",
+    "deu": "HALBLEITER"
+  },
+  "NON-LETHAL WEAPONS": {
+    "fra": "ARMES INCAPACITANTES",
+    "rare": "False",
+    "deu": "NICHTLETALE WAFFEN"
+  },
+  "URANIUM": {
+    "fra": "URANIUM",
+    "rare": "False",
+    "deu": "URAN"
+  },
+  "CONSUMER TECHNOLOGY": {
+    "fra": "VÊTEMENTS",
+    "rare": "False",
+    "deu": "UNTERHALTUNGSELEKTRONIK"
+  },
+  "LITHIUM": {
+    "fra": "LITHIUM",
+    "rare": "False",
+    "deu": "LITHIUM"
+  },
+  "SILVER": {
+    "fra": "ARGENT",
+    "rare": "False",
+    "deu": "SILBER"
+  },
+  "BERYLLIUM": {
+    "fra": "BÉRYLLIUM",
+    "rare": "False",
+    "deu": "BERYLLIUM"
+  },
+  "MINERAL EXTRACTORS": {
+    "fra": "EXTRACTEURS DE MINERAI",
+    "rare": "False",
+    "deu": "MINERALEXTRAKTOREN"
+  },
+  "PALLADIUM": {
+    "fra": "PALLADIUM",
+    "rare": "False",
+    "deu": "PALLADIUM"
+  },
+  "DOMESTIC APPLIANCES": {
+    "fra": "ÉQUIPEMENT DE LOISIR",
+    "rare": "False",
+    "deu": "HAUSHALTSGERÄTE"
+  },
+  "COMBAT STABILISERS": {
+    "fra": "STABILISATEURS DE COMBAT",
+    "rare": "False",
+    "deu": "KAMPFSTABILISATOREN"
+  },
+  "INDIUM": {
+    "fra": "INDIUM",
+    "rare": "False",
+    "deu": "INDIUM"
+  },
+  "ANIMAL MONITORS": {
+    "fra": "SYSTÈMES DE SURVEILLANCE",
+    "rare": "False",
+    "deu": "TIERÜBERWACHUNG"
+  },
+  "SYNTHETIC MEAT": {
+    "fra": "VIANDE SYNTHÉTIQUE",
+    "rare": "False",
+    "deu": "KÜNSTLICHES FLEISCH"
+  },
+  "TEA": {
+    "fra": "THÉ",
+    "rare": "False",
+    "deu": "TEE"
+  },
+  "MINERAL OIL": {
+    "fra": "HUILE MINÉRALE",
+    "rare": "False",
+    "deu": "MINERALÖL"
+  },
+  "BEER": {
+    "fra": "BIÈRE",
+    "rare": "False",
+    "deu": "BIER"
+  },
+  "POWER GENERATORS": {
+    "fra": "GÉNÉRATEURS",
+    "rare": "False",
+    "deu": "STROMERZEUGER"
+  },
+  "SLAVES": {
+    "fra": "ESCLAVES",
+    "rare": "False",
+    "deu": "SKLAVEN"
+  },
+  "FRUIT AND VEGETABLES": {
+    "fra": "FRUITS ET LÉGUMES",
+    "rare": "False",
+    "deu": "OBST UND GEMÜSE"
+  },
+  "AQUAPONIC SYSTEMS": {
+    "fra": "SYSTÈMES AQUAPONIQUES",
+    "rare": "False",
+    "deu": "AQUAPONIKSYSTEME"
+  },
+  "GRAIN": {
+    "fra": "CÉRÉALES",
+    "rare": "False",
+    "deu": "GETREIDE"
+  },
+  "H.E. SUITS": {
+    "fra": "COMBINAISONS DE PROTECTION",
+    "rare": "False",
+    "deu": "SCHUTZANZÜGE"
+  },
+  "CROP HARVESTERS": {
+    "fra": "MOISSONNEUSES",
+    "rare": "False",
+    "deu": "ERNTEMASCHINEN"
+  },
+  "ALGAE": {
+    "fra": "ALGUES",
+    "rare": "False",
+    "deu": "ALGEN"
+  },
+  "MARINE EQUIPMENT": {
+    "fra": "ÉQUIPEMENT AQUAMARIN",
+    "rare": "False",
+    "deu": "MARITIMAUSSTATTUNG"
+  },
+  "LAND ENRICHMENT SYSTEMS": {
+    "fra": "SYSTÈMES D'ENRICHISSEMENT DES",
+    "rare": "False",
+    "deu": "LANDANREICHERUNGSSYSTEME"
+  }
+}

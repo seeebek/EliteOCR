@@ -1,0 +1,57 @@
+<html>
+<head>
+<style>
+html {
+    font-family: Arial;
+}
+a {
+    color: #0000aa;
+    font-weight: bold;
+    text-decoration: none;
+}
+</style>
+</head>
+<body>
+<a href="./index.html">-Back-</a>
+<h3>EliteOCR is not finding the system name</h3>
+Checklist:<br>
+1. Verbose logging was enabled in AppConfig.xml (resets with every game update)<br>
+2. After adding verbose logging game was restarted and system was changed<br>
+3. Screenshots were made AFTER the former points were done<br>
+4. Log directory was set properly in EliteOCR<br><br>
+
+If not, do it or continue reading for more information<br><br>
+
+EliteOCR looks for system names in the log directory of Elite: Dangerous.
+Additionally VerboseLogging="1" has to be added in the game's AppConfig.xml.
+<br><br>
+You can find the logs in (your installation path)\EDLaunch\Products\FORC-FDEV-D-1002\Logs
+<br>
+AppConfig.xml should be in (your installation path)\EDLaunch\Products\FORC-FDEV-D-1002\
+<br>
+If you cannot find it use the search function of windows or search on the forum.
+<br><br>
+Should you still have problems make sure to do the following:
+<br><br>
+- If you just enabled verbose logging make sure to fly first to another system and make screenshots there.
+Elite: Dangerous is only adding info to log files after you changed the settings. Screenshots made before will not work.
+<br><br>
+- Always do screenshots in the game with F10. Screenshots made by 3rd party tools will not have corresponding entries in logs.
+<br><br>
+- Check if the screenshot and system names after jumping are listed in the log file. If not recheck your configuration in AppConfig.xml
+<br><br>
+Your Appconfig.xml should look similar to this:
+<div style="border: 1px solid #aaaaaa">
+&lt;Network<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Port=&quot;0&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;upnpenabled=&quot;1&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;LogFile=&quot;netLog&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;DatestampLog=&quot;1&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;VerboseLogging=&quot;1&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/Network&gt;<br>
+</div>
+<br><a href="./index.html">-Back-</a>
+</body>
+
+</html>
