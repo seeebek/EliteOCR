@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import cv2
 import math
 import tesseract
@@ -9,72 +10,72 @@ from bs4 import BeautifulSoup
 from nn_scripts.nn_training import nnTraining
 from Levenshtein import ratio, distance
 from collections import Counter
+from operator import itemgetter
 
 class OCRAreasFinder:
     def __init__(self, image):
         self.station_name = None
         self.market_table = None
+        self.market_width = 0
         self.valid = False
         self.findAreas(image)
         
     def findAreas(self, image):
         img = image
+        imgheight, imgwidth, xcolor = img.shape
         b,g,r  = cv2.split(img)
-        b = np.add(b, 0.0) 
-        new = np.divide(np.multiply(b, g), 255.0)
-        value = np.clip(new, 0.0, 255.0)
-        value = value.astype(np.uint8)
-        ret,thresh1 = cv2.threshold(value,128,255,cv2.THRESH_BINARY)
-        workimg = cv2.GaussianBlur(thresh1,(51,11),0)
-        ret,cont = cv2.threshold(workimg,1,255,cv2.THRESH_BINARY)
-        #cv2.imshow("xx", cont)
-        #cv2.waitKey(0)
-        contours,hierarchy = cv2.findContours(cont, 1, 2)
-        cnt = contours
-        y_pos = []
-        for c in cnt:
-            if cv2.contourArea(c) > 40:
-                x,y,w,h = cv2.boundingRect(c)
-                y_pos.append([y,h])
-        
         r = np.add(r, 0.0) 
         new = np.absolute(np.subtract(r, b))
         new = np.subtract(np.add(new,g), 128.0)
         value = np.clip(new, 0, 255)
         value = value.astype(np.uint8)
-
         h, w = value.shape
-        ret,thresh1 = cv2.threshold(255 - value,128,255,cv2.THRESH_BINARY)
-        lines = cv2.HoughLinesP((255 - thresh1), 1, math.pi/2, 2, None, h, 1);
-        counter = 0
-        x1 = []
-        y1 = []
-        x2 = []
-        y2 = []
+        ret,thresh1 = cv2.threshold(255 - value,160,255,cv2.THRESH_BINARY)
+        #cv2.imshow("xx", thresh1)
+        #cv2.waitKey(0)
+        lines = cv2.HoughLinesP((255 - thresh1), 1, math.pi/2, 2, None, h/2, 1)
+
+        loi = []
         if not (lines is None):
             for line in lines[0]:
-                x1.append(line[0])
-                y1.append(line[1])
-                x2.append(line[2])
-                y2.append(line[3])
-                pt1 = (line[0],line[1])
-                pt2 = (line[2],line[3])
-                counter += 1
+                loi.append((int(line[0]), int(line[1]), int(line[2])-int(line[0])))
         else:
             self.station_name = [[0,0],[0,0]]
             self.market_table = [[0,0],[0,0]]
             return
-
-        x1 = min(x1)
-        y1 = min(y1)
-        x2 = max(x2)
-        y2 = max(y2)
+        if len(loi) == 0:
+            self.station_name = [[0,0],[0,0]]
+            self.market_table = [[0,0],[0,0]]
+            return
         
-        for pos in y_pos:
-            if pos[0] < y1:
-                y1_station = pos[0]
-                y2_station = (pos[0]+pos[1])
-                break
+        longestline = max(loi,key=itemgetter(2))
+        self.market_width = longestline[2]
+        #print "start: " + str(longestline)
+        
+        #validate:
+        tolerance1 = [longestline[1]-int(0.98*longestline[2]*0.665306), longestline[1]-int(1.02*longestline[2]*0.665306)]
+        tolerance2 = [longestline[1]-int(0.98*longestline[2]*0.600816), longestline[1]-int(1.02*longestline[2]*0.600816)]
+        confirmed = [False,False]
+        for line in loi:
+            if line[1] < tolerance1[0] and line[1] > tolerance1[1]:
+                if line[2] > longestline[2]*0.70:
+                    #print "one"
+                    confirmed[0] = True
+            if line[1] < tolerance2[0] and line[1] > tolerance2[1]:
+                if line[2] > longestline[2]*0.70:
+                    #print "two"
+                    confirmed[1] = True
+        if all(item for item in confirmed):
+            self.valid = True
+                
+        
+        x1 = longestline[0]
+        y1 = longestline[1]-int(longestline[2]*0.6653)
+        x2 = longestline[0]+longestline[2]
+        y2 = longestline[1]
+        y1_station = longestline[1]-int(longestline[2]*0.7428)
+        y2_station = longestline[1]-int(longestline[2]*0.72)
+        
 
         #cv2.rectangle(img,(x1,y1_station),(x2,y2_station),(0,255,255),2)
         #cv2.rectangle(img,(x1, y1),(x2-int((x2-x1)*0.17), y2),(255,0,0),2)
@@ -95,14 +96,14 @@ class OCRAreasFinder:
                               (area[1]*x + x1)])
           
         #for area in areas:
-        #    cv2.rectangle(img,(int(area[0]*x + x1), int((y2-y1)*0.101+y1)), (int(area[1]*x +x1), int((y2-y1)*0.996+y1)), (0,255,255), 2)
+        #    cv2.rectangle(img,(int(area[0]*x + x1), int((y2-y1)*0.101+y1)), (int(area[1]*x +x1), int((y2-y1)*0.996+y1)), (0,255,255), 1)
             
         self.station_name = [[x1, y1_station],[x2, y2_station]]
         self.market_table = [[x1, int((y2-y1)*0.101+y1)],[x2,int((y2-y1)*0.996+y1)]]
         if x1 > 0 and x2 > x1 and y1_station > 0 and y2_station > y1_station and y1 > y2_station and y2 > y1:
             self.station_name = [[x1, y1_station],[x2, y2_station]]
             self.market_table = [[x1, int((y2-y1)*0.101+y1)],[x2,int((y2-y1)*0.996+y1)]]
-            self.valid = True
+            #self.valid = True
         else:
             self.station_name = [[0,0],[0,0]]
             self.market_table = [[0,0],[0,0]]
@@ -157,7 +158,7 @@ class TesseractStation:
             newline = OCRline(line['title'], area, factor)
             for word in line.findAll("span", { "class" : "ocrx_word" }):
                 if word.getText().strip() != '':
-                    newline.addWord(OCRbox(word['title'], word.getText(), factor), True)
+                    newline.addWord(OCRbox(word['title'], word.getText(), area, factor), True)
                     not_empty = True
             if not_empty:
                 linelist.append(newline)
@@ -179,7 +180,7 @@ class TesseractStationMulti:
         new_size = (int(w*factor), int(h*factor))
         snippet = cv2.resize(snippet, new_size, 0, 0, cv2.INTER_CUBIC)
         
-        repeats = 5
+        repeats = 7
         img = []
         for i in xrange(0,repeats):
             img.append(255 - contBright(snippet, 70.0+5*i, 255.0-10*i))
@@ -189,10 +190,30 @@ class TesseractStationMulti:
         #cv2.waitKey(0)
         results = self.hocrToList(self.ocr(fullimg))
         results.append(data.name.value)
+        
+        #diffs.append([i for i in xrange(len(data.name.value)) if data.name.value[i] != name[i]])
+        preffered = ""
         most_common = Counter(results).most_common()
+        #print most_common
+        if len(most_common) == 2:
+            if len(most_common[0][0]) <= len(most_common[1][0]):
+                diffs = [i for i in xrange(len(most_common[0][0])) if most_common[0][0][i] != most_common[1][0][i]]
+            else:
+                diffs = [i for i in xrange(len(most_common[1][0])) if most_common[0][0][i] != most_common[1][0][i]]
+            if len(diffs) == 1:
+                if most_common[0][0][diffs[0]] == "D" and most_common[1][0][diffs[0]] == "O":
+                    preffered = most_common[0][0]
+                elif most_common[0][0][diffs[0]] == "O" and most_common[1][0][diffs[0]] == "D":
+                    preffered = most_common[1][0]
+        
         if len(most_common) > 0:
+            if len(most_common) == 1:
+                item.confidence = 1.0
+            else:
+                item.confidence = 0.5
             item.value = most_common[0][0]
-            item.confidence = most_common[0][1]/(repeats+1.0)
+            if preffered != "":
+                item.value = preffered
             item.optional_values = self.sortAlternatives(most_common)
 
     def sortAlternatives(self, alt):
@@ -243,7 +264,8 @@ class TesseractStationMulti:
         return linelist
         
 class TesseractMarket1:
-    def __init__(self, image, area):
+    def __init__(self, parent, image, area, language = "big"):
+        self.lang = language
         self.image = image
         self.result = self.readMarketTable(area)
         
@@ -268,7 +290,11 @@ class TesseractMarket1:
         
     def ocr(self, image, area, factor):
         api = tesseract.TessBaseAPI()
-        api.Init(".","big",tesseract.OEM_DEFAULT)
+        #print self.lang
+        if self.lang == "big" or self.lang == "eng":
+            api.Init(".","big",tesseract.OEM_DEFAULT)
+        else:
+            api.Init(".", str(self.lang), tesseract.OEM_DEFAULT)
         api.SetPageSegMode(tesseract.PSM_SINGLE_BLOCK)
         h,w = image.shape
         w_step = w*image.dtype.itemsize
@@ -279,7 +305,7 @@ class TesseractMarket1:
         api.SetRectangle(int(area[0][0]*factor), int(area[0][1]*factor),
                          ocr_x2-int(area[0][0]*factor),
                          int(area[1][1]*factor)-int(area[0][1]*factor)) 
-        res = self.hocrToObject(api.GetHOCRText(0), area, factor)
+        res = self.hocrToObject(api.GetHOCRText(0).decode('utf-8'), area, factor)
         return res
         
     def hocrToObject(self, input, area, factor):
@@ -291,49 +317,76 @@ class TesseractMarket1:
             newline = OCRline(line['title'], area, factor)
             for word in line.findAll("span", { "class" : "ocrx_word" }):
                 if word.getText().strip() != '':
-                    newline.addWord(OCRbox(word['title'], word.getText(), factor))
+                    newline.addWord(OCRbox(word['title'], word.getText(), area, factor))
                     not_empty = True
             if not_empty:
                 linelist.append(newline)
         return linelist
 
 class Levenshtein:
-    def __init__(self, ocr_data, path):
-        self.levels = ['LOW', 'MED', 'HIGH']
-        try:
-            file = open(path + "\\commodities.json", 'r')
-            self.comm_list = json.loads(file.read())
-            self.comm_list.sort(key = len)
-        except:
-            self.comm_list = ['BEER']
-            
+    def __init__(self, ocr_data, path, language = "big"):
+        if language == "big":
+            self.lang = u"eng"
+        else:
+            self.lang = unicode(language)
+        
+        self.levels = {u"eng": [u'LOW', u'MED', u'HIGH'],
+                       u"deu": [u'NIEDRIG', u'MITTEL', u'HOCH'], 
+                       u"fra": [u'FAIBLE', u'MOYEN', u'ÉLEVÉ']}
+        file = open(path + "\\commodities.json", 'r')
+        self.comm_list = json.loads(file.read())
+        #print self.comm_list
+        #self.comm_list.sort(key = len)
+        if language == "big" or language == "eng":
+            self.comm_list = [k for k, v in self.comm_list.iteritems()]
+        else:
+            self.comm_list = [v[self.lang] for k, v in self.comm_list.iteritems()]
+
         self.result = self.cleanCommodities(ocr_data)
         
     def cleanCommodities(self, data):
         for i in xrange(len(data)):
             if not data[i][0] is None:
-                topratio = 0.0
+                mindist = 100
                 topcomm = ""
+                alternatives = []
                 for comm in self.comm_list:
-                    rat = ratio(data[i][0].value, unicode(comm))
-                    if rat > topratio:
-                        topratio = rat
+                    dist = distance(data[i][0].value, unicode(comm))
+                    if dist < 7:
+                        alternatives.append((unicode(comm), dist))
+                    if dist < mindist:
+                        mindist = dist
                         topcomm = comm
-                    if rat == 1.0:
+                    if dist == 0:
                         data[i][0].value = topcomm
                         data[i][0].confidence = 1.0
                         break
-                if topratio > 0.8:
+                #print unicode(data[i][0].value)
+                #print topcomm
+                #print
+                alternatives.sort(key=lambda x: x[1])
+                optional_values = [j[0] for j in alternatives]
+                
+                maxdist = 4
+                if len(data[i][0].value) < 5:
+                    maxdist = 3
+
+                if mindist < maxdist:
                     data[i][0].value = topcomm
-                    data[i][0].confidence = 1.0
-                    data[i][0].optional_values = [data[i][0].value, topcomm]
+                    if mindist < 2:
+                        data[i][0].confidence = 1.0
+                    else:
+                        data[i][0].confidence = 0.7
+                    if mindist != 0:
+                        data[i][0].optional_values = [data[i][0].value] + optional_values
                 else:
                     data[i][0].confidence = 0.0
-                    data[i][0].optional_values = [data[i][0].value, topcomm]
+                    data[i][0].optional_values = [data[i][0].value] + optional_values
+            # LOW MED HIGH
             if not data[i][4] is None:
                 topratio = 0.0
                 toplev = ""
-                for lev in self.levels:
+                for lev in self.levels[self.lang]:
                     rat = ratio(data[i][4].value, unicode(lev))
                     if rat > topratio:
                         topratio = rat
@@ -342,7 +395,7 @@ class Levenshtein:
             if not data[i][6] is None:
                 topratio = 0.0
                 toplev = ""
-                for lev in self.levels:
+                for lev in self.levels[self.lang]:
                     rat = ratio(data[i][6].value, unicode(lev))
                     if rat > topratio:
                         topratio = rat
@@ -350,26 +403,39 @@ class Levenshtein:
                 data[i][6].value = toplev
 
 class NNMethod:
-    def __init__(self, image, ocr_data, path):
+    def __init__(self, parent, image, ocr_data, path):
         self.result = ocr_data
         param = {'app_path': path}
         train = nnTraining.Instance(param)
         assert isinstance(train, type(nnTraining))
         train.setClassifier('logistic')
         
-        self.cleanNumbers(self.result, train, image)
+        self.cleanNumbers(parent, self.result, train, image)
         
-    def cleanNumbers(self, data, train, image):
+    def cleanNumbers(self, parent, data, train, image):
+        try:
+            step = 10.0/len(data)
+        except:
+            step = 10.0
         for i in xrange(len(data)):
+            parent.progress_bar.setValue(50+int(i*step))
             for j in xrange(len(data[i].items)):
                 if data[i][j] != None:
                     if j in [1, 2, 3,5]:
                         snippet = image[data[i][j].y1-2:data[i][j].y2+2,
                                         data[i][j].x1-2:data[i][j].x2+2]
                         snippet = cv2.cvtColor(snippet,cv2.COLOR_GRAY2RGB)
-                        snippet = cv2.copyMakeBorder(snippet, 5, 5, 5, 5,cv2.BORDER_CONSTANT,value=(255,255,255)) 
+                        h, w, c = snippet.shape
+                        factor = data[i].factor
+                        pad = int(4*factor)
+                        new_size = (int(w*factor), int(h*factor))
+                        snippet = cv2.resize(snippet, new_size, 0, 0, cv2.INTER_CUBIC)
+                        snippet = cv2.copyMakeBorder(snippet, pad, pad, pad, pad,cv2.BORDER_CONSTANT,value=(255,255,255)) 
                         res = train.doDigitPrediction(snippet)
-                        data[i][j].value = "{:,}".format(int(res))
+                        try:
+                            data[i][j].value = "{:,}".format(int(res))
+                        except:
+                            pass
 
 class OCRline():
     """Class providing a recognised line of text as an object, 
@@ -385,6 +451,7 @@ class OCRline():
         self.y2 = int(int(coords[4].replace(';', ''))/factor)
         self.w = self.x2 - self.x1
         self.h = self.y2 - self.y1
+        self.area = area
         self.areas_x = self.getXAreas(area)
         self.name = None
         self.sell = None
@@ -429,7 +496,10 @@ class OCRline():
                 self.items[0] = self.name
                 break
             if x1 > self.areas_x[1][0] and x2 < self.areas_x[1][1]:
-                self.sell = word
+                if self.sell is None:
+                    self.sell = word
+                else:
+                    self.sell = self.addPart(self.sell, word)
                 self.sell.value = self.sell.value.replace('.', ',')
                 self.items[1] = self.sell
                 break
@@ -437,12 +507,18 @@ class OCRline():
                 if word.value == "-":
                     self.buy = None
                 else:
-                    self.buy = word
+                    if self.buy is None:
+                        self.buy = word
+                    else:
+                        self.buy = self.addPart(self.buy, word)
                     self.buy.value = self.buy.value.replace('.', ',')
                     self.items[2] = self.buy
                 break
             if x1 > self.areas_x[3][0] and x2 < self.areas_x[3][1]:
-                self.demand_num = word
+                if self.demand_num is None:
+                    self.demand_num = word
+                else:
+                    self.demand_num = self.addPart(self.demand_num, word)
                 self.demand_num.value = self.demand_num.value.replace('.', ',')
                 self.items[3] = self.demand_num
                 break
@@ -451,7 +527,10 @@ class OCRline():
                 self.items[4] = self.demand
                 break
             if x1 > self.areas_x[5][0] and x2 < self.areas_x[5][1]:
-                self.supply_num = word
+                if self.supply_num is None:
+                    self.supply_num = word
+                else:
+                    self.supply_num = self.addPart(self.supply_num, word)
                 self.supply_num.value = self.supply_num.value.replace('.', ',')
                 self.items[5] = self.supply_num
                 break
@@ -460,7 +539,13 @@ class OCRline():
                 self.items[6] = self.supply
                 break
         
-                
+    def addPart(self, word, to_add):
+        bbox = "bbox " + unicode(word.x1) + " " + unicode(word.y1) + " " + unicode(to_add.x2) +\
+               " " + unicode(to_add.y2)
+        new_word = OCRbox(bbox, word.value + "" + to_add.value, self.area, 1.0)
+        
+        return new_word
+        
     def addName(self, word):
         if self.name == None:
             self.name = word
@@ -468,7 +553,7 @@ class OCRline():
             bbox = "bbox " + unicode(self.name.x1) + " " +\
                    unicode(self.name.y1) + " " + unicode(word.x2) +\
                    " " + unicode(word.y2)
-            self.name = OCRbox(bbox, self.name.value+" "+word.value, 1.0)
+            self.name = OCRbox(bbox, self.name.value+" "+word.value, self.area, 1.0)
     
     def __str__(self):
         return "OCRline: "+ unicode(self.items)
@@ -479,7 +564,7 @@ class OCRline():
     
 class OCRbox():
     """ Class providing recognised words as objects """
-    def __init__(self, bbox, text, factor):
+    def __init__(self, bbox, text, area, factor):
         coords = bbox.split()
         self.x1 = int(int(coords[1])/factor)
         self.y1 = int(int(coords[2])/factor)
@@ -488,7 +573,8 @@ class OCRbox():
         self.w = self.x2 - self.x1
         self.h = self.y2 - self.y1
         self.value = text.strip()
-        self.confidence = 1.0
+        
+        self.confidence = self.calculateConfidence(area, self.h)
 
         self.optional_values = []
         
@@ -497,3 +583,11 @@ class OCRbox():
     
     def __repr__(self):
         return "OCRbox: "+ unicode(self.value)
+
+    def calculateConfidence(self, area, height):
+        area_h = area[1][1]-area[0][1]
+        allowed_h = (int(0.7*(area_h/48)), int(1.3*(area_h/48)))
+        if height>=allowed_h[0] and height<=allowed_h[1]:
+            return 1.0
+        else:
+            return 0.5

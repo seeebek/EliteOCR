@@ -1,16 +1,10 @@
 # -*- mode: python -*-
-
-block_cipher = None
-
-
 a = Analysis(['EliteOCR.py'],
-             pathex=['C:\\Users\\Sebastian\\Desktop\\refactor'],
-             hiddenimports=[],
+             pathex=['C:\\Users\\SEBAST~1\\Desktop\\elite\\RFACTO~1'],
+             hiddenimports=['scipy.special._ufuncs_cxx'],
              hookspath=None,
-             runtime_hooks=None,
-             cipher=block_cipher)
-pyz = PYZ(a.pure,
-             cipher=block_cipher)
+             runtime_hooks=None)
+pyz = PYZ(a.pure)
 exe = EXE(pyz,
           a.scripts,
           exclude_binaries=True,
