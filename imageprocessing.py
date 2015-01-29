@@ -44,7 +44,7 @@ def removeTooBright(img, orig):
     workimg = cv2.subtract(orig, workimg)
     return workimg
     
-def makeCleanStationImage(img):
+def stationOrange(img):
     workimg = img[:]
     b,g,r  = cv2.split(workimg)
     b_inv = np.subtract(255.0, b)
@@ -53,7 +53,17 @@ def makeCleanStationImage(img):
     workimg = toCV(workimg)
     return workimg
     
-def makeCleanImage(img):
+def stationBlue(img):
+    workimg = img[:]
+    b,g,r  = cv2.split(workimg)
+    new = np.subtract(255.0, r)
+    workimg = contBright(new, 0, 190)
+    #workimg = toCV(workimg)
+    #cv2.imshow('image', workimg)
+    #cv2.waitKey(0)
+    return workimg
+
+def cleanOrange(img):
     workimg = img[:]
     b,g,r  = cv2.split(workimg)
     r = np.add(r, 0.0) 
@@ -63,3 +73,36 @@ def makeCleanImage(img):
     workimg = 255.0 - workimg
     workimg = toCV(workimg)
     return workimg
+ 
+def cleanBlue(img):
+    workimg = img[:]
+    b,g,r  = cv2.split(workimg)
+    #r = np.add(r, 0.0) 
+    new = np.add(r, 255.0-b)
+    new = toCV(new)
+    workimg = contBright(new, 0, 225)
+    #workimg = removeTooBright(b, new)
+    #workimg = 255.0 - workimg
+    #workimg = toCV(workimg)
+    #cv2.imshow('image', workimg)
+    #cv2.waitKey(0)
+    return workimg
+    
+def makeCleanImage(img, item):
+    if item.hud_color == 0:
+        return cleanOrange(img)
+    elif item.hud_color == 1:
+        return cleanBlue(img)
+    else:
+        return cleanOrange(img)
+       
+def makeCleanStationImage(img, item):
+    if item.hud_color == 0:
+        return stationOrange(img)
+    elif item.hud_color == 1:
+        return stationBlue(img)
+    else:
+        return stationOrange(img)
+    
+    
+

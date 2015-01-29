@@ -75,6 +75,9 @@
               <iconset resource="res.qrc">
                <normaloff>:/ico/plus.png</normaloff>:/ico/plus.png</iconset>
              </property>
+             <property name="shortcut">
+              <string>Alt+Q</string>
+             </property>
             </widget>
            </item>
            <item>
@@ -100,6 +103,9 @@
              <property name="text">
               <string>Add all</string>
              </property>
+             <property name="shortcut">
+              <string>Alt+W</string>
+             </property>
             </widget>
            </item>
            <item>
@@ -120,6 +126,9 @@
               <iconset resource="res.qrc">
                <normaloff>:/ico/minus.png</normaloff>:/ico/minus.png</iconset>
              </property>
+             <property name="shortcut">
+              <string>Alt+D</string>
+             </property>
             </widget>
            </item>
            <item>
@@ -135,6 +144,9 @@
              </property>
              <property name="text">
               <string>Remove all</string>
+             </property>
+             <property name="shortcut">
+              <string>Alt+F</string>
              </property>
             </widget>
            </item>
@@ -238,6 +250,9 @@
              <property name="text">
               <string>OCR</string>
              </property>
+             <property name="shortcut">
+              <string>Alt+E</string>
+             </property>
             </widget>
            </item>
            <item>
@@ -253,6 +268,9 @@
              </property>
              <property name="text">
               <string>OCR All</string>
+             </property>
+             <property name="shortcut">
+              <string>Alt+R</string>
              </property>
             </widget>
            </item>

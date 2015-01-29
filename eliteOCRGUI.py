@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'eliteOCRGUI.ui'
 #
-# Created: Tue Jan 20 13:59:55 2015
+# Created: Thu Jan 29 12:04:20 2015
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -624,13 +624,19 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "EliteOCR", None))
         self.label_7.setText(_translate("MainWindow", "Files", None))
         self.add_button.setText(_translate("MainWindow", "...", None))
+        self.add_button.setShortcut(_translate("MainWindow", "Alt+Q", None))
         self.add_all_button.setText(_translate("MainWindow", "Add all", None))
+        self.add_all_button.setShortcut(_translate("MainWindow", "Alt+W", None))
         self.remove_button.setText(_translate("MainWindow", "...", None))
+        self.remove_button.setShortcut(_translate("MainWindow", "Alt+D", None))
         self.remove_all_button.setText(_translate("MainWindow", "Remove all", None))
+        self.remove_all_button.setShortcut(_translate("MainWindow", "Alt+F", None))
         self.label_8.setText(_translate("MainWindow", "File: ", None))
         self.file_label.setText(_translate("MainWindow", "-", None))
         self.ocr_button.setText(_translate("MainWindow", "OCR", None))
+        self.ocr_button.setShortcut(_translate("MainWindow", "Alt+E", None))
         self.ocr_all.setText(_translate("MainWindow", "OCR All", None))
+        self.ocr_all.setShortcut(_translate("MainWindow", "Alt+R", None))
         self.label_9.setText(_translate("MainWindow", "System Name", None))
         self.label_5.setText(_translate("MainWindow", "Station", None))
         self.label.setText(_translate("MainWindow", "Commodity", None))

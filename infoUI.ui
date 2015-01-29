@@ -26,8 +26,8 @@
 
 If you have a problem read &quot;Help&quot; first!
 
--Custom UI colors are not supported!
--If you use screenshots lower than 1920x1080 EliteOCR will force you to wait 1,5 seconds on every recognized line.
+-Read Help for supported HUD colors. More will be added in the future.
+-If you use screenshots lower than 1680 by 1050px EliteOCR will force you to wait 1,2 seconds on every recognized line.
 -If you changed the FOV settings of the game the limitation may apply on higher resolutions.
 -If the limitations apply the option &quot;add entries with high confidence&quot; will be ignored.&quot;
 -You can remove the limitations if you change to private mode but the export to BPC and EDDN will be disabled.

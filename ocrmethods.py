@@ -3,6 +3,7 @@ import cv2
 import math
 import tesseract
 import json
+import codecs
 import numpy as np
 import cv2.cv as cv
 from imageprocessing import *
@@ -18,6 +19,7 @@ class OCRAreasFinder:
         self.market_table = None
         self.market_width = 0
         self.valid = False
+        self.hud_color = 0
         self.findAreas(image)
         
     def findAreas(self, image):
@@ -51,6 +53,8 @@ class OCRAreasFinder:
         longestline = max(loi,key=itemgetter(2))
         self.market_width = longestline[2]
         #print "start: " + str(longestline)
+        
+        self.hud_color = self.getHUD(longestline, img)
         
         #validate:
         tolerance1 = [longestline[1]-int(0.98*longestline[2]*0.665306), longestline[1]-int(1.02*longestline[2]*0.665306)]
@@ -110,6 +114,28 @@ class OCRAreasFinder:
         #small = cv2.resize(img, (0,0), fx=0.5, fy=0.5) 
         #cv2.imshow("xx", img)
         #cv2.waitKey(0)
+    def getHUD(self, line, img):
+        colors = [[10,105,245], #standard orange
+                  [245,105, 10]] # blue
+        candidates = [list(img[line[1]-1, line[0]+(line[2]/2)]),
+                      list(img[line[1],   line[0]+(line[2]/2)]),
+                      list(img[line[1]+1, line[0]+(line[2]/2)])]
+        color_found = False
+        for i in range(len(colors)):
+            first = False
+            second = False
+            third = False
+            for c in candidates:
+                first = colors[i][0]-10 <= c[0] <= colors[i][0]+10
+                second = colors[i][1]-10 <= c[1] <= colors[i][1]+10
+                third = colors[i][2]-10 <= c[2] <= colors[i][2]+10
+                if first and second and third:
+                    color_found = True
+                    #print i
+                    return i
+        return 0
+                
+            
 
 class TesseractStation:
     def __init__(self, image, area):
@@ -164,104 +190,102 @@ class TesseractStation:
                 linelist.append(newline)
         return linelist
 
-class TesseractStationMulti:
-    def __init__(self, image, data):
-        self.image = image
-        self.result = self.cleanStationName(data)
+class TesseractStationMLP:
+    def __init__(self, image, ocr_data, path):
+        self.ocr_data = ocr_data
         
-    def cleanStationName(self, data):
-        item = data.name
-        image = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
+        layers = np.array([400,32,36])
+        self.nnetwork = cv2.ANN_MLP(layers, 1,0.6,1)
+        self.nnetwork.load(path + "\\mlp.xml", "OCRMLP")
+        self.classdict = {0:"A",1:"B",2:"C",3:"D",4:"E",5:"F",6:"G",7:"H",8:"I",9:"J",10:"K",11:"L",12:"M",13:"N",14:"O",15:"P",16:"Q",17:"R",18:"S",19:"T",20:"U",21:"V",22:"W",23:"X",24:"Y",25:"Z",26:"Ä",27:"Ö",28:"Ü",29:"À",30:"É",31:"È",32:"Ê",33:"'",34:"-",35:".",}
+        try:
+            self.ocrSnippets(self.ocr_data, image)
+        except:
+            self.ocr_data.name.confidence = 0.5
+        
+    def ocrSnippets(self, ocr_data, image):
+        if ocr_data.name != None:
+            restext = ""
+            for box in ocr_data.name.boxes:
+                snippet = image[box[1]-5:box[3]+5, box[0]-5:box[2]+5]
+                characters = self.split(snippet)
+                ar = self.toArray(characters)
+                
+                data = np.array(ar, dtype='float32')
+                resultclasses = -1 * np.ones((len(data),36), dtype='float32')
+                self.nnetwork.predict(data, resultclasses)
+                
+                for j in range(len(resultclasses)):
+                    restext += self.classdict[np.argmax(resultclasses[j])].decode('utf-8')
+                restext += " "
+            #print ocr_data.name.value
+            #print restext.strip()
+            #print
+            ocr_data.name.value = restext.strip()
+            ocr_data.name.confidence = 1.0
+                
+    
+    def toArray(self, images):
+        array = []
+        for image in images:
+            temp = []
+            image = cv2.resize(image, (20, 20))
+            ret,image = cv2.threshold(image,140,255,cv2.THRESH_BINARY)
+            #print image
+            for row in image:
+                for cell in row:
+                    if cell == 255:
+                        temp.append(1)
+                    else:
+                        temp.append(0)
+            array.append(temp)
+        return array
+    
+    def split(self, image):
+        characters = []
+        x1 = 0
+        x2 = 0
+        symbol = 0
+        blackflag = False
+        start = False
+        image = cv2.resize(image, (0,0), fx=2, fy=2)
         h, w = image.shape
-        factor = 2400.0/h
-        
-        snippet = image[item.y1-1:item.y2+1, item.x1-1:item.x2+1]
-        h, w = snippet.shape
-        new_size = (int(w*factor), int(h*factor))
-        snippet = cv2.resize(snippet, new_size, 0, 0, cv2.INTER_CUBIC)
-        
-        repeats = 7
-        img = []
-        for i in xrange(0,repeats):
-            img.append(255 - contBright(snippet, 70.0+5*i, 255.0-10*i))
-        
-        fullimg = self.genNewImage(img)
-        #cv2.imshow("xx", fullimg)
-        #cv2.waitKey(0)
-        results = self.hocrToList(self.ocr(fullimg))
-        results.append(data.name.value)
-        
-        #diffs.append([i for i in xrange(len(data.name.value)) if data.name.value[i] != name[i]])
-        preffered = ""
-        most_common = Counter(results).most_common()
-        #print most_common
-        if len(most_common) == 2:
-            if len(most_common[0][0]) <= len(most_common[1][0]):
-                diffs = [i for i in xrange(len(most_common[0][0])) if most_common[0][0][i] != most_common[1][0][i]]
-            else:
-                diffs = [i for i in xrange(len(most_common[1][0])) if most_common[0][0][i] != most_common[1][0][i]]
-            if len(diffs) == 1:
-                if most_common[0][0][diffs[0]] == "D" and most_common[1][0][diffs[0]] == "O":
-                    preffered = most_common[0][0]
-                elif most_common[0][0][diffs[0]] == "O" and most_common[1][0][diffs[0]] == "D":
-                    preffered = most_common[1][0]
-        
-        if len(most_common) > 0:
-            if len(most_common) == 1:
-                item.confidence = 1.0
-            else:
-                item.confidence = 0.5
-            item.value = most_common[0][0]
-            if preffered != "":
-                item.value = preffered
-            item.optional_values = self.sortAlternatives(most_common)
-
-    def sortAlternatives(self, alt):
-        sorted = []
-        for tuple in alt:
-            sorted.append(tuple[0])
-        return sorted
-    
-    def genNewImage(self, img):
-        h, w = img[0].shape
-        vis = np.zeros((int(1.5*h*len(img))+20, int(1.5*w)+20), np.uint8)
-        vis = 255 - vis
-        currenty = 20
-        currentx = 20
-        for i in img:
-            height, width = i.shape
-            vis[currenty:currenty+height, currentx:currentx+width] = i
-            currenty += height + 15
-        return vis
-    
-    def ocr(self, image):
-        """Return OCR result."""
-        api = tesseract.TessBaseAPI()
-        api.Init(".","big",tesseract.OEM_DEFAULT)
-        api.SetPageSegMode(tesseract.PSM_SINGLE_BLOCK)
-        h,w = image.shape
-        w_step = w*image.dtype.itemsize
-        iplimage = cv.CreateImageHeader((w,h), cv.IPL_DEPTH_8U, 1)
-        cv.SetData(iplimage, image.tostring(),image.dtype.itemsize * (w))
-        tesseract.SetCvImage(iplimage,api)
-        hocr = api.GetHOCRText(0)
-        return hocr
-    
-    def hocrToList(self, input, scale_factor=1):
-        """Converts HOCR HTML data from Tesseract OCR into easily usable objects."""
-        soup = BeautifulSoup(input)
-        linelist = []
-        for line in soup.findAll("span", { "class" : "ocr_line" }):
-            wordlist = ""
-            not_empty = False
-            for word in line.findAll("span", { "class" : "ocrx_word" }):
-                if word.getText().strip() != '':
-                    new_word = word.getText()
-                    wordlist += new_word +" "
-                    not_empty = True
-            if not_empty:
-                linelist.append(wordlist.strip())
-        return linelist
+        for i in range(len(image[0])):
+            blackflag = False
+            for j in range(len(image)):
+                if image[j][i] < 160:
+                    blackflag = True
+                    break
+            if blackflag and (not start):
+                x1 = i
+                start = True 
+            if (not blackflag) and start:
+                x2 = i
+                start = False
+                snippet = self.topbottom(image[0:len(image), x1:x2], h)
+                ret,snippet = cv2.threshold(snippet,200,255,cv2.THRESH_BINARY)
+                characters.append(snippet)
+        return characters
+                
+    def topbottom(self, input, h):
+        first = 0
+        last = 0
+        blackflag = False
+        firstflag = False
+        for i in range(len(input)):
+            blackflag = False
+            for j in range(len(input[0])):
+                if input[i][j] < 190:
+                    if not firstflag:
+                        first = i
+                        firstflag = True
+                    last = i
+        res = input[first:last, 0:len(input[0])]
+        if h/len(res[0]) > 3:
+            res = input[10:len(input)-10, 0:len(input[0])]
+            border = (h - len(res[0]))/2
+            res = cv2.copyMakeBorder(res,0,0,border,border,cv2.BORDER_CONSTANT,value=(255,255,255))
+        return res
         
 class TesseractMarket1:
     def __init__(self, parent, image, area, language = "big"):
@@ -333,8 +357,9 @@ class Levenshtein:
         self.levels = {u"eng": [u'LOW', u'MED', u'HIGH'],
                        u"deu": [u'NIEDRIG', u'MITTEL', u'HOCH'], 
                        u"fra": [u'FAIBLE', u'MOYEN', u'ÉLEVÉ']}
-        file = open(path + "\\commodities.json", 'r')
+        file = codecs.open(path + "\\commodities.json", 'r', "utf-8")
         self.comm_list = json.loads(file.read())
+        file.close()
         #print self.comm_list
         #self.comm_list.sort(key = len)
         if language == "big" or language == "eng":
@@ -402,6 +427,103 @@ class Levenshtein:
                         toplev = lev
                 data[i][6].value = toplev
 
+class MLPMethod:
+    def __init__(self, parent, image, ocr_data, path):
+        self.ocr_data = ocr_data
+        
+        layers = np.array([400,32,36])
+        self.nnetwork = cv2.ANN_MLP(layers, 1,0.6,1)
+        self.nnetwork.load(path + "\\mlp.xml", "OCRMLP")
+        self.classdict = {0:"A",1:"B",2:"C",3:"D",4:"E",5:"F",6:"G",7:"H",8:"I",9:"J",10:"K",11:"L",12:"M",13:"N",14:"O",15:"P",16:"Q",17:"R",18:"S",19:"T",20:"U",21:"V",22:"W",23:"X",24:"Y",25:"Z",26:"Ä",27:"Ö",28:"Ü",29:"À",30:"É",31:"È",32:"Ê",33:"'",34:"-",35:".",}
+        self.ocrSnippets(parent, self.ocr_data, image)
+        
+    def ocrSnippets(self, parent, ocr_data, image):
+        for i in xrange(len(ocr_data)):
+            if ocr_data[i].name != None:
+                restext = ""
+                try:
+                    for box in ocr_data[i].name.boxes:
+                        snippet = image[box[1]-5:box[3]+5, box[0]-5:box[2]+5]
+                        characters = self.split(snippet)
+                        ar = self.toArray(characters)
+                        
+                        data = np.array(ar, dtype='float32')
+                        resultclasses = -1 * np.ones((len(data),36), dtype='float32')
+                        self.nnetwork.predict(data, resultclasses)
+                        
+                        for j in range(len(resultclasses)):
+                            restext += self.classdict[np.argmax(resultclasses[j])].decode('utf-8')
+                        restext += " "
+                    #print ocr_data[i].name.value
+                    #print restext
+                    #print
+                    ocr_data[i].name.value = restext.strip()
+                except:
+                    ocr_data[i].name.confidence = 0.5
+    
+    def toArray(self, images):
+        array = []
+        for image in images:
+            temp = []
+            image = cv2.resize(image, (20, 20))
+            ret,image = cv2.threshold(image,140,255,cv2.THRESH_BINARY)
+            #print image
+            for row in image:
+                for cell in row:
+                    if cell == 255:
+                        temp.append(1)
+                    else:
+                        temp.append(0)
+            array.append(temp)
+        return array
+    
+    def split(self, image):
+        characters = []
+        x1 = 0
+        x2 = 0
+        symbol = 0
+        blackflag = False
+        start = False
+        image = cv2.resize(image, (0,0), fx=2, fy=2)
+        
+        h, w = image.shape
+        for i in range(len(image[0])):
+            blackflag = False
+            for j in range(len(image)):
+                if image[j][i] < 160:
+                    blackflag = True
+                    break
+            if blackflag and (not start):
+                x1 = i
+                start = True 
+            if (not blackflag) and start:
+                x2 = i
+                start = False
+                snippet = self.topbottom(image[0:len(image), x1:x2], h)
+                ret,snippet = cv2.threshold(snippet,200,255,cv2.THRESH_BINARY)
+                characters.append(snippet)
+        return characters
+                
+    def topbottom(self, input, h):
+        first = 0
+        last = 0
+        blackflag = False
+        firstflag = False
+        for i in range(len(input)):
+            blackflag = False
+            for j in range(len(input[0])):
+                if input[i][j] < 190:
+                    if not firstflag:
+                        first = i
+                        firstflag = True
+                    last = i
+        res = input[first:last, 0:len(input[0])]
+        if h/len(res[0]) > 3:
+            res = input[10:len(input)-10, 0:len(input[0])]
+            border = (h - len(res[0]))/2
+            res = cv2.copyMakeBorder(res,0,0,border,border,cv2.BORDER_CONSTANT,value=(255,255,255))
+        return res
+                
 class NNMethod:
     def __init__(self, parent, image, ocr_data, path):
         self.result = ocr_data
@@ -418,7 +540,17 @@ class NNMethod:
         except:
             step = 10.0
         for i in xrange(len(data)):
-            parent.progress_bar.setValue(50+int(i*step))
+            if not parent is None:
+                parent.progress_bar.setValue(50+int(i*step))
+            else:
+                sys.stdout.write("\r[=====")
+                for s in range(5):
+                    if i > (len(data)/5)*s:
+                        sys.stdout.write("=")
+                    else:
+                        sys.stdout.write(" ")
+                sys.stdout.write("]")
+                sys.stdout.flush()
             for j in xrange(len(data[i].items)):
                 if data[i][j] != None:
                     if j in [1, 2, 3,5]:
@@ -549,11 +681,15 @@ class OCRline():
     def addName(self, word):
         if self.name == None:
             self.name = word
+            self.name.addBox()
         else:
+            temp = self.name
             bbox = "bbox " + unicode(self.name.x1) + " " +\
                    unicode(self.name.y1) + " " + unicode(word.x2) +\
                    " " + unicode(word.y2)
             self.name = OCRbox(bbox, self.name.value+" "+word.value, self.area, 1.0)
+            #print temp.boxes
+            self.name.addBox(temp.boxes + [word.box])
     
     def __str__(self):
         return "OCRline: "+ unicode(self.items)
@@ -570,6 +706,8 @@ class OCRbox():
         self.y1 = int(int(coords[2])/factor)
         self.x2 = int(int(coords[3])/factor)
         self.y2 = int(int(coords[4].replace(';', ''))/factor)
+        self.box = [self.x1, self.y1, self.x2, self.y2]
+        self.boxes = []
         self.w = self.x2 - self.x1
         self.h = self.y2 - self.y1
         self.value = text.strip()
@@ -583,7 +721,13 @@ class OCRbox():
     
     def __repr__(self):
         return "OCRbox: "+ unicode(self.value)
-
+    
+    def addBox(self, box = None):
+        if not box is None:
+            self.boxes = box
+        else:
+            self.boxes.append(self.box)
+        
     def calculateConfidence(self, area, height):
         area_h = area[1][1]-area[0][1]
         allowed_h = (int(0.7*(area_h/48)), int(1.3*(area_h/48)))

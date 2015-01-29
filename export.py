@@ -68,7 +68,7 @@ class Export:
     def exportToCsv(self, result, file):
         for row in result:
             if len(row[0]) == 0:
-                QMessageBox.warning(self,"No System Name", "There are rows missing system name! \nThe exported CSV file might be incompatible with some tools.")
+                QMessageBox.warning(None,"No System Name", "There are rows missing system name! \nThe exported CSV file might be incompatible with some tools.")
                 break
         towrite = ""
         for row in result:

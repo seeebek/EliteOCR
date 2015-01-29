@@ -31,37 +31,37 @@
 <context>
     <name>EliteOCR</name>
     <message>
-        <location filename="EliteOCR.py" line="143"/>
+        <location filename="EliteOCR.py" line="161"/>
         <source>Switching to public mode will clear the result table! Are you sure you want to do it?</source>
         <translation>Passer au mode public va effacer le tableau ! etes vous sur de vouloir faire ça ?</translation>
     </message>
     <message>
-        <location filename="EliteOCR.py" line="153"/>
+        <location filename="EliteOCR.py" line="171"/>
         <source>Switching to private mode will disable BPC and EDDN Export! Are you sure you want to do it?</source>
         <translation>Passer au mode public va désactiver l&apos;exportation de BPC et EDDN ! etes vous sur de vouloir faire ça ?</translation>
     </message>
     <message>
-        <location filename="EliteOCR.py" line="154"/>
+        <location filename="EliteOCR.py" line="162"/>
         <source>Yes</source>
         <translation>Oui</translation>
     </message>
     <message>
-        <location filename="EliteOCR.py" line="154"/>
+        <location filename="EliteOCR.py" line="162"/>
         <source>No</source>
         <translation>Non</translation>
     </message>
     <message>
-        <location filename="EliteOCR.py" line="123"/>
+        <location filename="EliteOCR.py" line="141"/>
         <source>New version of EliteOCR available: %s To download it go to Help &gt; Update</source>
         <translation>Une nouvelle version d&apos;EliteOCR est disponible : %s Pour la télécharger ouvrez le menu Aide &gt; Mettre à jour</translation>
     </message>
     <message>
-        <location filename="EliteOCR.py" line="524"/>
+        <location filename="EliteOCR.py" line="579"/>
         <source>System name not found in log files. Make sure log directory path is set up correctly or add system name manually in the field below. Note: System name is necessary for BPC import!</source>
         <translation>Le nom du système n&apos;a pas été trouvé dans les fichiers de log. Assurez vous que le chemin du Répertoire est configuré correctement ou ajoutez le nom du système manuellement dans le champ ci-dessous. Remarque : Le nom du système est obligatoire pour l&apos;importation de BDC!</translation>
     </message>
     <message>
-        <location filename="EliteOCR.py" line="343"/>
+        <location filename="EliteOCR.py" line="361"/>
         <source>File was not recognized as a valid market screenshot. If the file is valid please report the issue in the forum.</source>
         <translation>Le fichier n&apos;est pas reconnu comme une capture d&apos;écran du marché valide. Si le fichier est valide merci de signaler le problème dans le forum.</translation>
     </message>
@@ -97,8 +97,8 @@
 
 If you have a problem read &quot;Help&quot; first!
 
--Custom UI colors are not supported!
--If you use screenshots lower than 1920x1080 EliteOCR will force you to wait 1,5 seconds on every recognized line.
+-Read Help for supported HUD colors. More will be added in the future.
+-If you use screenshots lower than 1680 by 1050px EliteOCR will force you to wait 1,2 seconds on every recognized line.
 -If you changed the FOV settings of the game the limitation may apply on higher resolutions.
 -If the limitations apply the option &quot;add entries with high confidence&quot; will be ignored.&quot;
 -You can remove the limitations if you change to private mode but the export to BPC and EDDN will be disabled.

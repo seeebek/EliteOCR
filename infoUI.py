@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'infoUI.ui'
 #
-# Created: Tue Jan 20 14:18:51 2015
+# Created: Thu Jan 29 11:42:40 2015
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -59,8 +59,8 @@ class Ui_Info(object):
 "\n"
 "If you have a problem read \"Help\" first!\n"
 "\n"
-"-Custom UI colors are not supported!\n"
-"-If you use screenshots lower than 1920x1080 EliteOCR will force you to wait 1,5 seconds on every recognized line.\n"
+"-Read Help for supported HUD colors. More will be added in the future.\n"
+"-If you use screenshots lower than 1680 by 1050px EliteOCR will force you to wait 1,2 seconds on every recognized line.\n"
 "-If you changed the FOV settings of the game the limitation may apply on higher resolutions.\n"
 "-If the limitations apply the option \"add entries with high confidence\" will be ignored.\"\n"
 "-You can remove the limitations if you change to private mode but the export to BPC and EDDN will be disabled.\n"

@@ -9,33 +9,46 @@ from imageprocessing import *
 from settings import Settings
 
 #OCR engines:
-from ocrmethods import TesseractStation, TesseractStationMulti, TesseractMarket1, Levenshtein, NNMethod
+from ocrmethods import TesseractStation, TesseractStationMLP, TesseractMarket1, Levenshtein, NNMethod, MLPMethod
 
 class OCR():
-    def __init__(self, parent, color_image, ocr_areas, language = "big"):
+    def __init__(self, parent, color_image, ocr_areas, language = "big", item = None):
+        self.item = item
         self.lang = language
         self.settings = Settings()
         self.repeats = 1
         self.image = color_image
-        parent.progress_bar.setMinimum(0)
-        parent.progress_bar.setMaximum(60)
-        parent.progress_bar.setValue(0)
-        self.contrast_station_img = makeCleanStationImage(self.image)
+        if not parent is None:
+            parent.progress_bar.setMinimum(0)
+            parent.progress_bar.setMaximum(60)
+            parent.progress_bar.setValue(0)
+        self.contrast_station_img = makeCleanStationImage(self.image, item)
         cv2.imwrite(".\\nn_training_images\\station.png", self.contrast_station_img)
-        parent.progress_bar.setValue(10)
-        parent.repaint()
-        self.contrast_commodities_img = makeCleanImage(self.image)
-        parent.progress_bar.setValue(20)
+        if not parent is None:
+            parent.progress_bar.setValue(10)
+            parent.repaint()
+        else:
+            sys.stdout.write("\r[===       ]")
+            sys.stdout.flush()
+        self.contrast_commodities_img = makeCleanImage(self.image, item)
+        if not parent is None:
+            parent.progress_bar.setValue(20)
         self.ocr_areas = ocr_areas
-        parent.progress_bar.setValue(30)
+        if not parent is None:
+            parent.progress_bar.setValue(30)
         self.station = self.readStationName(parent)
-        parent.progress_bar.setValue(40)
+        if not parent is None:
+            parent.progress_bar.setValue(40)
+        else:
+            sys.stdout.write("\r[====      ]")
+            sys.stdout.flush()
         self.commodities = self.readMarket(parent)
-        parent.progress_bar.setValue(0)
+        if not parent is None:
+            parent.progress_bar.setValue(0)
         
     def readStationName(self, parent):
         station_name = TesseractStation(self.contrast_station_img, self.ocr_areas.station_name)
-        station_name1 = TesseractStationMulti(self.image, station_name.result[0])
+        station_name1 = TesseractStationMLP(self.contrast_station_img, station_name.result[0], self.settings.app_path)
         
         if len(station_name.result) > 0:
             return station_name.result[0]
@@ -44,10 +57,18 @@ class OCR():
         
     def readMarket(self, parent):
         market_table = TesseractMarket1(parent, self.contrast_commodities_img, self.ocr_areas.market_table, self.lang)
-        parent.progress_bar.setValue(50)
+        if not self.item is None:
+            if self.item.market_width > 1065:
+                mlp = MLPMethod(parent, self.contrast_commodities_img, market_table.result, self.settings.app_path)
+        if not parent is None:
+            parent.progress_bar.setValue(50)
+        else:
+            sys.stdout.write("\r[=====     ]")
+            sys.stdout.flush()
         clean_commodities = Levenshtein(market_table.result, self.settings.app_path, self.lang)
         clean_numbers = NNMethod(parent,self.contrast_commodities_img, market_table.result, self.settings.app_path)
-        parent.progress_bar.setValue(60)
+        if not parent is None:
+            parent.progress_bar.setValue(60)
         
         #return self.compareResults(market_table.result,[market_table2.result])
         return clean_numbers.result

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS><TS version="2.0" language="de_DE" sourcelanguage="">
+<!DOCTYPE TS>
+<TS version="2.0" language="de_DE">
 <context>
     <name>Editor</name>
     <message>
@@ -31,37 +32,37 @@
 <context>
     <name>EliteOCR</name>
     <message>
-        <location filename="EliteOCR.py" line="143"/>
+        <location filename="EliteOCR.py" line="161"/>
         <source>Switching to public mode will clear the result table! Are you sure you want to do it?</source>
         <translation>Wechsel in den öffentlichen Modus wird die Ergebnistabelle leeren. Fortfahren?</translation>
     </message>
     <message>
-        <location filename="EliteOCR.py" line="153"/>
+        <location filename="EliteOCR.py" line="171"/>
         <source>Switching to private mode will disable BPC and EDDN Export! Are you sure you want to do it?</source>
         <translation>Wechsel in den privaten Modus wird die Exportmöglichkeit nach BPC und EDDN ausschalten. Fortfahren?</translation>
     </message>
     <message>
-        <location filename="EliteOCR.py" line="154"/>
+        <location filename="EliteOCR.py" line="162"/>
         <source>Yes</source>
         <translation>Ja</translation>
     </message>
     <message>
-        <location filename="EliteOCR.py" line="154"/>
+        <location filename="EliteOCR.py" line="162"/>
         <source>No</source>
         <translation>Nein</translation>
     </message>
     <message>
-        <location filename="EliteOCR.py" line="123"/>
+        <location filename="EliteOCR.py" line="141"/>
         <source>New version of EliteOCR available: %s To download it go to Help &gt; Update</source>
         <translation>Neue Version von EliteOCR ist verfügbar: %s Um sie herunterzuladen click auf Hilfe &gt; Update</translation>
     </message>
     <message>
-        <location filename="EliteOCR.py" line="524"/>
+        <location filename="EliteOCR.py" line="579"/>
         <source>System name not found in log files. Make sure log directory path is set up correctly or add system name manually in the field below. Note: System name is necessary for BPC import!</source>
         <translation>Systemname nicht gefunden. Stelle sicher, dass der Log pfad korrekt ist und VerboseLogging gesetzt wurde. Ansonsten fülle den Systemnamen manuell aus. </translation>
     </message>
     <message>
-        <location filename="EliteOCR.py" line="343"/>
+        <location filename="EliteOCR.py" line="361"/>
         <source>File was not recognized as a valid market screenshot. If the file is valid please report the issue in the forum.</source>
         <translation>Datei als kein Marketscreenshot erkannt. Falls die Datei doch richtig ist, melde das Probelm im Forum.</translation>
     </message>
@@ -106,12 +107,41 @@ If you have a problem read &quot;Help&quot; first!
 -If you have other problems report them on the Forum (forums.frontier.co.uk) in EliteOCR thread.
 
 -If you are not happy about the limitations: DO NOT USE EliteOCR(nobody is forcing you) and stop complaining.</source>
-        <translation>Bitte Merken:
+        <translation type="obsolete">Bitte Merken:
 
 Solltest du Probleme haben, ließ erstmal &quot;Hilfe&quot;.
 
 -Gänderte Interfacefarben im Spiel sind nicht unterstützt!
 -Falls du die Auflösung unter 1920x1080 nutzen solltest, wirst du bei jeder Zeile 1,5 Sekunden warten müssen.
+-Falls du die FOV Einstellung im Spiel verändert hast, kann die oben genannte Einschränkung gelten.
+-Falls die Einschränkung gilt, wird die Option &quot;Automatisches hinzufügen...&quot; ignoriert.
+-Die Enschränkung kann ausgeschaltet werden, wenn man den &quot;Öffentlichen Modus&quot; ausschaltet. BPC und EDDN Export wird dabei auch ausgeschaltet.
+-Falls EliteOCR die Log Dateinen/Systemnamen nicht finden kann, ließ &quot;Hilfe&quot;.
+-Falls du andere Probleme haben solltest, melde sie im Forum (forums.frontier.co.uk) in EliteOCR Thread.
+
+-Falls du unzufrieden mit den Einschränkungen sein solltest, BENUTZE EliteOCR NICHT (keiner zwingt dich dazu) und hör auf zu meckern!</translation>
+    </message>
+    <message>
+        <location filename="infoUI.py" line="58"/>
+        <source>Please note:
+
+If you have a problem read &quot;Help&quot; first!
+
+-Read Help for supported HUD colors. More will be added in the future.
+-If you use screenshots lower than 1680 by 1050px EliteOCR will force you to wait 1,2 seconds on every recognized line.
+-If you changed the FOV settings of the game the limitation may apply on higher resolutions.
+-If the limitations apply the option &quot;add entries with high confidence&quot; will be ignored.&quot;
+-You can remove the limitations if you change to private mode but the export to BPC and EDDN will be disabled.
+-If you have problems with EliteOCR not finding the log files/system names read &quot;Help&quot;.
+-If you have other problems report them on the Forum (forums.frontier.co.uk) in EliteOCR thread.
+
+-If you are not happy about the limitations: DO NOT USE EliteOCR(nobody is forcing you) and stop complaining.</source>
+        <translation>Bitte Merken:
+
+Solltest du Probleme haben, ließ erstmal &quot;Hilfe&quot;.
+
+-Unter Hilfe wirst du eine Liste unterstützter HUD-Farben finden.
+-Falls du die Auflösung unter 1680x1050 nutzen solltest, wirst du bei jeder Zeile 1,2 Sekunden warten müssen.
 -Falls du die FOV Einstellung im Spiel verändert hast, kann die oben genannte Einschränkung gelten.
 -Falls die Einschränkung gilt, wird die Option &quot;Automatisches hinzufügen...&quot; ignoriert.
 -Die Enschränkung kann ausgeschaltet werden, wenn man den &quot;Öffentlichen Modus&quot; ausschaltet. BPC und EDDN Export wird dabei auch ausgeschaltet.
@@ -316,12 +346,12 @@ Solltest du Probleme haben, ließ erstmal &quot;Hilfe&quot;.
     <message>
         <location filename="eliteOCRGUI.py" line="642"/>
         <source>&amp;Add and Next</source>
-        <translation>Hinzuf. und &amp;Weiter</translation>
+        <translation>Eintr&amp;agen und Weiter</translation>
     </message>
     <message>
         <location filename="eliteOCRGUI.py" line="643"/>
         <source>&amp;Continue to next file</source>
-        <translation>Nächste &amp;Datei</translation>
+        <translation>Nä&amp;chste Datei</translation>
     </message>
 </context>
 <context>

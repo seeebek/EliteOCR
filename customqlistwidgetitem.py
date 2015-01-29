@@ -27,6 +27,7 @@ class CustomQListWidgetItem(QListWidgetItem):
         self.img_height = 0
         self.market_width = 0
         self.ocr_areas = None
+        self.hud_color = None
         
     def loadColorImage(self):
         return self.addImage(self.hiddentext)
@@ -54,7 +55,8 @@ class CustomQListWidgetItem(QListWidgetItem):
         h, w = image.shape
         self.img_height = h
         self.ocr_areas = OCRAreasFinder(color_image)
-        self.market_width = self.ocr_areas.market_width 
+        self.market_width = self.ocr_areas.market_width
+        self.hud_color = self.ocr_areas.hud_color
         if not parent is None:
             parent.progress_bar.setValue(14)
         points = self.ocr_areas.market_table
