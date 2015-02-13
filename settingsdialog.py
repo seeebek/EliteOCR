@@ -16,7 +16,6 @@ class SettingsDialog(QDialog, Ui_Settings):
         self.exp_dir.setText(self.exportdir)
         self.horizontal_exp.setChecked(self.settings['horizontal_exp'])
         self.native_dialog.setChecked(self.settings['native_dialog'])
-        self.updates_check.setChecked(self.settings['updates_check'])
         self.exp_browse.clicked.connect(self.browseExportDir)
         
         self.logdir = self.settings['log_dir']
@@ -29,12 +28,22 @@ class SettingsDialog(QDialog, Ui_Settings):
         self.delete_files.setChecked(self.settings['delete_files'])
         self.pause_at_end.setChecked(self.settings['pause_at_end'])
         self.create_nn_images.setChecked(self.settings['create_nn_images'])
+        self.input_size.setValue(self.settings['input_size'])
+        self.snippet_size.setValue(self.settings['snippet_size'])
+        self.label_color.setText(self.settings['label_color'])
+        self.input_color.setText(self.settings['input_color'])
+        self.button_color.setText(self.settings['button_color'])
+        self.button_border_color.setText(self.settings['button_border_color'])
+        self.border_color.setText(self.settings['border_color'])
         self.browse.clicked.connect(self.browseDir)
         
         self.lg_browse.clicked.connect(self.browseLogDir)
         
         self.fillUILang()
         self.fillOCRLang()
+        
+        if self.settings['theme'] == "dark":
+            self.theme.setCurrentIndex(1)
     
     def fillUILang(self):
         self.ui_language.addItem("en")
@@ -99,9 +108,16 @@ class SettingsDialog(QDialog, Ui_Settings):
         self.settings.setValue('remove_dupli', self.remove_dupli.isChecked())
         self.settings.setValue('delete_files', self.delete_files.isChecked())
         self.settings.setValue('pause_at_end', self.pause_at_end.isChecked())
-        self.settings.setValue('updates_check', self.updates_check.isChecked())
         self.settings.setValue('ui_language', self.ui_language.currentText())
         self.settings.setValue('ocr_language', self.ocr_language.currentText())
         self.settings.setValue('create_nn_images', self.create_nn_images.isChecked())
+        self.settings.setValue('theme', self.theme.currentText())
+        self.settings.setValue('input_size', self.input_size.value())
+        self.settings.setValue('snippet_size', self.snippet_size.value())
+        self.settings.setValue('label_color', self.label_color.text())
+        self.settings.setValue('input_color', self.input_color.text())
+        self.settings.setValue('button_color', self.button_color.text())
+        self.settings.setValue('button_border_color', self.button_border_color.text())
+        self.settings.setValue('border_color', self.border_color.text())
         self.settings.sync()
         self.close()

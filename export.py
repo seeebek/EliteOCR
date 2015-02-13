@@ -68,7 +68,7 @@ class Export:
     def exportToCsv(self, result, file):
         for row in result:
             if len(row[0]) == 0:
-                QMessageBox.warning(None,"No System Name", "There are rows missing system name! \nThe exported CSV file might be incompatible with some tools.")
+                QMessageBox.warning(self.parent,"No System Name", "There are rows missing system name! \nThe exported CSV file might be incompatible with some tools.")
                 break
         towrite = ""
         for row in result:
@@ -146,6 +146,7 @@ class Export:
             bpc_format.append([unicode(id)]+row)
             
         self.exportToCsv(bpc_format, file)
+        self.parent.statusbar.showMessage ("To support the community consider exporting your data to EDDN", 4000)
         
     def eddnExport(self):
         all_rows = self.parent.result_table.rowCount()
@@ -185,7 +186,7 @@ class Export:
         notsent = list(set(range(all_rows))-set(sent_rows))
 
         if len(to_send) < all_rows:
-            QMessageBox.warning(self,"Warning", "Following rows will not be exported to EDDN:\n "+\
+            QMessageBox.warning(self.parent,"Warning", "Following rows will not be exported to EDDN:\n "+\
             str(notsent)+"\n"+\
             "Possible reasons:\n"+\
             "- Rows were sent already once before\n"+\
@@ -247,3 +248,4 @@ class Export:
             self.parent.settings.setValue('last_export_format', "xlsx")
             self.parent.settings.sync()
             self.exportToXlsx(self.tableToList(True, True), file)
+        self.parent.statusbar.showMessage ("To support the community consider exporting your data to EDDN", 4000)

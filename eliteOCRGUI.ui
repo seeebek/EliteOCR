@@ -6,9 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1197</width>
-    <height>822</height>
+    <width>1272</width>
+    <height>801</height>
    </rect>
+  </property>
+  <property name="focusPolicy">
+   <enum>Qt::TabFocus</enum>
   </property>
   <property name="windowTitle">
    <string>EliteOCR</string>
@@ -17,1044 +20,866 @@
    <iconset resource="res.qrc">
     <normaloff>:/ico/icon.ico</normaloff>:/ico/icon.ico</iconset>
   </property>
-  <property name="animated">
-   <bool>true</bool>
-  </property>
-  <property name="tabShape">
-   <enum>QTabWidget::Rounded</enum>
-  </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout_5">
+   <property name="font">
+    <font>
+     <family>Consolas</family>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_4">
     <item>
-     <widget class="QWidget" name="widget" native="true">
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>200</height>
-       </size>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_9">
-       <property name="margin">
-        <number>0</number>
-       </property>
-       <item>
-        <layout class="QVBoxLayout" name="verticalLayout_4">
-         <item>
-          <widget class="QLabel" name="label_7">
-           <property name="minimumSize">
-            <size>
-             <width>150</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>20</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>Files</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_7">
-           <item>
-            <widget class="QToolButton" name="add_button">
-             <property name="maximumSize">
-              <size>
-               <width>16777215</width>
-               <height>20</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>...</string>
-             </property>
-             <property name="icon">
-              <iconset resource="res.qrc">
-               <normaloff>:/ico/plus.png</normaloff>:/ico/plus.png</iconset>
-             </property>
-             <property name="shortcut">
-              <string>Alt+Q</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="add_all_button">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>70</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>50</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>Add all</string>
-             </property>
-             <property name="shortcut">
-              <string>Alt+W</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QToolButton" name="remove_button">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>16777215</width>
-               <height>20</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>...</string>
-             </property>
-             <property name="icon">
-              <iconset resource="res.qrc">
-               <normaloff>:/ico/minus.png</normaloff>:/ico/minus.png</iconset>
-             </property>
-             <property name="shortcut">
-              <string>Alt+D</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="remove_all_button">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>70</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>Remove all</string>
-             </property>
-             <property name="shortcut">
-              <string>Alt+F</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeType">
-              <enum>QSizePolicy::Expanding</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <widget class="QListWidget" name="file_list">
-           <property name="minimumSize">
-            <size>
-             <width>150</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>200</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="Line" name="line_3">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QVBoxLayout" name="verticalLayout_2">
-         <property name="spacing">
-          <number>0</number>
-         </property>
-         <property name="sizeConstraint">
-          <enum>QLayout::SetDefaultConstraint</enum>
-         </property>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout">
-           <property name="sizeConstraint">
-            <enum>QLayout::SetDefaultConstraint</enum>
-           </property>
-           <item>
-            <widget class="QLabel" name="label_8">
-             <property name="maximumSize">
-              <size>
-               <width>30</width>
-               <height>25</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>File: </string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="file_label">
-             <property name="maximumSize">
-              <size>
-               <width>16777215</width>
-               <height>25</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>-</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_8">
-           <item>
-            <widget class="QPushButton" name="ocr_button">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>16777215</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>OCR</string>
-             </property>
-             <property name="shortcut">
-              <string>Alt+E</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="ocr_all">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>16777215</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>OCR All</string>
-             </property>
-             <property name="shortcut">
-              <string>Alt+R</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer_3">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>5</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <widget class="Line" name="line">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="system_not_found">
-           <property name="styleSheet">
-            <string notr="true">QLabel {color: red; }</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_6">
-           <property name="spacing">
-            <number>10</number>
-           </property>
-           <item>
-            <widget class="QLabel" name="label_9">
-             <property name="text">
-              <string>System Name</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="system_name">
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>25</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>11</pointsize>
-              </font>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <widget class="QLabel" name="label_5">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>20</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>Station</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_5">
-           <property name="spacing">
-            <number>6</number>
-           </property>
-           <item>
-            <widget class="QGraphicsView" name="station_name_img">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>6</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>20</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>16777215</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="verticalScrollBarPolicy">
-              <enum>Qt::ScrollBarAlwaysOff</enum>
-             </property>
-             <property name="horizontalScrollBarPolicy">
-              <enum>Qt::ScrollBarAlwaysOff</enum>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="station_name">
-             <property name="enabled">
-              <bool>true</bool>
-             </property>
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>4</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>25</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>16777215</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>11</pointsize>
-              </font>
-             </property>
-             <property name="acceptDrops">
-              <bool>false</bool>
-             </property>
-             <property name="styleSheet">
-              <string notr="true"/>
-             </property>
-             <property name="editable">
-              <bool>true</bool>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>16</width>
-               <height>16</height>
-              </size>
-             </property>
-             <property name="frame">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_3">
-           <property name="spacing">
-            <number>6</number>
-           </property>
-           <property name="sizeConstraint">
-            <enum>QLayout::SetFixedSize</enum>
-           </property>
-           <item>
-            <layout class="QVBoxLayout" name="verticalLayout">
-             <property name="spacing">
-              <number>0</number>
-             </property>
-             <item>
-              <layout class="QGridLayout" name="gridLayout">
-               <property name="horizontalSpacing">
-                <number>6</number>
-               </property>
-               <property name="verticalSpacing">
-                <number>0</number>
-               </property>
-               <item row="1" column="3">
-                <widget class="QGraphicsView" name="demand_img">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
-                 <property name="verticalScrollBarPolicy">
-                  <enum>Qt::ScrollBarAlwaysOff</enum>
-                 </property>
-                 <property name="horizontalScrollBarPolicy">
-                  <enum>Qt::ScrollBarAlwaysOff</enum>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                 </property>
-                 <property name="renderHints">
-                  <set>QPainter::SmoothPixmapTransform|QPainter::TextAntialiasing</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="5">
-                <widget class="QGraphicsView" name="supply_img">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
-                 <property name="verticalScrollBarPolicy">
-                  <enum>Qt::ScrollBarAlwaysOff</enum>
-                 </property>
-                 <property name="horizontalScrollBarPolicy">
-                  <enum>Qt::ScrollBarAlwaysOff</enum>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                 </property>
-                 <property name="renderHints">
-                  <set>QPainter::SmoothPixmapTransform|QPainter::TextAntialiasing</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="6">
-                <widget class="QGraphicsView" name="supply_text_img">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
-                 <property name="verticalScrollBarPolicy">
-                  <enum>Qt::ScrollBarAlwaysOff</enum>
-                 </property>
-                 <property name="horizontalScrollBarPolicy">
-                  <enum>Qt::ScrollBarAlwaysOff</enum>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                 </property>
-                 <property name="renderHints">
-                  <set>QPainter::SmoothPixmapTransform|QPainter::TextAntialiasing</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="4">
-                <widget class="QGraphicsView" name="demand_text_img">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
-                 <property name="verticalScrollBarPolicy">
-                  <enum>Qt::ScrollBarAlwaysOff</enum>
-                 </property>
-                 <property name="horizontalScrollBarPolicy">
-                  <enum>Qt::ScrollBarAlwaysOff</enum>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                 </property>
-                 <property name="renderHints">
-                  <set>QPainter::SmoothPixmapTransform|QPainter::TextAntialiasing</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="2">
-                <widget class="QGraphicsView" name="buy_img">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
-                 <property name="verticalScrollBarPolicy">
-                  <enum>Qt::ScrollBarAlwaysOff</enum>
-                 </property>
-                 <property name="horizontalScrollBarPolicy">
-                  <enum>Qt::ScrollBarAlwaysOff</enum>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                 </property>
-                 <property name="renderHints">
-                  <set>QPainter::SmoothPixmapTransform|QPainter::TextAntialiasing</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="0">
-                <widget class="QGraphicsView" name="name_img">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
-                 <property name="verticalScrollBarPolicy">
-                  <enum>Qt::ScrollBarAlwaysOff</enum>
-                 </property>
-                 <property name="horizontalScrollBarPolicy">
-                  <enum>Qt::ScrollBarAlwaysOff</enum>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                 </property>
-                 <property name="renderHints">
-                  <set>QPainter::SmoothPixmapTransform|QPainter::TextAntialiasing</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="1">
-                <widget class="QGraphicsView" name="sell_img">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
-                 <property name="verticalScrollBarPolicy">
-                  <enum>Qt::ScrollBarAlwaysOff</enum>
-                 </property>
-                 <property name="horizontalScrollBarPolicy">
-                  <enum>Qt::ScrollBarAlwaysOff</enum>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-                 </property>
-                 <property name="renderHints">
-                  <set>QPainter::SmoothPixmapTransform|QPainter::TextAntialiasing</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="0">
-                <widget class="QLabel" name="label">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="text">
-                  <string>Commodity</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="1">
-                <widget class="QLabel" name="label_2">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="text">
-                  <string>Sell</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="2">
-                <widget class="QLabel" name="label_3">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="text">
-                  <string>Buy</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="3">
-                <widget class="QLabel" name="label_4">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="text">
-                  <string>Demand</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="5">
-                <widget class="QLabel" name="label_6">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="text">
-                  <string>Supply</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="0">
-                <widget class="QComboBox" name="name">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                   <horstretch>43</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>25</height>
-                  </size>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>11</pointsize>
-                  </font>
-                 </property>
-                 <property name="styleSheet">
-                  <string notr="true"/>
-                 </property>
-                 <property name="editable">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="1">
-                <widget class="QComboBox" name="sell">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                   <horstretch>12</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>25</height>
-                  </size>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>11</pointsize>
-                  </font>
-                 </property>
-                 <property name="styleSheet">
-                  <string notr="true"/>
-                 </property>
-                 <property name="editable">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="2">
-                <widget class="QComboBox" name="buy">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                   <horstretch>12</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>25</height>
-                  </size>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>11</pointsize>
-                  </font>
-                 </property>
-                 <property name="styleSheet">
-                  <string notr="true"/>
-                 </property>
-                 <property name="editable">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="3">
-                <widget class="QComboBox" name="demand_num">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                   <horstretch>14</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>25</height>
-                  </size>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>11</pointsize>
-                  </font>
-                 </property>
-                 <property name="styleSheet">
-                  <string notr="true"/>
-                 </property>
-                 <property name="editable">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="4">
-                <widget class="QComboBox" name="demand">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                   <horstretch>3</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>25</height>
-                  </size>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>11</pointsize>
-                  </font>
-                 </property>
-                 <property name="styleSheet">
-                  <string notr="true"/>
-                 </property>
-                 <property name="editable">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="5">
-                <widget class="QComboBox" name="supply_num">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                   <horstretch>14</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>25</height>
-                  </size>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>11</pointsize>
-                  </font>
-                 </property>
-                 <property name="styleSheet">
-                  <string notr="true"/>
-                 </property>
-                 <property name="editable">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="6">
-                <widget class="QComboBox" name="supply">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                   <horstretch>3</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>25</height>
-                  </size>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>11</pointsize>
-                  </font>
-                 </property>
-                 <property name="styleSheet">
-                  <string notr="true"/>
-                 </property>
-                 <property name="editable">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QVBoxLayout" name="verticalLayout_3">
-             <property name="spacing">
-              <number>0</number>
-             </property>
-             <item>
-              <widget class="QPushButton" name="skip_button">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="text">
-                <string>&amp;Skip</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="save_button">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="text">
-                <string>&amp;Add and Next</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="continue_button">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="text">
-                <string>&amp;Continue to next file</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </widget>
+     <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0">
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <property name="spacing">
+         <number>1</number>
+        </property>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <item>
+           <widget class="QToolButton" name="add_button">
+            <property name="text">
+             <string>...</string>
+            </property>
+            <property name="icon">
+             <iconset resource="res.qrc">
+              <normaloff>:/ico/plus.png</normaloff>:/ico/plus.png</iconset>
+            </property>
+            <property name="shortcut">
+             <string>Alt+Q</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="remove_button">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>...</string>
+            </property>
+            <property name="icon">
+             <iconset resource="res.qrc">
+              <normaloff>:/ico/minus.png</normaloff>:/ico/minus.png</iconset>
+            </property>
+            <property name="shortcut">
+             <string>Alt+D</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QPushButton" name="add_all_button">
+            <property name="text">
+             <string>Add all</string>
+            </property>
+            <property name="shortcut">
+             <string>Alt+W</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="remove_all_button">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>Remove all</string>
+            </property>
+            <property name="shortcut">
+             <string>Alt+F</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QListWidget" name="file_list">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>16777215</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="Line" name="line">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <property name="spacing">
+         <number>2</number>
+        </property>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_7">
+          <item>
+           <widget class="QPushButton" name="ocr_button">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>OCR</string>
+            </property>
+            <property name="shortcut">
+             <string>Alt+E</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="ocr_all">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>OCR All</string>
+            </property>
+            <property name="shortcut">
+             <string>Alt+R</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_8">
+          <item>
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>System </string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="system_name">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>30</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_9">
+          <item>
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>Station</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGraphicsView" name="station_name_img">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
+            <property name="verticalScrollBarPolicy">
+             <enum>Qt::ScrollBarAlwaysOff</enum>
+            </property>
+            <property name="horizontalScrollBarPolicy">
+             <enum>Qt::ScrollBarAlwaysOff</enum>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="station_name">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>30</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_10">
+          <item>
+           <layout class="QGridLayout" name="gridLayout">
+            <property name="verticalSpacing">
+             <number>2</number>
+            </property>
+            <item row="0" column="2">
+             <widget class="QLabel" name="label_7">
+              <property name="text">
+               <string>Buy</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="5">
+             <widget class="QLabel" name="label_10">
+              <property name="text">
+               <string>Supply</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QGraphicsView" name="name_img">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>25</height>
+               </size>
+              </property>
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="verticalScrollBarPolicy">
+               <enum>Qt::ScrollBarAlwaysOff</enum>
+              </property>
+              <property name="horizontalScrollBarPolicy">
+               <enum>Qt::ScrollBarAlwaysOff</enum>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="3">
+             <widget class="QLabel" name="label_8">
+              <property name="text">
+               <string>Demand</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="4">
+             <widget class="QLineEdit" name="demand">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>3</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>30</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="6">
+             <widget class="QLineEdit" name="supply">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>3</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>30</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="6">
+             <widget class="QGraphicsView" name="supply_text_img">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>25</height>
+               </size>
+              </property>
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="verticalScrollBarPolicy">
+               <enum>Qt::ScrollBarAlwaysOff</enum>
+              </property>
+              <property name="horizontalScrollBarPolicy">
+               <enum>Qt::ScrollBarAlwaysOff</enum>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QLineEdit" name="sell">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>12</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>30</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLineEdit" name="name">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>43</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>30</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="2">
+             <widget class="QLineEdit" name="buy">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>12</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>30</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="3">
+             <widget class="QLineEdit" name="demand_num">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>14</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>30</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="3">
+             <widget class="QGraphicsView" name="demand_img">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>25</height>
+               </size>
+              </property>
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="verticalScrollBarPolicy">
+               <enum>Qt::ScrollBarAlwaysOff</enum>
+              </property>
+              <property name="horizontalScrollBarPolicy">
+               <enum>Qt::ScrollBarAlwaysOff</enum>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="4">
+             <widget class="QGraphicsView" name="demand_text_img">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>25</height>
+               </size>
+              </property>
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="verticalScrollBarPolicy">
+               <enum>Qt::ScrollBarAlwaysOff</enum>
+              </property>
+              <property name="horizontalScrollBarPolicy">
+               <enum>Qt::ScrollBarAlwaysOff</enum>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="5">
+             <widget class="QGraphicsView" name="supply_img">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>25</height>
+               </size>
+              </property>
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="verticalScrollBarPolicy">
+               <enum>Qt::ScrollBarAlwaysOff</enum>
+              </property>
+              <property name="horizontalScrollBarPolicy">
+               <enum>Qt::ScrollBarAlwaysOff</enum>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLabel" name="label_6">
+              <property name="text">
+               <string>Sell</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_5">
+              <property name="text">
+               <string>Commodity</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QGraphicsView" name="sell_img">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>25</height>
+               </size>
+              </property>
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="verticalScrollBarPolicy">
+               <enum>Qt::ScrollBarAlwaysOff</enum>
+              </property>
+              <property name="horizontalScrollBarPolicy">
+               <enum>Qt::ScrollBarAlwaysOff</enum>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="2">
+             <widget class="QGraphicsView" name="buy_img">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>25</height>
+               </size>
+              </property>
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="verticalScrollBarPolicy">
+               <enum>Qt::ScrollBarAlwaysOff</enum>
+              </property>
+              <property name="horizontalScrollBarPolicy">
+               <enum>Qt::ScrollBarAlwaysOff</enum>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="5">
+             <widget class="QLineEdit" name="supply_num">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>14</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>30</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QPushButton" name="save_button">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Add</string>
+              </property>
+              <property name="shortcut">
+               <string>Alt+A</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="skip_button">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Skip</string>
+              </property>
+              <property name="shortcut">
+               <string>Alt+S</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="continue_button">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Next File</string>
+              </property>
+              <property name="shortcut">
+               <string>Alt+C</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+     </layout>
     </item>
     <item>
-     <widget class="Line" name="line_2">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="QLabel" name="label_12">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>15</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>15</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>File:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="file_label">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>15</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>15</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>-</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="system_not_found">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>15</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>15</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">color: #d00</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QSplitter" name="splitter">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
+      <widget class="QGraphicsView" name="preview">
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
+       <property name="verticalScrollBarPolicy">
+        <enum>Qt::ScrollBarAlwaysOff</enum>
+       </property>
+       <property name="horizontalScrollBarPolicy">
+        <enum>Qt::ScrollBarAlwaysOff</enum>
+       </property>
+       <property name="dragMode">
+        <enum>QGraphicsView::ScrollHandDrag</enum>
+       </property>
+      </widget>
+      <widget class="CustomQTableWidget" name="result_table">
+       <column>
+        <property name="text">
+         <string>Station</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Commodity</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Sell</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Buy</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Demand</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Dem. Level</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Supply</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Sup. Level</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Timestamp</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>System</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Img. Height</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>EDDN Sent</string>
+        </property>
+       </column>
+      </widget>
      </widget>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_10">
+     <layout class="QHBoxLayout" name="horizontalLayout_4">
       <item>
        <widget class="QDoubleSpinBox" name="factor">
         <property name="minimum">
@@ -1070,147 +895,13 @@
       </item>
       <item>
        <widget class="QPushButton" name="zoom_button">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
         <property name="text">
          <string>Zoom</string>
         </property>
        </widget>
       </item>
       <item>
-       <spacer name="horizontalSpacer_4">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0">
-      <item>
-       <widget class="QSplitter" name="splitter">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="frameShape">
-         <enum>QFrame::NoFrame</enum>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <widget class="QGraphicsView" name="preview">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>88</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="verticalScrollBarPolicy">
-          <enum>Qt::ScrollBarAlwaysOff</enum>
-         </property>
-         <property name="horizontalScrollBarPolicy">
-          <enum>Qt::ScrollBarAlwaysOff</enum>
-         </property>
-         <property name="dragMode">
-          <enum>QGraphicsView::ScrollHandDrag</enum>
-         </property>
-        </widget>
-        <widget class="CustomQTableWidget" name="result_table">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>80</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="columnCount">
-          <number>12</number>
-         </property>
-         <column>
-          <property name="text">
-           <string>Station</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Commodity</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Sell</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Buy</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Demand</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Dem. Level</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Supply</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Sup. Level</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Timestamp</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>System</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Img. Height</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>EDDN Sent</string>
-          </property>
-         </column>
-        </widget>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
-      <item>
-       <spacer name="horizontalSpacer_2">
+       <spacer name="horizontalSpacer_3">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -1236,12 +927,6 @@
        <widget class="QPushButton" name="export_button">
         <property name="enabled">
          <bool>false</bool>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>25</height>
-         </size>
         </property>
         <property name="text">
          <string>Export</string>
@@ -1278,9 +963,6 @@
         <height>10</height>
        </size>
       </property>
-      <property name="maximum">
-       <number>1</number>
-      </property>
       <property name="value">
        <number>0</number>
       </property>
@@ -1290,28 +972,16 @@
      </widget>
     </item>
    </layout>
-   <zorder>widget</zorder>
-   <zorder>line_2</zorder>
-   <zorder></zorder>
-   <zorder>progress_bar</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1197</width>
+     <width>1272</width>
      <height>21</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuHelp">
-    <property name="title">
-     <string>Help</string>
-    </property>
-    <addaction name="actionHelp"/>
-    <addaction name="actionUpdate"/>
-    <addaction name="actionAbout"/>
-   </widget>
    <widget class="QMenu" name="menuFile">
     <property name="title">
      <string>File</string>
@@ -1327,16 +997,19 @@
     <addaction name="actionCommodity_Editor"/>
     <addaction name="actionPublic_Mode"/>
    </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionHelp"/>
+    <addaction name="actionUpdate"/>
+    <addaction name="actionAbout"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuSettings"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="actionAbout">
-   <property name="text">
-    <string>About</string>
-   </property>
-  </action>
   <action name="actionOpen">
    <property name="text">
     <string>Open</string>
@@ -1348,6 +1021,9 @@
    </property>
   </action>
   <action name="actionPreferences">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Preferences</string>
    </property>
@@ -1355,6 +1031,14 @@
   <action name="actionCommodity_Editor">
    <property name="text">
     <string>Commodity Editor</string>
+   </property>
+  </action>
+  <action name="actionPublic_Mode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Public Mode</string>
    </property>
   </action>
   <action name="actionHelp">
@@ -1367,12 +1051,9 @@
     <string>Update</string>
    </property>
   </action>
-  <action name="actionPublic_Mode">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
+  <action name="actionAbout">
    <property name="text">
-    <string>Public Mode</string>
+    <string>About</string>
    </property>
   </action>
  </widget>
@@ -1383,6 +1064,34 @@
    <header>customqtablewidget.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>add_button</tabstop>
+  <tabstop>remove_button</tabstop>
+  <tabstop>add_all_button</tabstop>
+  <tabstop>remove_all_button</tabstop>
+  <tabstop>file_list</tabstop>
+  <tabstop>ocr_button</tabstop>
+  <tabstop>ocr_all</tabstop>
+  <tabstop>system_name</tabstop>
+  <tabstop>station_name</tabstop>
+  <tabstop>name</tabstop>
+  <tabstop>sell</tabstop>
+  <tabstop>buy</tabstop>
+  <tabstop>demand_num</tabstop>
+  <tabstop>demand</tabstop>
+  <tabstop>supply_num</tabstop>
+  <tabstop>supply</tabstop>
+  <tabstop>save_button</tabstop>
+  <tabstop>skip_button</tabstop>
+  <tabstop>continue_button</tabstop>
+  <tabstop>clear_table</tabstop>
+  <tabstop>export_button</tabstop>
+  <tabstop>bpc_button</tabstop>
+  <tabstop>eddn_button</tabstop>
+  <tabstop>factor</tabstop>
+  <tabstop>zoom_button</tabstop>
+  <tabstop>result_table</tabstop>
+ </tabstops>
  <resources>
   <include location="res.qrc"/>
  </resources>
@@ -1398,8 +1107,8 @@
      <y>-1</y>
     </hint>
     <hint type="destinationlabel">
-     <x>545</x>
-     <y>299</y>
+     <x>635</x>
+     <y>400</y>
     </hint>
    </hints>
   </connection>

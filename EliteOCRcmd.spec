@@ -3,7 +3,7 @@
 block_cipher = None
 
 
-a = Analysis(['EliteOCR.py'],
+a = Analysis(['EliteOCRcmd.py'],
              pathex=['C:\\Users\\SEBAST~1\\Desktop\\RFACTO~2'],
              hiddenimports=[],
              hookspath=None,
@@ -14,16 +14,15 @@ pyz = PYZ(a.pure,
 exe = EXE(pyz,
           a.scripts,
           exclude_binaries=True,
-          name='EliteOCR.exe',
-          icon='icon.ico',
+          name='EliteOCRcmd.exe',
           debug=False,
           strip=None,
           upx=True,
-          console=False )
+          console=True )
 coll = COLLECT(exe,
                a.binaries,
                a.zipfiles,
                a.datas,
                strip=None,
                upx=True,
-               name='EliteOCR')
+               name='EliteOCRcmd')

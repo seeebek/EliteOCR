@@ -50,7 +50,7 @@ except AttributeError:
     def _translate(context, text, disambig):
         return QApplication.translate(context, text, disambig)
 
-appversion = "0.5"
+appversion = "0.5.2.2"
 gui = False
 logging.basicConfig(format='%(asctime)s %(levelname)s:\n%(message)s',filename='errorlog.txt',level=logging.WARNING)
 
@@ -65,12 +65,29 @@ def exception_handler(ex_cls, ex, tb):
 sys.excepthook = exception_handler
 
 class EliteOCR(QMainWindow, Ui_MainWindow):
-    def __init__(self):            
+    def __init__(self, app):            
         QMainWindow.__init__(self) #QMainWindow.__init__(self, None, Qt.FramelessWindowHint)
         self.setupUi(self)
+        self.app = app
+        self.settings = Settings(self)
+        
+        self.resizeElements()
+        
+        self.darkstyle = self.genDarkStyle()
+        self.def_style = """
+                    QWidget { font-size: 10pt; font-family: Consolas}
+                    QLineEdit { font-size: 13pt; font-family: Consolas}
+        """
+        if self.settings["theme"] == "dark":
+            self.dark_theme = True
+            self.style = self.darkstyle
+        else:
+            self.dark_theme = False
+            self.style = self.def_style
+        self.app.setStyleSheet(self.style)
+        
         self.appversion = appversion
         self.setupTable()
-        self.settings = Settings(self)
         self.export = Export(self)
         self.actionPublic_Mode.setChecked(self.settings["public_mode"])
         
@@ -123,11 +140,9 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         QObject.connect(self.eddnthread, SIGNAL('finished(QString)'), self.export.eddnFinished)
         QObject.connect(self.eddnthread, SIGNAL('update(int,int)'), self.export.eddnUpdate)
         
-        self.checkupadte = self.settings["updates_check"]
         self.thread = Worker()
         self.connect(self.thread, SIGNAL("output(QString, QString)"), self.showUpdateAvailable)
-        if self.checkupadte:
-            self.thread.check(self.appversion)
+        self.thread.check(self.appversion)
             
         if not self.settings.reg.contains('info_accepted'):
             self.infoDialog = InfoDialog()
@@ -136,7 +151,71 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
             if not self.settings['info_accepted']:
                 self.infoDialog = InfoDialog()
                 self.infoDialog.exec_()
+    
+    def resizeElements(self):
+        fields = [self.system_name, self.station_name, self.name, self.sell, self.buy, self.demand_num, self.demand, self.supply_num, self.supply, self.label_12, self.file_label, self.system_not_found]
+        for field in fields:
+            field.setMinimumSize(QSize(0, self.settings['input_size']))
+            field.setMaximumSize(QSize(16777215, self.settings['input_size']))
+        canvases = [self.station_name_img, self.name_img, self.sell_img, self.buy_img, self.demand_img, self.demand_text_img, self.supply_img, self.supply_text_img]
+        for canvas in canvases:
+            canvas.setMinimumSize(QSize(0, self.settings['snippet_size']))
+            canvas.setMaximumSize(QSize(16777215, self.settings['snippet_size']))
+    
+    def genDarkStyle(self):
+        style = """
+                    QWidget {{ background-color: #000; font-size: 10pt; font-family: Consolas}}
+                    QLabel {{ color: {0};}}
+                    QCheckBox {{ color: {0}; }}
+                    QPushButton {{color: {2};
+                                 background-color: #000;
+                                 border: 1px solid {3};
+                                 min-height: 13px;
+                                 padding: 2px;}}
+                    QToolButton {{color: {2};
+                                 background-color: #000;
+                                 border: 1px solid {3};
+                                 min-height: 12px;
+                                 padding: 2px;}}
+                    QPushButton[enabled="false"]{{color: #555; border: 1px solid #555;}}
+                    QToolButton[enabled="false"]{{color: #555; border: 1px solid #555;}}
+
+                    QStatusBar {{ background-color: #000; color: {0};}}
+
+                    QMenuBar {{ background-color: #000; color: {0};}}
+                    QMenuBar::item {{ background-color: #000; color: {0};}}
+                    QMenuBar::item:selected {{ background-color: #888; color: {0};}}
+
+                    QMenu {{ background-color: #000; color: {0};}}
+                    QMenu::item {{ background-color: #000; color: {0};}}
+                    QMenu::item:selected {{ background-color: #888; color: {0};}}
+
+                    QListWidget {{ background-color: #000; min-width: 150px}}
+                    QFrame[frameShape="4"] {{ background-color: #888; }}
+                    QFrame[frameShape="5"] {{ background-color: #888; }}
+
+                    QGraphicsView {{ background-color: #000; border: 1px solid {4}}}
+                    QTableWidget {{ background-color: #000; color: {0}; border: 1px solid {4}}}
+                    QLineEdit {{ background-color: #000; border: 1px solid {4}; color: {1}; font-size: 13pt; font-family: Consolas}}
+                    QComboBox {{  background-color: #000; border: 1px solid {4}; color: {1};}}
+                    QComboBox:editable {{color: {1}; font-size: 11pt}}
+                    QComboBox::down-arrow {{ image: url(:/ico/arrow.png); }}
+                    QComboBox::drop-down:editable {{color: {1};}}
+                    QHeaderView::section {{  background-color: #000; color: {0}; border: 1px solid {4}; padding: 2px; }}
+                    QTableView QTableCornerButton::section {{ background: #000;}}
+                    QSplitter {{ background-color: #0a0; color: #a00; }}
+                    QProgressBar {{ border: 1px solid {4}; background-color: #000;}}
+                    QProgressBar::chunk {{ background-color: #0a0; width: 20px; }}
+                    QDoubleSpinBox {{ background-color: #888;}}
+                    QSpinBox {{ background-color: #888;}}
+                    QWebView {{ background-color: #888;}}
+                    QTreeView {{ color: {0}; border: 1px solid {4}}}
+                    QTabBar::tab {{ background-color: #000; color:{0}; border: 1px solid {4}; padding: 4px;}}
+                    QListView {{ color: {1}; border: 1px solid {4}}}
+        """.format(str(self.settings['label_color']),str(self.settings['input_color']),str(self.settings['button_color']),str(self.settings['button_border_color']),str(self.settings['border_color']))
         
+        return style
+    
     def showUpdateAvailable(self, dir, appversion):
         self.newupd = (dir, appversion)
         self.statusbar.showMessage(unicode(_translate("EliteOCR","New version of EliteOCR available: %s To download it go to Help > Update", None)) % appversion, 0)
@@ -173,8 +252,8 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
             reply = QMessageBox.question(self, 'Mode', msg, QMessageBox.Yes, QMessageBox.No)
 
             if reply == QMessageBox.Yes:
-                self.bpc_button.setEnabled(False)
-                self.eddn_button.setEnabled(False)
+                self.enableButton(self.bpc_button, False)
+                self.enableButton(self.eddn_button,False)
             else:    
                 self.actionPublic_Mode.setChecked(True)
     
@@ -187,19 +266,19 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
             self.tdexport = plugin2.TD_Export(self, self.settings.app_path.decode('windows-1252'))
             self.tdexport_button = QPushButton(self.centralwidget)
             self.tdexport_button.setText("Trade Dangerous Export")
-            self.tdexport_button.setEnabled(False)
-            self.horizontalLayout_2.addWidget(self.tdexport_button)
+            self.enableButton(self.tdexport_button, False)
+            self.horizontalLayout_4.addWidget(self.tdexport_button)
             self.tdexport_button.clicked.connect(lambda: self.tdexport.run(self.export.tableToList(False, True)))
     
     def enablePluginButtons(self):
         if 'tdexport' in dir(self):
             if self.tdexport != None:
-                self.tdexport_button.setEnabled(True)
+                self.enableButton(self.tdexport_button, True)
         
     def disablePluginButtons(self):
         if 'tdexport' in dir(self):
             if self.tdexport != None:
-                self.tdexport_button.setEnabled(False)
+                self.enableButton(self.tdexport_button, False)
 
     def About(self):
         QMessageBox.about(self,"About", "EliteOCR\nVersion "+self.appversion+"\n\n"+\
@@ -236,6 +315,16 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         """Open settings dialog and reload settings"""
         settingsDialog = SettingsDialog(self.settings)
         settingsDialog.exec_()
+        if self.settings["theme"] == "dark":
+            self.dark_theme = True
+            self.darkstyle = self.genDarkStyle()
+            self.style = self.darkstyle
+        else:
+            self.dark_theme = False
+            self.style = self.def_style
+        #self.app.setStyleSheet("")
+        self.app.setStyleSheet(self.style)
+        self.resizeElements()
     
     def openEditor(self):
         editorDialog = EditorDialog(self.settings)
@@ -278,13 +367,13 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.progress_bar.setValue(0)
         self.file_list.itemClicked.connect(self.selectFile)
         self.save_button.setEnabled(False)
-        self.skip_button.setEnabled(False)
+        self.enableButton(self.skip_button, False)
         #self.cleanAllFields()
         #self.cleanAllSnippets()
         if first_item !=None:
             self.selectFile(first_item)
         if self.ocr_button.isEnabled() and self.file_list.count() > 1:
-            self.ocr_all.setEnabled(True)
+            self.enableButton(self.ocr_all, True)
         self.cleanAllFields()
         self.cleanAllSnippets()
         
@@ -304,7 +393,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.remove_button.setEnabled(False)
         self.remove_all_button.setEnabled(False)
         self.ocr_button.setEnabled(False)
-        self.zoom_button.setEnabled(False)
+        self.enableButton(self.zoom_button, False)
     
     def softRemoveFile(self):
         item = self.file_list.currentItem()
@@ -320,7 +409,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         scene = QGraphicsScene()
         self.previewSetScene(scene)
         self.save_button.setEnabled(False)
-        self.skip_button.setEnabled(False)
+        self.enableButton(self.skip_button, False)
         self.cleanAllFields()
         self.cleanAllSnippets()
         if self.file_list.currentItem():
@@ -329,9 +418,9 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
             self.remove_button.setEnabled(False)
             self.remove_all_button.setEnabled(False)
             self.ocr_button.setEnabled(False)
-            self.zoom_button.setEnabled(False)
+            self.enableButton(self.zoom_button, False)
         if self.file_list.count() < 2:
-            self.ocr_all.setEnabled(False)
+            self.enableButton(self.ocr_all, False)
     
     def selectFile(self, item):
         """Select clicked file and shows prewiev of the selected file."""
@@ -345,27 +434,26 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.preview_image = item.loadPreviewImage(self.color_image, self)
         self.progress_bar.setValue(20)
         self.ocr_all_set = False
-        font = QFont()
-        font.setPointSize(11)
+        #font = QFont("Consolas", 11)
         self.system_not_found.setText("")
         if len(item.system) == 0:
-            self.system_not_found.setText(_translate("EliteOCR","System name not found in log files. Make sure log directory path is set up correctly or add system name manually in the field below. Note: System name is necessary for BPC import!", None))
+            self.system_not_found.setText(_translate("EliteOCR","System name not found in log files. Please read Help for more info.", None))
         self.system_name.setText(item.system)
-        self.system_name.setFont(font)
+        #self.system_name.setFont(font)
         self.file_list.setCurrentItem(item)
         self.file_label.setText(item.text())
         self.setPreviewImage(self.preview_image)
         self.remove_button.setEnabled(True)
         self.remove_all_button.setEnabled(True)
-        self.continue_button.setEnabled(False)
+        self.enableButton(self.continue_button, False)
         if not item.valid_market:
-            self.system_not_found.setText(_translate("EliteOCR","File was not recognized as a valid market screenshot. If the file is valid please report the issue in the forum.", None))
+            self.system_not_found.setText(_translate("EliteOCR","File was not recognized as a valid market screenshot. Please read Help for more info.", None))
             self.progress_bar.setValue(0)
             return
         self.ocr_button.setEnabled(True)
-        self.zoom_button.setEnabled(True)
+        self.enableButton(self.zoom_button, True)
         if self.file_list.count() > 1:
-            self.ocr_all.setEnabled(True)
+            self.enableButton(self.ocr_all, True)
         self.progress_bar.setValue(0)
     
     def setPreviewImage(self, image):
@@ -411,8 +499,9 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
             self.markCurrentRectangle()
             self.drawStationName()
             self.skip_button.setEnabled(True)
-            self.save_button.setEnabled(True)
+            self.enableButton(self.save_button, True)
             self.processOCRLine()
+            self.system_name.setFocus()
             if self.settings['create_nn_images']:
                 self.saveStationForTraining()
         else:
@@ -421,31 +510,31 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
     def addItemToTable(self):
         """Adds items from current OCR result line to the result table."""
         tab = self.result_table
-        res_station = unicode(self.station_name.currentText()).title()
+        res_station = unicode(self.station_name.text()).title()
         row_count = tab.rowCount()
         self.export_button.setEnabled(True)
         if self.actionPublic_Mode.isChecked():
             self.bpc_button.setEnabled(True)
             self.eddn_button.setEnabled(True)
         self.enablePluginButtons()
-        self.clear_table.setEnabled(True)
+        self.enableButton(self.clear_table, True)
         #check for duplicates
         duplicate = False
         if self.settings["remove_dupli"]:
             for i in range(row_count):
                 station = unicode(tab.item(i, 0).text()).title()
                 com1 = unicode(tab.item(i, 1).text()).title()
-                com2 = unicode(self.fields[0].currentText()).replace(',', '').title()
+                com2 = unicode(self.fields[0].text()).replace(',', '').title()
                 if station == res_station and com1 == com2:
                     duplicate = True
         
         if not duplicate:
-            self.current_result.station.name.value = self.station_name.currentText()
+            self.current_result.station.name.value = self.station_name.text()
             tab.insertRow(row_count)
             newitem = QTableWidgetItem(unicode(res_station).title().replace("'S", "'s"))
             tab.setItem(row_count, 0, newitem)
             for n, field in enumerate(self.fields):
-                newitem = QTableWidgetItem(unicode(field.currentText()).replace(',', '').title())
+                newitem = QTableWidgetItem(unicode(field.text()).replace(',', '').title())
                 tab.setItem(row_count, n+1, newitem)
             newitem = QTableWidgetItem(self.file_list.currentItem().timestamp)
             tab.setItem(row_count, 8, newitem)
@@ -475,7 +564,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         for index, field, canvas, item in zip(range(0, len(self.canvases) - 1),
                                               self.fields, self.canvases, res.items):
 
-            val = unicode(field.currentText()).replace(',', '')
+            val = unicode(field.text())#.replace(',', '')
             if field in [self.sell, self.buy, self.demand_num, self.supply_num]:
                 if val:
                     snippet = self.cutImage(cres.contrast_commodities_img, item)
@@ -503,7 +592,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         w = len(self.current_result.contrast_commodities_img)
         h = len(self.current_result.contrast_commodities_img[0])
         snippet = self.cutImage(cres.contrast_station_img, cres.station.name)
-        val = self.station_name.currentText()
+        val = self.station_name.text()
         imageFilepath = self.training_image_dir + u'\\text\\' + unicode(val) + u'_' + unicode(w) + u'x' + unicode(h) +\
                                 u'-' + unicode(int(time())) + u'-' +\
                                 unicode(random.randint(10000, 100000)) + u'.png'
@@ -524,7 +613,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                 print self.file_list.currentItem().text()
                 remove(self.file_list.currentItem().hiddentext)
                 self.removeFile()
-        self.continue_button.setEnabled(False)
+        self.enableButton(self.continue_button, False)
     
     def nextLine(self):
         """Process next OCR result line."""
@@ -533,20 +622,21 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         if len(self.previewRects) > self.OCRline:
             self.markCurrentRectangle()
             self.processOCRLine()
+            self.name.setFocus()
         else:
             self.save_button.setEnabled(False)
-            self.skip_button.setEnabled(False)
+            self.enableButton(self.skip_button, False)
             self.cleanAllFields()
             self.cleanAllSnippets()
             if self.ocr_all_set:
                 if self.settings['pause_at_end']:
-                    self.continue_button.setEnabled(True)
+                    self.enableButton(self.continue_button, True)
                 else:
                     self.nextFile()
             else:
                 if self.settings['delete_files']:
                     if self.settings['pause_at_end']:
-                        self.continue_button.setEnabled(True)
+                        self.enableButton(self.continue_button, True)
                     else:
                         print "Deleted (nextLine 486):"
                         print self.file_list.currentItem().text()
@@ -567,19 +657,18 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
             self.color_image = self.file_list.currentItem().loadColorImage()
             self.preview_image = self.file_list.currentItem().loadPreviewImage(self.color_image, self)
             self.performOCR()
-            font = QFont()
-            font.setPointSize(11)
+            #font = QFont("Consolas", 11)
             if self.OCRline == 0:
                 if len(self.file_list.currentItem().system) > 0:
                     self.system_not_found.setText("")
                     self.system_name.setText(self.file_list.currentItem().system)
-                    self.system_name.setFont(font)
+                    #self.system_name.setFont(font)
                 else:
                     self.system_name.setText("")
-                    self.system_name.setFont(font)
+                    #self.system_name.setFont(font)
                     self.system_not_found.setText(_translate("EliteOCR","System name not found in log files. Make sure log directory path is set up correctly or add system name manually in the field below. Note: System name is necessary for BPC import!",None))
-                self.system_name.setFocus()
-                self.system_name.selectAll()
+                #self.system_name.setFocus()
+                #self.system_name.selectAll()
         else:
             if self.settings['delete_files']:
                 print "Deleted (nextFile 520):"
@@ -593,14 +682,13 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.clear_table.setEnabled(False)
         self.export_button.setEnabled(False)
         self.bpc_button.setEnabled(False)
-        self.eddn_button.setEnabled(False)
+        self.enableButton(self.eddn_button, False)
         self.disablePluginButtons()
     
     def processOCRLine(self):
         """Process current OCR result line."""
         if len(self.current_result.commodities) > self.OCRline:
-            font = QFont()
-            font.setPointSize(11)
+            #font = QFont("Consolas", 11)
             res = self.current_result.commodities[self.OCRline]
             if self.OCRline > 0:
                 autofill = True
@@ -619,16 +707,16 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
             if self.file_list.currentItem().market_width < 1065 and self.actionPublic_Mode.isChecked():
                 autofill = False
                 self.save_button.setEnabled(False)
-                self.skip_button.setEnabled(True)
-                QTimer.singleShot(1200, partial(self.save_button.setEnabled, True));
+                self.enableButton(self.skip_button, True)
+                QTimer.singleShot(1200, partial(self.enableButton, self.save_button, True));
                 #QTimer.singleShot(1500, partial(self.skip_button.setEnabled, True));
                         
             for field, canvas, item in zip(self.fields, self.canvases, res.items):
                 if item != None:
-                    field.clear()
-                    field.addItems(item.optional_values)
-                    field.setEditText(item.value)
-                    field.lineEdit().setFont(font)
+                    #field.clear()
+                    #field.addItems(item.optional_values)
+                    field.setText(item.value)
+                    #field.lineEdit().setFont(font)
                     if not(self.settings["auto_fill"] and autofill):
                         self.setConfidenceColor(field, item)
                         self.drawSnippet(canvas, item)
@@ -641,19 +729,34 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
     
     def setConfidenceColor(self, field, item):
         c = item.confidence
-        if c > 0.83:
-            color  = "#ffffff"
-        if c <= 0.83 and c >0.67:
-            color = "#ffffbf"
-        if c <= 0.67 and c >0.5:
-            color = "#fff2bf"
-        if c <= 0.5 and c >0.34:
-            color = "#ffe6bf"
-        if c <= 0.34 and c >0.17:
-            color = "#ffd9bf"
-        if c <= 0.17:
-            color = "#ffccbf"
-        field.lineEdit().setStyleSheet("QLineEdit{background: "+color+";}")
+        #c = random.random()
+        if self.dark_theme:
+            if c > 0.83:
+                color  = "#000"
+            if c <= 0.83 and c >0.67:
+                color = "#666600"
+            if c <= 0.67 and c >0.5:
+                color = "#665100"
+            if c <= 0.5 and c >0.34:
+                color = "#663e00"
+            if c <= 0.34 and c >0.17:
+                color = "#662900"
+            if c <= 0.17:
+                color = "#661500"
+        else:
+            if c > 0.83:
+                color  = "#ffffff"
+            if c <= 0.83 and c >0.67:
+                color = "#ffffbf"
+            if c <= 0.67 and c >0.5:
+                color = "#fff2bf"
+            if c <= 0.5 and c >0.34:
+                color = "#ffe6bf"
+            if c <= 0.34 and c >0.17:
+                color = "#ffd9bf"
+            if c <= 0.17:
+                color = "#ffccbf"
+        field.setStyleSheet("background: "+color+";")
 
 
         
@@ -727,13 +830,16 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         """Draw single result item to graphicsview"""
         res = self.current_result
         snippet = self.cutImage(res.contrast_commodities_img, item)
+        if self.dark_theme: 
+            snippet = 255 - snippet
         #cv2.imwrite('snippets/'+unicode(self.currentsnippet)+'.png',snippet)
         #self.currentsnippet += 1
         processedimage = array2qimage(snippet)
         pix = QPixmap()
         pix.convertFromImage(processedimage)
-        if graphicsview.height() < pix.height():
-            pix = pix.scaled(graphicsview.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        
+        pix = pix.scaled(graphicsview.width(), graphicsview.height(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+
         scene = QGraphicsScene()
         scene.addPixmap(pix)
         graphicsview.setScene(scene)
@@ -743,14 +849,16 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         """Draw station name snippet to station_name_img"""
         res = self.current_result
         name = res.station.name
-        self.station_name.clear()
-        self.station_name.addItems(name.optional_values)
-        self.station_name.setEditText(name.value)
-        font = QFont()
-        font.setPointSize(11)
-        self.station_name.lineEdit().setFont(font)
-        self.setConfidenceColor(self.station_name, name)
+        #self.station_name.setText('')
+        #self.station_name.clear()
+        #self.station_name.addItems(name.optional_values)
+        self.station_name.setText(name.value)
+        #font = QFont("Consolas", 11)
+        #self.station_name.lineEdit().setFont(font)
+        #self.setConfidenceColor(self.station_name, name)
         img = self.cutImage(res.contrast_station_img, name)
+        if self.dark_theme: 
+            img = 255 - img
         processedimage = array2qimage(img)
         pix = QPixmap()
         pix.convertFromImage(processedimage)
@@ -769,12 +877,16 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
             self.cleanField(field)
         self.cleanField(self.station_name)
         self.save_button.setEnabled(False)
-        self.skip_button.setEnabled(False)
+        self.enableButton(self.skip_button, False)
     
     def cleanField(self, field):
-        field.setEditText('')
-        field.lineEdit().setStyleSheet("")
-        field.clear()
+        field.setText('')
+        if self.dark_theme:
+            field.setStyleSheet("background: #000;")
+        else:
+            field.setStyleSheet("background: #fff;")
+        #field.lineEdit().setStyleSheet("")
+        #field.clear()
             
     def cleanAllSnippets(self):
         for field in self.canvases:
@@ -784,6 +896,13 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
     def cleanSnippet(self, graphicsview):
         scene = QGraphicsScene()
         graphicsview.setScene(scene)
+        
+    def enableButton(self, button, switch):
+        button.setEnabled(switch)
+        if self.dark_theme:
+            self.app.setStyleSheet("")
+            self.app.setStyleSheet(self.style)
+            self.repaint()
 
 def translateApp(app, qtTranslator):
     if getattr(sys, 'frozen', False):
@@ -812,18 +931,19 @@ def translateApp(app, qtTranslator):
                 app.installTranslator(translator)
             """
 def usage():
-    print """Usage: EliteOCR -i input [-o output] [-s system] [-l lang]
+    print """Usage: EliteOCR -i input [-o output] [-s system] [-l lang] [-t]
     
-    -i --input:   path to an image file
-    -o --output:  defines where results should be written, default output.xml
-    -s --system:  overrides the system name from log files
-    -l --lang:    OCR language, must be one from this list: eng, deu, fra
-    -h --help:    shows this help page
-    -v --version: version info
+    -i --input:     path to an image file
+    -o --output:    defines where results should be written, default output.xml
+    -s --system:    overrides the system name from log files
+    -l --lang:      OCR language, must be one from this list: eng, deu, fra
+    -h --help:      shows this help page
+    -t --translate: translate results to english
+    -v --version:   version info
     
-Example: EliteOCR.exe -i Screenshot_0014.bmp -o result.xml -s "Test System" -l fra
+Example: EliteOCR.exe -i Screenshot_0014.bmp -o result.xml -s "Test System" -l fra -t
     """
-def ocr(language, input, output, system):
+def ocr(language, input, output, system, translate):
     settings = Settings()
     if isfile(input):
         sys.stdout.write("\r[=         ]")
@@ -845,7 +965,7 @@ def ocr(language, input, output, system):
         result = OCR(None, color_img, item.ocr_areas, language, item)
         sys.stdout.write("\r")
         sys.stdout.flush()
-        XMLOutput(language, input, output, item, result, system, w, h)
+        XMLOutput(language, input, output, item, result, system, w, h, translate)
         return 0
     else:
         print "Input file not found!"
@@ -854,13 +974,14 @@ def ocr(language, input, output, system):
 def main(argv):
     if len(argv) > 0:
         try:
-            opts, args = getopt.getopt(argv,"hvl:i:o:s:",["help","version","lang=","input=","output=","system="])
+            opts, args = getopt.getopt(argv,"hvtl:i:o:s:",["help","version","translate","lang=","input=","output=","system="])
         except getopt.GetoptError:
             usage()
             sys.exit(2)
         ocr_lang = "eng"
         inputfile = ""
         outputfile = "output.xml"
+        translate = False
         system = None
         for opt, arg in opts:
             if opt in ("-h", "--help"):
@@ -869,6 +990,8 @@ def main(argv):
             elif opt in ("-v", "--version"):
                 print 'EliteOCR version: '+str(appversion)
                 sys.exit()
+            elif opt in ("-t", "--translate"):
+                translate = True
             elif opt in ("-l", "--lang"):
                 ocr_lang = arg
             elif opt in ("-i", "--input"):
@@ -877,7 +1000,7 @@ def main(argv):
                 outputfile = arg
             elif opt in ("-s", "--system"):
                 system = arg
-        ocr(ocr_lang, inputfile, outputfile, system)
+        ocr(ocr_lang, inputfile, outputfile, system, translate)
     else:
         global gui
         gui = True
@@ -886,7 +1009,7 @@ def main(argv):
         translateApp(app, qtTranslator)
 
               
-        window = EliteOCR()
+        window = EliteOCR(app)
         if window.error_close:
            sys.exit() 
         window.show()

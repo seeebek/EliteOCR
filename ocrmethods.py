@@ -193,15 +193,14 @@ class TesseractStation:
 class TesseractStationMLP:
     def __init__(self, image, ocr_data, path):
         self.ocr_data = ocr_data
-        
-        layers = np.array([400,32,36])
+        layers = np.array([400,32,46])
         self.nnetwork = cv2.ANN_MLP(layers, 1,0.6,1)
-        self.nnetwork.load(path + "\\mlp.xml", "OCRMLP")
-        self.classdict = {0:"A",1:"B",2:"C",3:"D",4:"E",5:"F",6:"G",7:"H",8:"I",9:"J",10:"K",11:"L",12:"M",13:"N",14:"O",15:"P",16:"Q",17:"R",18:"S",19:"T",20:"U",21:"V",22:"W",23:"X",24:"Y",25:"Z",26:"Ä",27:"Ö",28:"Ü",29:"À",30:"É",31:"È",32:"Ê",33:"'",34:"-",35:".",}
-        try:
-            self.ocrSnippets(self.ocr_data, image)
-        except:
-            self.ocr_data.name.confidence = 0.5
+        self.nnetwork.load(path + "\\text.xml", "OCRMLP")
+        self.classdict={0:"A",1:"B",2:"C",3:"D",4:"E",5:"F",6:"G",7:"H",8:"I",9:"J",10:"K",11:"L",12:"M",13:"N",14:"O",15:"P",16:"Q",17:"R",18:"S",19:"T",20:"U",21:"V",22:"W",23:"X",24:"Y",25:"Z",26:"Ä",27:"Ö",28:"Ü",29:"À",30:"É",31:"È",32:"Ê",33:"'",34:"-",35:".",36:"0",37:"1",38:"2",39:"3",40:"4",41:"5",42:"6",43:"7",44:"8",45:"9",}
+        #try:
+        self.ocrSnippets(self.ocr_data, image)
+        #except:
+        #    self.ocr_data.name.confidence = 0.5
         
     def ocrSnippets(self, ocr_data, image):
         if ocr_data.name != None:
@@ -212,7 +211,7 @@ class TesseractStationMLP:
                 ar = self.toArray(characters)
                 
                 data = np.array(ar, dtype='float32')
-                resultclasses = -1 * np.ones((len(data),36), dtype='float32')
+                resultclasses = -1 * np.ones((len(data),46), dtype='float32')
                 self.nnetwork.predict(data, resultclasses)
                 
                 for j in range(len(resultclasses)):
@@ -249,11 +248,13 @@ class TesseractStationMLP:
         blackflag = False
         start = False
         image = cv2.resize(image, (0,0), fx=2, fy=2)
+        image = contBright(image, 70.0, 200.0)
+        
         h, w = image.shape
         for i in range(len(image[0])):
             blackflag = False
             for j in range(len(image)):
-                if image[j][i] < 160:
+                if image[j][i] < 150:
                     blackflag = True
                     break
             if blackflag and (not start):
@@ -262,7 +263,7 @@ class TesseractStationMLP:
             if (not blackflag) and start:
                 x2 = i
                 start = False
-                snippet = self.topbottom(image[0:len(image), x1:x2], h)
+                snippet, point = self.topbottom(image[0:len(image), x1:x2], h)
                 ret,snippet = cv2.threshold(snippet,200,255,cv2.THRESH_BINARY)
                 characters.append(snippet)
         return characters
@@ -272,20 +273,23 @@ class TesseractStationMLP:
         last = 0
         blackflag = False
         firstflag = False
+        point = False
         for i in range(len(input)):
             blackflag = False
             for j in range(len(input[0])):
-                if input[i][j] < 190:
+                if input[i][j] < 200:
                     if not firstflag:
                         first = i
                         firstflag = True
                     last = i
         res = input[first:last, 0:len(input[0])]
-        if h/len(res[0]) > 3:
+        if first > (0.55*len(input)) and last>=len(input)-14:
+            point = True
+        if len(res)<((h-20)/2) or ((h-20)*1.0)/len(res[0]) > 4.5:
             res = input[10:len(input)-10, 0:len(input[0])]
-            border = (h - len(res[0]))/2
+            border = ((h-20) - len(res[0]))/2
             res = cv2.copyMakeBorder(res,0,0,border,border,cv2.BORDER_CONSTANT,value=(255,255,255))
-        return res
+        return res, point
         
 class TesseractMarket1:
     def __init__(self, parent, image, area, language = "big"):
@@ -430,11 +434,10 @@ class Levenshtein:
 class MLPMethod:
     def __init__(self, parent, image, ocr_data, path):
         self.ocr_data = ocr_data
-        
-        layers = np.array([400,32,36])
+        layers = np.array([400,32,46])
         self.nnetwork = cv2.ANN_MLP(layers, 1,0.6,1)
-        self.nnetwork.load(path + "\\mlp.xml", "OCRMLP")
-        self.classdict = {0:"A",1:"B",2:"C",3:"D",4:"E",5:"F",6:"G",7:"H",8:"I",9:"J",10:"K",11:"L",12:"M",13:"N",14:"O",15:"P",16:"Q",17:"R",18:"S",19:"T",20:"U",21:"V",22:"W",23:"X",24:"Y",25:"Z",26:"Ä",27:"Ö",28:"Ü",29:"À",30:"É",31:"È",32:"Ê",33:"'",34:"-",35:".",}
+        self.nnetwork.load(path + "\\text.xml", "OCRMLP")
+        self.classdict = {0:"A",1:"B",2:"C",3:"D",4:"E",5:"F",6:"G",7:"H",8:"I",9:"J",10:"K",11:"L",12:"M",13:"N",14:"O",15:"P",16:"Q",17:"R",18:"S",19:"T",20:"U",21:"V",22:"W",23:"X",24:"Y",25:"Z",26:"Ä",27:"Ö",28:"Ü",29:"À",30:"É",31:"È",32:"Ê",33:"'",34:"-",35:".",36:"0",37:"1",38:"2",39:"3",40:"4",41:"5",42:"6",43:"7",44:"8",45:"9",}
         self.ocrSnippets(parent, self.ocr_data, image)
         
     def ocrSnippets(self, parent, ocr_data, image):
@@ -448,7 +451,7 @@ class MLPMethod:
                         ar = self.toArray(characters)
                         
                         data = np.array(ar, dtype='float32')
-                        resultclasses = -1 * np.ones((len(data),36), dtype='float32')
+                        resultclasses = -1 * np.ones((len(data),46), dtype='float32')
                         self.nnetwork.predict(data, resultclasses)
                         
                         for j in range(len(resultclasses)):
@@ -485,12 +488,13 @@ class MLPMethod:
         blackflag = False
         start = False
         image = cv2.resize(image, (0,0), fx=2, fy=2)
+        image = contBright(image, 70.0, 200.0)
         
         h, w = image.shape
         for i in range(len(image[0])):
             blackflag = False
             for j in range(len(image)):
-                if image[j][i] < 160:
+                if image[j][i] < 150:
                     blackflag = True
                     break
             if blackflag and (not start):
@@ -499,7 +503,7 @@ class MLPMethod:
             if (not blackflag) and start:
                 x2 = i
                 start = False
-                snippet = self.topbottom(image[0:len(image), x1:x2], h)
+                snippet, point = self.topbottom(image[0:len(image), x1:x2], h)
                 ret,snippet = cv2.threshold(snippet,200,255,cv2.THRESH_BINARY)
                 characters.append(snippet)
         return characters
@@ -509,20 +513,23 @@ class MLPMethod:
         last = 0
         blackflag = False
         firstflag = False
+        point = False
         for i in range(len(input)):
             blackflag = False
             for j in range(len(input[0])):
-                if input[i][j] < 190:
+                if input[i][j] < 200:
                     if not firstflag:
                         first = i
                         firstflag = True
                     last = i
         res = input[first:last, 0:len(input[0])]
-        if h/len(res[0]) > 3:
+        if first > (0.55*len(input)) and last>=len(input)-14:
+            point = True
+        if len(res)<((h-20)/2) or ((h-20)*1.0)/len(res[0]) > 4.5:
             res = input[10:len(input)-10, 0:len(input[0])]
-            border = (h - len(res[0]))/2
+            border = ((h-20) - len(res[0]))/2
             res = cv2.copyMakeBorder(res,0,0,border,border,cv2.BORDER_CONSTANT,value=(255,255,255))
-        return res
+        return res, point
                 
 class NNMethod:
     def __init__(self, parent, image, ocr_data, path):
@@ -553,7 +560,7 @@ class NNMethod:
                 sys.stdout.flush()
             for j in xrange(len(data[i].items)):
                 if data[i][j] != None:
-                    if j in [1, 2, 3,5]:
+                    if j in [1, 2, 3, 5]:
                         snippet = image[data[i][j].y1-2:data[i][j].y2+2,
                                         data[i][j].x1-2:data[i][j].x2+2]
                         snippet = cv2.cvtColor(snippet,cv2.COLOR_GRAY2RGB)
@@ -563,7 +570,12 @@ class NNMethod:
                         new_size = (int(w*factor), int(h*factor))
                         snippet = cv2.resize(snippet, new_size, 0, 0, cv2.INTER_CUBIC)
                         snippet = cv2.copyMakeBorder(snippet, pad, pad, pad, pad,cv2.BORDER_CONSTANT,value=(255,255,255)) 
-                        res = train.doDigitPrediction(snippet)
+                        res, errorflag = train.doDigitPrediction(snippet)
+
+                        if len(data[i][j].value.replace(".","").replace(",","")) != len(str(res)):
+                            data[i][j].confidence = 0.7
+                        if errorflag:
+                            data[i][j].confidence = 0.0
                         try:
                             data[i][j].value = "{:,}".format(int(res))
                         except:

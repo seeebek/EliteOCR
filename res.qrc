@@ -1,9 +1,6 @@
 <RCC>
   <qresource prefix="ico">
-    <file>p1.png</file>
-    <file>p2.png</file>
-    <file>p3.png</file>
-    <file>p4.png</file>
+    <file>arrow.png</file>
     <file>icon.ico</file>
     <file>minus.png</file>
     <file>plus.png</file>

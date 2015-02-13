@@ -57,7 +57,7 @@ def stationBlue(img):
     workimg = img[:]
     b,g,r  = cv2.split(workimg)
     new = np.subtract(255.0, r)
-    workimg = contBright(new, 0, 190)
+    workimg = contBright(new, 0, 160)
     #workimg = toCV(workimg)
     #cv2.imshow('image', workimg)
     #cv2.waitKey(0)
@@ -80,7 +80,7 @@ def cleanBlue(img):
     #r = np.add(r, 0.0) 
     new = np.add(r, 255.0-b)
     new = toCV(new)
-    workimg = contBright(new, 0, 225)
+    workimg = contBright(new, 0, 180)
     #workimg = removeTooBright(b, new)
     #workimg = 255.0 - workimg
     #workimg = toCV(workimg)

@@ -67,5 +67,9 @@ class EDDNExport(QThread):
                      "demand": (int(line[5]) if line[5] else 0),
                      "timestamp": line[9],
                     }
+        if line[6] != "":
+            new_dict["supplyLevel"] = line[6]
+        if line[8] != "":
+            new_dict["demandLevel"] = line[8]
         #print new_dict
         return new_dict

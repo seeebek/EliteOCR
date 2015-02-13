@@ -2,10 +2,22 @@ from subprocess import call
 from shutil import copy, copytree, rmtree, move
 
 try:
+    copy("./EliteOCR.py", "./EliteOCRcmd.py")
+    print "EliteOCRcmd.py created"
+except:
+    print "EliteOCRcmd.py not created"
+
+try:
     rmtree("./dist/bin/")
     print "bin deleted"
 except:
     print "bin not deleted"
+    
+try:
+    rmtree("./dist/EliteOCRcmd/")
+    print "EliteOCRcmd deleted"
+except:
+    print "EliteOCRcmd not deleted"
 
 try:
     retcode = call("pyinstaller --onedir EliteOCR.spec")
@@ -13,14 +25,32 @@ try:
     print "pyinstaller finished with code: " + str(retcode)
 except:
     print "pyinstaller error"
+    
+try:
+    retcode = call("pyinstaller --onedir EliteOCRcmd.spec")
+    print ""
+    print "pyinstaller finished with code: " + str(retcode)
+except:
+    print "pyinstaller error"
 
-"""    
+try:
+    copy("./dist/EliteOCRcmd/EliteOCRcmd.exe", "./dist/EliteOCR/EliteOCRcmd.exe")
+    print "EliteOCRcmd.exe copied"
+except:
+    print "EliteOCRcmd.exe not copied"
+    
+try:
+    copy("./dist/EliteOCRcmd/EliteOCRcmd.exe.manifest", "./dist/EliteOCR/EliteOCRcmd.exe.manifest")
+    print "EliteOCRcmd.exe.manifest copied"
+except:
+    print "EliteOCRcmd.exe.manifest not copied"
+
 try:
     rmtree("./dist/tessdata/")
     print "tessdata deleted"
 except:
     print "tessdata not deleted"
-"""    
+ 
 try:
     copytree("./tessdata/", "./dist/tessdata/")
     print "tessdata copied"
@@ -45,6 +75,12 @@ try:
 except:
     print "nn_scripts not copied"
 
+try:
+    copy("./text.xml", "./dist/EliteOCR/text.xml")
+    print "text.xml copied"
+except:
+    print "text.xml not copied"
+    
 try:
     copytree("./plugins/", "./dist/EliteOCR/plugins/")
     print "plugins copied"

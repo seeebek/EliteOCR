@@ -23,7 +23,7 @@ class OCR():
             parent.progress_bar.setMaximum(60)
             parent.progress_bar.setValue(0)
         self.contrast_station_img = makeCleanStationImage(self.image, item)
-        cv2.imwrite(".\\nn_training_images\\station.png", self.contrast_station_img)
+        #cv2.imwrite(".\\nn_training_images\\station.png", self.contrast_station_img)
         if not parent is None:
             parent.progress_bar.setValue(10)
             parent.repaint()

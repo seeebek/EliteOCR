@@ -12,21 +12,15 @@ class Settings():
         self.values = {}
         self.reg = QSettings('seeebek', 'eliteOCR')
         if self.reg.contains('settings_version'):
-            if float(self.reg.value('settings_version', type=QString)) < 1.2:
+            if float(self.reg.value('settings_version', type=QString)) < 1.4:
                 self.cleanReg()
                 self.setAllDefaults()
                 self.reg.sync()
                 self.values = self.loadSettings()
-            if float(self.reg.value('settings_version', type=QString)) < 1.4:
-                self.setDefaultLanguage()
-                self.setDefaultDelete()
-                self.setDefaultTranslateResults()
-                self.setDefaultPause()
-                self.setDefaultUpdatesCheck()
-                self.setDefaultPublicMode()
-                self.setDefaultNativeDialog()
-                self.reg.setValue('settings_version', "1.4")
+            if float(self.reg.value('settings_version', type=QString)) < 1.5:
+                self.reg.setValue('settings_version', "1.5")
                 self.reg.sync()
+                self.values = self.loadSettings()
             else:
                 self.values = self.loadSettings()
         else:
@@ -70,12 +64,19 @@ class Settings():
                'delete_files': self.reg.value('delete_files', type=bool),
                'translate_results': self.reg.value('translate_results', type=bool),
                'pause_at_end': self.reg.value('pause_at_end', type=bool),
-               'updates_check': self.reg.value('updates_check', type=bool),
                'public_mode': self.reg.value('public_mode', type=bool),
                'native_dialog': self.reg.value('native_dialog', type=bool),
                'create_nn_images': self.reg.value('create_nn_images', type=bool),
                'zoom_factor': self.reg.value('zoom_factor', 1.0, type=float),
-               'info_accepted': self.reg.value('info_accepted', False, type=bool),}
+               'info_accepted': self.reg.value('info_accepted', False, type=bool),
+               'theme': self.reg.value('theme', 'default', type=QString),
+               'input_size': self.reg.value('input_size', 30, type=int),
+               'snippet_size': self.reg.value('snippet_size', 30, type=int),
+               'label_color': self.reg.value('label_color', '#ffffff', type=QString),
+               'input_color': self.reg.value('input_color', '#ffffff', type=QString),
+               'button_color': self.reg.value('button_color', '#ffffff', type=QString),
+               'button_border_color': self.reg.value('button_border_color', '#ffffff', type=QString),
+               'border_color': self.reg.value('border_color', '#ffffff', type=QString)}
         return set
         
     def setAllDefaults(self):
@@ -86,7 +87,6 @@ class Settings():
         self.setDefaultDelete()
         self.setDefaultTranslateResults()
         self.setDefaultPause()
-        self.setDefaultUpdatesCheck()
         self.setDefaultPublicMode()
         self.setDefaultNativeDialog()
         self.setDefaultScreenshotDir()
@@ -121,9 +121,6 @@ class Settings():
         
     def setDefaultDelete(self):
         self.reg.setValue('delete_files', False)
-        
-    def setDefaultUpdatesCheck(self):
-        self.reg.setValue('updates_check', True)
         
     def setDefaultTranslateResults(self):
         self.reg.setValue('translate_results', False)

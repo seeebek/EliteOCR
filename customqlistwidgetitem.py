@@ -106,9 +106,9 @@ class CustomQListWidgetItem(QListWidgetItem):
         system_name = self.parseLogFile(path, dir, self.filetime[0], self.filetime[1], self.filetime[2],
                                  self.filetime[3], self.filetime[4])
         if system_name == "" and int(self.filetime[3]) < 8:
-            newdate = datetime(int(self.filetime[0]), int(self.filetime[1]), int(self.filetime[2]),
+            newdate = datetime(int('20'+self.filetime[0]), int(self.filetime[1]), int(self.filetime[2]),
                                  int(self.filetime[3]), int(self.filetime[4])) - timedelta(days=1)
-            system_name = self.parseLogFile(path, dir, str(newdate.year), str(newdate.month), str(newdate.day),
+            system_name = self.parseLogFile(path, dir, newdate.strftime("%y"), newdate.strftime("%m"), newdate.strftime("%d"),
                                  self.filetime[3], self.filetime[4])
         return system_name
         

@@ -73,7 +73,7 @@ class nnTraining():
             os.makedirs(directory)
 
     def doDigitPrediction(self, img):
-        segments = self.processImageToSegment(img, self.segmentObjectColor, self.segmentObjectColorThreshold)
+        segments, errorflag = self.processImageToSegment(img, self.segmentObjectColor, self.segmentObjectColorThreshold)
 
         #np.reshape(digit, (-1, 40 * 40))[0]
         resultDigit = ''
@@ -83,7 +83,8 @@ class nnTraining():
             result = self.classifier.predict(rdigit)
             resultDigit += str(int(result))
             #results.append(result)
-        return resultDigit
+
+        return (resultDigit, errorflag)
 
     def convertAllImagesToSegmentFiles(self):
         print 'Chopping of images to segments beginning...'
@@ -190,6 +191,7 @@ class nnTraining():
         segments = self.segmentImage(imgBig, objectColor, threshold)
         #Make pixels lighter than a certain cutoff value whiter, help deal with problematic antialiasing (such as the gap in the number 6)
         paddedSegments = []
+        errorflag = False
 
         for s, segment in enumerate(segments):
             for y, row in enumerate(segment[0]):
@@ -217,10 +219,11 @@ class nnTraining():
                 padded_s = cv2.copyMakeBorder(imgBig, top_padding, bottom_padding, left_padding, right_padding, cv2.BORDER_CONSTANT, value=[255, 255, 255])
                 paddedSegments.append(padded_s)
             except:
+                errorflag = True
                 print 'Failed to pad successfully!'
                 print w, h, top_padding, bottom_padding, left_padding, right_padding
 
-        return paddedSegments
+        return (paddedSegments, errorflag)
 
     def processImageFileToSegment(self, imageFilePath, objectColor, threshold, saveFile=False, doPerturb=False):
         """

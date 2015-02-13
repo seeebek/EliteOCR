@@ -23,7 +23,10 @@ class Worker(QThread):
         return cmp(normalize(version1), normalize(version2))
     
     def run(self):
-        r = requests.get('http://sourceforge.net/projects/eliteocr/files/')
+        try:
+            r = requests.get('http://sourceforge.net/projects/eliteocr/files/')
+        except:
+            return
         #print r.status_code
         result = r.text.encode('utf-8')
 
@@ -36,8 +39,10 @@ class Worker(QThread):
                     versions.append(row['title'].strip())
 
         versions.sort(reverse=True)
-
-        r2 = requests.get('http://sourceforge.net/projects/eliteocr/files/'+versions[0]+"/")
+        try:
+            r2 = requests.get('http://sourceforge.net/projects/eliteocr/files/'+versions[0]+"/")
+        except:
+            return
         #print "got files"
         result2 = r2.text.encode('utf-8')
 
