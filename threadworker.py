@@ -33,12 +33,16 @@ class Worker(QThread):
         versions = []
 
         soup = BeautifulSoup(result)
-        for line in soup.findAll("table", { "id" : "files_list" }):
-            for row in line.findAll("tr", { "class" : "folder" }):
-                if re.search("[0-9]$", row['title'].strip()):
-                    versions.append(row['title'].strip())
+        try:
+            for line in soup.findAll("table", { "id" : "files_list" }):
+                for row in line.findAll("tr", { "class" : "folder" }):
+                    if re.search("[0-9]$", row['title'].strip()):
+                        versions.append(row['title'].strip())
 
-        versions.sort(reverse=True)
+            versions.sort(reverse=True)
+        except:
+            return
+            
         try:
             r2 = requests.get('http://sourceforge.net/projects/eliteocr/files/'+versions[0]+"/")
         except:

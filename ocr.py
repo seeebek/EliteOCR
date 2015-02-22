@@ -47,7 +47,7 @@ class OCR():
             parent.progress_bar.setValue(0)
         
     def readStationName(self, parent):
-        station_name = TesseractStation(self.contrast_station_img, self.ocr_areas.station_name)
+        station_name = TesseractStation(self.contrast_station_img, self.ocr_areas.station_name, self.settings.app_path)
         station_name1 = TesseractStationMLP(self.contrast_station_img, station_name.result[0], self.settings.app_path)
         
         if len(station_name.result) > 0:
@@ -56,7 +56,7 @@ class OCR():
             return None
         
     def readMarket(self, parent):
-        market_table = TesseractMarket1(parent, self.contrast_commodities_img, self.ocr_areas.market_table, self.lang)
+        market_table = TesseractMarket1(parent, self.contrast_commodities_img, self.ocr_areas.market_table, self.settings.app_path, self.lang)
         if not self.item is None:
             if self.item.market_width > 1065:
                 mlp = MLPMethod(parent, self.contrast_commodities_img, market_table.result, self.settings.app_path)

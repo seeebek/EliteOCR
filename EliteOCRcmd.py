@@ -50,12 +50,16 @@ except AttributeError:
     def _translate(context, text, disambig):
         return QApplication.translate(context, text, disambig)
 
-appversion = "0.5.2.2"
+appversion = "0.5.3"
 gui = False
 logging.basicConfig(format='%(asctime)s %(levelname)s:\n%(message)s',filename='errorlog.txt',level=logging.WARNING)
 
 def exception_handler(ex_cls, ex, tb):
-    logging.critical('n'+''.join(traceback.format_tb(tb))+'\n{0}: {1}\n'.format(ex_cls, ex))
+    fulltb = ''.join(traceback.format_tb(tb))
+    fulltb = fulltb.replace("<string>", "EliteOCR")
+    fulltb = fulltb.replace("C:\\Users\\SEBAST~1\\Desktop\\RFACTO~2\\build\\EliteOCR\\out00-PYZ.pyz\\", "")
+    fulltb = fulltb.replace("C:\\Users\\SEBAST~1\\Desktop\\RFACTO~2\\build\\EliteOCRcmd\\out00-PYZ.pyz\\", "")
+    logging.critical(fulltb+'\n{0}: {1}\n'.format(ex_cls, ex))
     print "An error was encountered. Please read errorlog.txt"
     print gui
     if gui:
@@ -100,6 +104,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.newupd = None
         self.zoom = False
         self.minres = 0
+        self.busyDialog = None
         self.fields = [self.name, self.sell, self.buy, self.demand_num, self.demand,
                        self.supply_num, self.supply]
         self.canvases = [self.name_img, self.sell_img, self.buy_img, self.demand_img,
@@ -234,6 +239,8 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.settings.reg.setValue("public_mode", self.actionPublic_Mode.isChecked())
         self.settings.reg.setValue("zoom_factor", self.factor.value())
         self.settings.reg.sync()
+        if not self.busyDialog is None:
+            self.busyDialog.close()
         event.accept()
     
     def toggleMode(self):
@@ -476,11 +483,12 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
     def performOCR(self):
         """Send image to OCR and process the results"""
         self.OCRline = 0
-        busyDialog = BusyDialog(self)
-        busyDialog.show()
+        self.busyDialog = BusyDialog(self)
+        self.busyDialog.show()
         QApplication.processEvents()
         if self.file_list.currentItem().valid_market:
             self.current_result = OCR(self, self.color_image, self.file_list.currentItem().ocr_areas, self.settings["ocr_language"], self.file_list.currentItem())
+            self.busyDialog.close()
             """
             try:
                 self.current_result = OCR(self.color_image)
@@ -495,6 +503,9 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                     "problem persist, please recalibrate the OCR areas with Settings->Calibrate.")
                 return
             """
+            if len(self.current_result.commodities) < 1:
+                QMessageBox.critical(self,"Error", "No results found!\nYou might be using an unsupported HUD color. Please read help for more information.")
+                return 
             self.drawOCRPreview()
             self.markCurrentRectangle()
             self.drawStationName()

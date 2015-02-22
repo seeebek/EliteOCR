@@ -26,17 +26,19 @@ class OCRAreasFinder:
         img = image
         imgheight, imgwidth, xcolor = img.shape
         b,g,r  = cv2.split(img)
-        r = np.add(r, 0.0) 
+        r = np.add(r, 0.0)
         new = np.absolute(np.subtract(r, b))
+        del b,r
         new = np.subtract(np.add(new,g), 128.0)
+        del g
         value = np.clip(new, 0, 255)
+        del new
         value = value.astype(np.uint8)
         h, w = value.shape
         ret,thresh1 = cv2.threshold(255 - value,160,255,cv2.THRESH_BINARY)
         #cv2.imshow("xx", thresh1)
         #cv2.waitKey(0)
         lines = cv2.HoughLinesP((255 - thresh1), 1, math.pi/2, 2, None, h/2, 1)
-
         loi = []
         if not (lines is None):
             for line in lines[0]:
@@ -114,6 +116,7 @@ class OCRAreasFinder:
         #small = cv2.resize(img, (0,0), fx=0.5, fy=0.5) 
         #cv2.imshow("xx", img)
         #cv2.waitKey(0)
+        
     def getHUD(self, line, img):
         colors = [[10,105,245], #standard orange
                   [245,105, 10]] # blue
@@ -138,7 +141,8 @@ class OCRAreasFinder:
             
 
 class TesseractStation:
-    def __init__(self, image, area):
+    def __init__(self, image, area, path):
+        self.path = path.decode('windows-1252')
         self.image = image
         self.result = self.readStationName(area)
         
@@ -162,7 +166,7 @@ class TesseractStation:
         
     def ocr(self, image, area, factor):
         api = tesseract.TessBaseAPI()
-        api.Init(".","big",tesseract.OEM_DEFAULT)
+        api.Init(self.path.encode('windows-1252'), "big", tesseract.OEM_DEFAULT)
         api.SetPageSegMode(tesseract.PSM_SINGLE_BLOCK)
         h,w = image.shape
         w_step = w*image.dtype.itemsize
@@ -292,7 +296,8 @@ class TesseractStationMLP:
         return res, point
         
 class TesseractMarket1:
-    def __init__(self, parent, image, area, language = "big"):
+    def __init__(self, parent, image, area, path, language = "big"):
+        self.path = path.decode('windows-1252')
         self.lang = language
         self.image = image
         self.result = self.readMarketTable(area)
@@ -320,9 +325,9 @@ class TesseractMarket1:
         api = tesseract.TessBaseAPI()
         #print self.lang
         if self.lang == "big" or self.lang == "eng":
-            api.Init(".","big",tesseract.OEM_DEFAULT)
+            api.Init(self.path.encode('windows-1252'),"big",tesseract.OEM_DEFAULT)
         else:
-            api.Init(".", str(self.lang), tesseract.OEM_DEFAULT)
+            api.Init(self.path.encode('windows-1252'), str(self.lang), tesseract.OEM_DEFAULT)
         api.SetPageSegMode(tesseract.PSM_SINGLE_BLOCK)
         h,w = image.shape
         w_step = w*image.dtype.itemsize

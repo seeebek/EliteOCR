@@ -3,6 +3,16 @@ import sys
 import numpy as np
 from PyQt4 import QtGui as qt
 
+"""
+def memory():
+    import os
+    from wmi import WMI
+    w = WMI('.')
+    result = w.query("SELECT WorkingSet FROM Win32_PerfRawData_PerfProc_Process WHERE IDProcess=%d" % os.getpid())
+    print int(result[0].WorkingSet)/1048576
+    return int(result[0].WorkingSet)
+"""
+
 def contBright(value, in_min, in_max):
     """ Adjust brightness and contrast of image provided as array
     in value. Comparable to "Levels" in GIMP.
@@ -36,8 +46,8 @@ def adjustTableImg(img, factor):
     return workimg
 
 def removeTooBright(img, orig):
-    workimg = img[:]
-    workimg = contBright(workimg, 100.0, 255.0)
+    #workimg = img[:]
+    workimg = contBright(img, 100.0, 255.0)
     ret, workimg = cv2.threshold(workimg,100,255,cv2.THRESH_BINARY)
     workimg = cv2.GaussianBlur(workimg,(51,41),0)
     ret,workimg = cv2.threshold(workimg,1,255,cv2.THRESH_BINARY)
@@ -45,31 +55,37 @@ def removeTooBright(img, orig):
     return workimg
     
 def stationOrange(img):
-    workimg = img[:]
-    b,g,r  = cv2.split(workimg)
+    #workimg = img[:]
+    b  = cv2.split(img)[0]
     b_inv = np.subtract(255.0, b)
     new = np.maximum(np.subtract(b, b_inv), 0.0)
+    del b, b_inv
     workimg = np.subtract(255.0, new)
+    del new
     workimg = toCV(workimg)
     return workimg
     
 def stationBlue(img):
-    workimg = img[:]
-    b,g,r  = cv2.split(workimg)
+    #workimg = img[:]
+    r  = cv2.split(img)[2]
     new = np.subtract(255.0, r)
+    del r
     workimg = contBright(new, 0, 160)
+    del new
     #workimg = toCV(workimg)
     #cv2.imshow('image', workimg)
     #cv2.waitKey(0)
     return workimg
 
 def cleanOrange(img):
-    workimg = img[:]
-    b,g,r  = cv2.split(workimg)
+    #workimg = img[:]
+    b,g,r  = cv2.split(img)
     r = np.add(r, 0.0) 
     new = np.subtract(np.add(r,g), 128.0)
+    del r,g
     new = toCV(new)
     workimg = removeTooBright(b, new)
+    del b, new
     workimg = 255.0 - workimg
     workimg = toCV(workimg)
     return workimg
