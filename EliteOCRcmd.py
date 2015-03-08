@@ -44,6 +44,8 @@ from ezodf import newdoc, Sheet
 import imp
 #from plugins.BPC_Feeder.bpcfeeder_wrapper import BPC_Feeder
 
+os.environ["TESSDATA_PREFIX"] = "." + os.sep
+
 try:
     _encoding = QApplication.UnicodeUTF8
     def _translate(context, text, disambig):
