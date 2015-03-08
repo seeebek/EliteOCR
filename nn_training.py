@@ -12,9 +12,9 @@ from settings import Settings
 class nnTraining:
     def __init__(self):
         settings = Settings()
-        self.trainingImageDir = dirname(settings.app_path + "\\nn_training_images\\"
+        self.trainingImageDir = dirname(settings.app_path + os.sep + "nn_training_images" + os.sep
         self.splitTrainingImageFolderName = 'split_training_images'
-        self.splitTrainingImageDir = self.trainingImageDir + self.splitTrainingImageFolderName + "\\"
+        self.splitTrainingImageDir = self.trainingImageDir + self.splitTrainingImageFolderName + os.sep
 
         self.checkAndMakeDir(self.trainingImageDir)
         self.checkAndMakeDir(self.splitTrainingImageDir)

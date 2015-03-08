@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 import cv2
 import math
 import tesseract
@@ -199,7 +200,7 @@ class TesseractStationMLP:
         self.ocr_data = ocr_data
         layers = np.array([400,32,46])
         self.nnetwork = cv2.ANN_MLP(layers, 1,0.6,1)
-        self.nnetwork.load(path + "\\text.xml", "OCRMLP")
+        self.nnetwork.load(path + os.sep + "text.xml", "OCRMLP")
         self.classdict={0:"A",1:"B",2:"C",3:"D",4:"E",5:"F",6:"G",7:"H",8:"I",9:"J",10:"K",11:"L",12:"M",13:"N",14:"O",15:"P",16:"Q",17:"R",18:"S",19:"T",20:"U",21:"V",22:"W",23:"X",24:"Y",25:"Z",26:"Ä",27:"Ö",28:"Ü",29:"À",30:"É",31:"È",32:"Ê",33:"'",34:"-",35:".",36:"0",37:"1",38:"2",39:"3",40:"4",41:"5",42:"6",43:"7",44:"8",45:"9",}
         #try:
         self.ocrSnippets(self.ocr_data, image)
@@ -366,7 +367,7 @@ class Levenshtein:
         self.levels = {u"eng": [u'LOW', u'MED', u'HIGH'],
                        u"deu": [u'NIEDRIG', u'MITTEL', u'HOCH'], 
                        u"fra": [u'FAIBLE', u'MOYEN', u'ÉLEVÉ']}
-        file = codecs.open(path + "\\commodities.json", 'r', "utf-8")
+        file = codecs.open(path + os.sep + "commodities.json", 'r', "utf-8")
         self.comm_list = json.loads(file.read())
         file.close()
         #print self.comm_list
@@ -441,7 +442,7 @@ class MLPMethod:
         self.ocr_data = ocr_data
         layers = np.array([400,32,46])
         self.nnetwork = cv2.ANN_MLP(layers, 1,0.6,1)
-        self.nnetwork.load(path + "\\text.xml", "OCRMLP")
+        self.nnetwork.load(path + os.sep + "text.xml", "OCRMLP")
         self.classdict = {0:"A",1:"B",2:"C",3:"D",4:"E",5:"F",6:"G",7:"H",8:"I",9:"J",10:"K",11:"L",12:"M",13:"N",14:"O",15:"P",16:"Q",17:"R",18:"S",19:"T",20:"U",21:"V",22:"W",23:"X",24:"Y",25:"Z",26:"Ä",27:"Ö",28:"Ü",29:"À",30:"É",31:"È",32:"Ê",33:"'",34:"-",35:".",36:"0",37:"1",38:"2",39:"3",40:"4",41:"5",42:"6",43:"7",44:"8",45:"9",}
         self.ocrSnippets(parent, self.ocr_data, image)
         

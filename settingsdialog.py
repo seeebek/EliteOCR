@@ -4,6 +4,7 @@ from settingsUI import Ui_Settings
 from settings import Settings
 from os.path import isdir
 from os import listdir
+import os
 
 class SettingsDialog(QDialog, Ui_Settings):
     def __init__(self, settings):
@@ -62,10 +63,10 @@ class SettingsDialog(QDialog, Ui_Settings):
     def fillOCRLang(self):
         self.ocr_language.addItem("eng")
         path = ""
-        if isdir(unicode(self.settings.app_path.decode('windows-1252')+"\\..\\tessdata\\")):
-            path = unicode(self.settings.app_path.decode('windows-1252')+"\\..\\tessdata\\")
-        if isdir(unicode(self.settings.app_path.decode('windows-1252')+"\\tessdata\\")):
-            path = unicode(self.settings.app_path.decode('windows-1252')+"\\tessdata\\")
+        if isdir(unicode(self.settings.app_path.decode('windows-1252')+os.sep+".."+os.sep+"tessdata"+os.sep)):
+            path = unicode(self.settings.app_path.decode('windows-1252')+os.sep+".."+os.sep+"tessdata"+os.sep)
+        if isdir(unicode(self.settings.app_path.decode('windows-1252')+os.sep+"tessdata"+os.sep)):
+            path = unicode(self.settings.app_path.decode('windows-1252')+os.sep+"tessdata"+os.sep)
         if isdir(path):
             dir = listdir(path)
             dir.remove("big.traineddata")

@@ -4,6 +4,7 @@ from updateUI import Ui_Update
 from threadworker import Worker
 from os import makedirs, rename, remove
 from os.path import isdir, isfile
+import os
 import requests
 import time
 import sys
@@ -47,9 +48,9 @@ class UpdateDialog(QDialog, Ui_Update):
             self.label.setText("Starting download.")
             url = "http://sourceforge.net/projects/eliteocr/files/"+self.newupd[0]+"/EliteOCR."+self.newupd[1]+".zip"
             #url = "http://blog.fancyrhino.com/wp-content/uploads/2014/03/3.jpg"
-            if not isdir(unicode(self.app_path)+u"\\..\\update\\"):
-                makedirs(unicode(self.app_path)+u"\\..\\update\\")
-            self.filepath = unicode(self.app_path)+u"\\..\\update\\EliteOCR."+unicode(self.newupd[1])+u".zip.part"
+            if not isdir(unicode(self.app_path)+os.sep+u".."+os.sep+u"update"+os.sep):
+		    makedirs(unicode(self.app_path)+os.sep+u".."+os.sep+u"update"+os.sep)
+            self.filepath = unicode(self.app_path)+os.sep+u".."+os.sep+u"update"+os.sep+u"EliteOCR."+unicode(self.newupd[1])+u".zip.part"
             #print self.filepath
             self.downloader.get(url, self.filepath)
     
@@ -61,7 +62,7 @@ class UpdateDialog(QDialog, Ui_Update):
         self.progress_bar.setValue(0)
         self.label.setText("Download finished. You can find it in the update directory.")
         
-        subprocess.Popen(r'explorer /select,"'+unicode(self.app_path).encode('windows-1252')+'\\..\\update\\EliteOCR.'+unicode(self.newupd[1]).encode('windows-1252')+'.zip"')
+        subprocess.Popen(r'explorer /select,"'+unicode(self.app_path).encode('windows-1252')+os.sep+'..'+os.sep+'update'+os.sep+'EliteOCR.'+unicode(self.newupd[1]).encode('windows-1252')+'.zip"')
     
     def downloadFinishedError(self):
         self.progress_bar.setMaximum(1)
@@ -139,4 +140,3 @@ class Downloader(QThread):
             self.emit(SIGNAL("finished()"))
         else:
             self.emit(SIGNAL("finishederror()"))
-        

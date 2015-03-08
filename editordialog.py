@@ -12,7 +12,7 @@ class EditorDialog(QDialog, Ui_Editor):
         self.add_button.clicked.connect(self.addCommodity)
         self.delete_button.clicked.connect(self.deleteCommodity)
 
-        file = codecs.open(self.settings.app_path + "\\commodities.json", 'r', "utf-8")
+        file = codecs.open(self.settings.app_path + os.sep + "commodities.json", 'r', "utf-8")
         file_content = file.read()
         commdict = json.loads(file_content)
         file.close()
@@ -65,9 +65,8 @@ class EditorDialog(QDialog, Ui_Editor):
                     #line = self.result_table.item(row,9).text()
         #print save_dict
         
-        file = codecs.open(self.settings.app_path + "\\commodities.json", 'w', "utf-8")
+        file = codecs.open(self.settings.app_path + os.sep + "commodities.json", 'w', "utf-8")
         file.write(json.dumps(save_dict, indent=2, separators=(',', ': '), ensure_ascii=False))
         file.close()
         
         self.close()
-        

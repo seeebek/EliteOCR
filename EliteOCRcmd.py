@@ -4,6 +4,7 @@ import logging
 import traceback
 import sys
 import getopt
+import os
 #import time
 import json
 import codecs
@@ -137,7 +138,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.error_close = False
 
         #set up required items for nn
-        self.training_image_dir = unicode(self.settings.app_path.decode('windows-1252'))+u"\\nn_training_images\\"
+        self.training_image_dir = unicode(self.settings.app_path.decode('windows-1252'))+os.sep+u"nn_training_images"+os.sep
         
         self.loadPlugins()
         self.restorePos()
@@ -303,9 +304,9 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
     def loadPlugins(self):
         """Load known plugins"""
         #Trade Dangerous Export by gazelle (bgol)    
-        if isfile(self.settings.app_path+"\\plugins\\TD_Export\\TD_Export.py"):
+        if isfile(self.settings.app_path+os.sep+"plugins"+os.sep+"TD_Export"+os.sep+"TD_Export.py"):
             plugin2 = imp.load_source('TD_Export', self.settings.app_path+\
-                                     "\\plugins\\TD_Export\\TD_Export.py")
+                                     os.sep+"plugins"+os.sep+"TD_Export"+os.sep+"TD_Export.py")
             self.tdexport = plugin2.TD_Export(self, self.settings.app_path.decode('windows-1252'))
             self.tdexport_button = QPushButton(self.centralwidget)
             self.tdexport_button.setText("Trade Dangerous Export")
@@ -608,10 +609,10 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         res = cres.commodities[self.OCRline]
         if not exists(self.training_image_dir):
             makedirs(self.training_image_dir)
-        if not exists(self.training_image_dir+"\\text"):
-            makedirs(self.training_image_dir+"\\text")
-        if not exists(self.training_image_dir+"\\numbers"):
-            makedirs(self.training_image_dir+"\\numbers")
+        if not exists(self.training_image_dir+os.sep+"text"):
+            makedirs(self.training_image_dir+os.sep+"text")
+        if not exists(self.training_image_dir+os.sep+"numbers"):
+            makedirs(self.training_image_dir+os.sep+"numbers")
         w = len(self.current_result.contrast_commodities_img)
         h = len(self.current_result.contrast_commodities_img[0])
         for index, field, canvas, item in zip(range(0, len(self.canvases) - 1),
@@ -622,7 +623,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                 if val:
                     snippet = self.cutImage(cres.contrast_commodities_img, item)
                     #cv2.imshow('snippet', snippet)
-                    imageFilepath = self.training_image_dir + u'\\numbers\\' + unicode(val) + u'_' + unicode(w) + u'x' + unicode(h) +\
+                    imageFilepath = self.training_image_dir + os.sep + u'numbers' + os.sep + unicode(val) + u'_' + unicode(w) + u'x' + unicode(h) +\
                                     u'-' + unicode(int(time())) + u'-' +\
                                     unicode(random.randint(10000, 100000)) + u'.png'
                     cv2.imwrite(imageFilepath.encode('windows-1252'), snippet)
@@ -630,7 +631,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                 if val:
                     snippet = self.cutImage(cres.contrast_commodities_img, item)
                     #cv2.imshow('snippet', snippet)
-                    imageFilepath = self.training_image_dir + u'\\text\\' + unicode(val) + u'_' + unicode(w) + u'x' + unicode(h) +\
+                    imageFilepath = self.training_image_dir + os.sep + u'text' + os.sep + unicode(val) + u'_' + unicode(w) + u'x' + unicode(h) +\
                                     u'-' + unicode(int(time())) + u'-' +\
                                     unicode(random.randint(10000, 100000)) + u'.png'
                     cv2.imwrite(imageFilepath.encode('windows-1252'), snippet)
@@ -640,13 +641,13 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         cres = self.current_result
         if not exists(self.training_image_dir):
             makedirs(self.training_image_dir)
-        if not exists(self.training_image_dir+"\\text"):
-            makedirs(self.training_image_dir+"\\text")
+        if not exists(self.training_image_dir+os.sep+"text"):
+            makedirs(self.training_image_dir+os.sep+"text")
         w = len(self.current_result.contrast_commodities_img)
         h = len(self.current_result.contrast_commodities_img[0])
         snippet = self.cutImage(cres.contrast_station_img, cres.station.name)
         val = self.station_name.text()
-        imageFilepath = self.training_image_dir + u'\\text\\' + unicode(val) + u'_' + unicode(w) + u'x' + unicode(h) +\
+        imageFilepath = self.training_image_dir + os.sep + u'text' + os.sep + unicode(val) + u'_' + unicode(w) + u'x' + unicode(h) +\
                                 u'-' + unicode(int(time())) + u'-' +\
                                 unicode(random.randint(10000, 100000)) + u'.png'
         cv2.imwrite(imageFilepath.encode('windows-1252'), snippet)
@@ -974,7 +975,7 @@ def translateApp(app, qtTranslator):
     #application_path = unicode(application_path).encode('windows-1252')
     
     if not ui_language == 'en':
-        path = application_path+"\\translations\\"
+        path = application_path+os.sep+"translations"+os.sep
         if isdir(path):
             qtTranslator.load("EliteOCR_"+ui_language, path.decode('windows-1252'))
             app.installTranslator(qtTranslator)
@@ -983,7 +984,7 @@ def translateApp(app, qtTranslator):
             translators = translator_list
             for file in dir:
                 qtTranslator = QTranslator()
-                if qtTranslator.load(application_path+"\\translations\\de\\"+splitext(file)[0]):
+                if qtTranslator.load(application_path+os.sep+"translations"+os.sep+"de"+os.sep+splitext(file)[0]):
                     translators.append(qtTranslator)
             for translator in translators:
                 app.installTranslator(translator)
@@ -1071,6 +1072,7 @@ def main(argv):
         if window.error_close:
            sys.exit() 
         window.show()
+	window.raise_()
         sys.exit(app.exec_())
 
 if __name__ == '__main__':

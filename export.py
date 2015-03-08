@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 import codecs
 import json
 from datetime import datetime, timedelta
@@ -14,7 +15,7 @@ class Export:
     
     def translate(self, input):
         language = str(self.parent.settings["ocr_language"])
-        file = codecs.open(self.parent.settings.app_path + "\\commodities.json", 'r')
+        file = codecs.open(self.parent.settings.app_path + os.sep + "commodities.json", 'r')
         self.comm_list = json.loads(file.read())
         if language == "big" or language == "eng":
             return input
@@ -106,7 +107,7 @@ class Export:
         name = unicode(self.parent.current_result.station.name.value).title().replace("'S", "'s")
         system = unicode(self.parent.result_table.item(0,9).text())
         time = strftime("%Y-%m-%dT%H.%M.%S")
-        dir = self.parent.settings["export_dir"]+"\\"+system+"."+name+"."+time+".bpc"
+        dir = self.parent.settings["export_dir"]+os.sep+system+"."+name+"."+time+".bpc"
         if self.parent.settings["native_dialog"]:
             file = QFileDialog.getSaveFileName(None, 'Save', dir, "Slopey's Best Price Calculator CSV-File (*.bpc)",
                                           "Slopey's Best Price Calculator CSV-File (*.bpc)")
@@ -224,7 +225,7 @@ class Export:
         name = unicode(self.parent.current_result.station.name.value).title().replace("'S", "'s")
         system = unicode(self.parent.result_table.item(0,9).text())
         time = strftime("%Y-%m-%dT%H.%M.%S")
-        dir = self.parent.settings["export_dir"]+"\\"+system+"."+name+"."+time+"."+self.parent.settings['last_export_format']+'"'
+        dir = self.parent.settings["export_dir"]+os.sep+system+"."+name+"."+time+"."+self.parent.settings['last_export_format']+'"'
         if self.parent.settings["native_dialog"]:
             file = QFileDialog.getSaveFileName(None, 'Save', dir, "CSV-File (*.csv);;OpenDocument Spreadsheet (*.ods);;Excel Workbook (*.xlsx)",
                                           filter)

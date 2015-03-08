@@ -151,7 +151,7 @@ class CustomQListWidgetItem(QListWidgetItem):
             
         screenshotfound = False
         for file in candidates:
-            for line in reversed(open(path+"\\"+file).readlines()):
+            for line in reversed(open(path+os.sep+file).readlines()):
                 if screenshotfound:
                     if re.match(matchsystem, line):
                         match = re.search(findname, line)
