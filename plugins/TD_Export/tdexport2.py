@@ -178,6 +178,7 @@ class TD_Export():
         self.mapOCR2TD["NATURAL FABRICS"] = [ "Natural Fabrics", "Textiles" ]
         self.mapOCR2TD["NON-LETHAL WPNS"] = [ "Non-Lethal Weapons", "Weapons" ]
         self.mapOCR2TD["NON-LETHAL WEAPONS"] = [ "Non-Lethal Weapons", "Weapons" ]
+        self.mapOCR2TD["PAINITE"] = [ "Painite", "Minerals" ]
         self.mapOCR2TD["PALLADIUM"] = [ "Palladium", "Metals" ]
         self.mapOCR2TD["PERFORMANCE ENHANCERS"] = [ "Performance Enhancers", "Medicines" ]
         self.mapOCR2TD["PERSONAL WEAPONS"] = [ "Personal Weapons", "Weapons" ]

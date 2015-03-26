@@ -22,7 +22,14 @@ class CustomQListWidgetItem(QListWidgetItem):
         self.timestamp = self.getTimeStamp()
         self.filetime = self.getFileTime()
         #self.filetime = ["14", "12", "23", "18", "58", "30"]
+        self.log_file = None
+        self.search_time = None
         self.system = self.getSystemName()
+        
+        if len(self.system) > 0:
+            self.station = self.getStationName(self.search_time)
+        else:
+            self.station = None
         self.valid_market = False
         self.img_height = 0
         self.market_width = 0
@@ -96,7 +103,24 @@ class CustomQListWidgetItem(QListWidgetItem):
         minute = strftime("%M", tmstmp)
         second = strftime("%S", tmstmp)
         return [year, month, day, hour, minute, second]
+
+    def getStationName(self, search_time):
+        path = unicode(self.settings['log_dir']).encode('windows-1252')
+        matchscreen = "^{"+search_time[0]+":"+search_time[1]+":..}"
+        matchline = "^{[\S]*}\sFindBestIsland:"
         
+        stationfound = False
+        for line in reversed(open(path+"\\"+self.log_file).readlines()):
+            if stationfound:
+                if re.match(matchline, line):
+                    elements = line.split(":")
+                    return elements[-2]
+
+            else:
+                if re.match(matchscreen, line):
+                    stationfound = True
+        return None
+    
     def getSystemName(self):
         """Get system name from log files"""
         path = unicode(self.settings['log_dir']).encode('windows-1252')
@@ -132,6 +156,8 @@ class CustomQListWidgetItem(QListWidgetItem):
                     if re.match(matchsystem, line):
                         match = re.search(findname, line)
                         if match:
+                            self.log_file = file
+                            self.search_time = (hour, minute)
                             return match.group(0).strip("(").strip(")")
                 else:
                     if re.match(matchscreen, line):

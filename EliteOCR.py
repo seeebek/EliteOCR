@@ -6,6 +6,7 @@ import sys
 import getopt
 #import time
 import json
+import codecs
 from functools import partial
 from datetime import datetime, timedelta
 from time import strftime, strptime, time
@@ -50,7 +51,7 @@ except AttributeError:
     def _translate(context, text, disambig):
         return QApplication.translate(context, text, disambig)
 
-appversion = "0.5.3"
+appversion = "0.5.4.1"
 gui = False
 logging.basicConfig(format='%(asctime)s %(levelname)s:\n%(message)s',filename='errorlog.txt',level=logging.WARNING)
 
@@ -74,7 +75,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.app = app
         self.settings = Settings(self)
-        
+        self.auto = True
         self.resizeElements()
         
         self.darkstyle = self.genDarkStyle()
@@ -156,6 +157,47 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
             if not self.settings['info_accepted']:
                 self.infoDialog = InfoDialog()
                 self.infoDialog.exec_()
+        
+        self.checkAppConfigXML()
+        #QTimer.singleShot(2000, self.autoRun)
+    
+    def autoRun(self):
+        self.addAllScreenshots()
+        if self.file_list.count() > 0:
+            self.runOCRAll()
+            
+            while self.file_list.currentRow() < self.file_list.count()-1:
+                self.addItemToTable()
+            self.addItemToTable()
+            self.export.eddnExport()
+        QTimer.singleShot(60000, self.autoRun)
+            
+    def checkAppConfigXML(self):
+        path = unicode(self.settings['log_dir']).encode('windows-1252')+"\\..\\AppConfig.xml"
+        if isfile(path):
+            file = codecs.open(path, 'r', "utf-8")
+            file_content = file.read()
+            file.close()
+            start = file_content.find("<Network")
+            end = file_content.find("</Network>")
+            position = file_content.lower().find('verboselogging="1"', start, end)
+            
+            if position == -1:
+                msg = _translate("EliteOCR","You don't have \"Verbose Logging\" enabled in your AppConfig.xml. It is necessary for automatic system name recognition. Do you want EliteOCR to enable it for you?", None)
+                reply = QMessageBox.question(self, 'Change File', msg, _translate("EliteOCR","Yes", None), _translate("EliteOCR","No", None))
+                if reply == 0:
+                    file = codecs.open(unicode(self.settings['log_dir']).encode('windows-1252')+"\\..\\AppConfig_backup.xml", 'w', "utf-8")
+                    file.write(file_content)
+                    file.close()
+                    
+                    newfile = file_content[:start+8] + '\n      VerboseLogging="1"' + file_content[start+8:]
+
+                    file = codecs.open(path, 'w', "utf-8")
+                    file.write(newfile)
+                    file.close()
+                    QMessageBox.information(self,"Restart the Game", "Please restart the game to apply the change in AppConfig.xml")
+                else:
+                    return
     
     def resizeElements(self):
         fields = [self.system_name, self.station_name, self.name, self.sell, self.buy, self.demand_num, self.demand, self.supply_num, self.supply, self.label_12, self.file_label, self.system_not_found]
@@ -229,12 +271,18 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.settings.reg.beginGroup("MainWindow")
         self.resize(self.settings.reg.value("size", QSize(400, 400)).toSize())
         self.move(self.settings.reg.value("pos", QPoint(200, 200)).toPoint())
+        if self.settings.reg.value("maximized", False, type=bool):
+            self.showMaximized()
         self.settings.reg.endGroup()
     
     def closeEvent(self, event):
         self.settings.reg.beginGroup("MainWindow")
         self.settings.reg.setValue("size", self.size())
         self.settings.reg.setValue("pos", self.pos())
+        if self.windowState() == Qt.WindowMaximized:
+            self.settings.reg.setValue("maximized", True)
+        else:
+            self.settings.reg.setValue("maximized", False)
         self.settings.reg.endGroup()
         self.settings.reg.setValue("public_mode", self.actionPublic_Mode.isChecked())
         self.settings.reg.setValue("zoom_factor", self.factor.value())
@@ -344,7 +392,8 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         files = []
         for file in gen:
             files.append(file)
-        self.addFiles(files)
+        if len(files) > 0:
+            self.addFiles(files)
     
     def addFiles(self, screenshots = None):
         """Add files to the file list."""
@@ -446,6 +495,8 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         if len(item.system) == 0:
             self.system_not_found.setText(_translate("EliteOCR","System name not found in log files. Please read Help for more info.", None))
         self.system_name.setText(item.system)
+        if not item.station is None:
+            self.station_name.setText(item.station)
         #self.system_name.setFont(font)
         self.file_list.setCurrentItem(item)
         self.file_label.setText(item.text())
@@ -529,6 +580,10 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
             self.eddn_button.setEnabled(True)
         self.enablePluginButtons()
         self.enableButton(self.clear_table, True)
+        # check if no stock and not purchased
+        if self.demand_num.text() == "" and self.supply_num.text() == "":
+            self.nextLine()
+            return
         #check for duplicates
         duplicate = False
         if self.settings["remove_dupli"]:
@@ -620,8 +675,6 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
             self.nextFile()
         else:
             if self.settings['delete_files']:
-                print "Deleted (continueOCR 458):"
-                print self.file_list.currentItem().text()
                 remove(self.file_list.currentItem().hiddentext)
                 self.removeFile()
         self.enableButton(self.continue_button, False)
@@ -649,8 +702,6 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                     if self.settings['pause_at_end']:
                         self.enableButton(self.continue_button, True)
                     else:
-                        print "Deleted (nextLine 486):"
-                        print self.file_list.currentItem().text()
                         remove(self.file_list.currentItem().hiddentext)
                         self.removeFile()
                 
@@ -659,8 +710,6 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         """OCR next file"""
         if self.file_list.currentRow() < self.file_list.count()-1:
             if self.settings['delete_files']:
-                print "Deleted (nextFile 496):"
-                print self.file_list.currentItem().text()
                 remove(self.file_list.currentItem().hiddentext)
                 self.softRemoveFile()
             else:
@@ -673,6 +722,8 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                 if len(self.file_list.currentItem().system) > 0:
                     self.system_not_found.setText("")
                     self.system_name.setText(self.file_list.currentItem().system)
+                    if not self.file_list.currentItem().station is None:
+                        self.station_name.setText(self.file_list.currentItem().station)
                     #self.system_name.setFont(font)
                 else:
                     self.system_name.setText("")
@@ -682,8 +733,6 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                 #self.system_name.selectAll()
         else:
             if self.settings['delete_files']:
-                print "Deleted (nextFile 520):"
-                print self.file_list.currentItem().text()
                 remove(self.file_list.currentItem().hiddentext)
                 self.softRemoveFile()
             
@@ -695,6 +744,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.bpc_button.setEnabled(False)
         self.enableButton(self.eddn_button, False)
         self.disablePluginButtons()
+        #TODO :if file list empty, clear preview image 
     
     def processOCRLine(self):
         """Process current OCR result line."""
@@ -719,8 +769,8 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                 autofill = False
                 self.save_button.setEnabled(False)
                 self.enableButton(self.skip_button, True)
-                QTimer.singleShot(1200, partial(self.enableButton, self.save_button, True));
-                #QTimer.singleShot(1500, partial(self.skip_button.setEnabled, True));
+                QTimer.singleShot(1200, partial(self.enableButton, self.save_button, True))
+                #QTimer.singleShot(1500, partial(self.skip_button.setEnabled, True))
                         
             for field, canvas, item in zip(self.fields, self.canvases, res.items):
                 if item != None:
@@ -863,7 +913,10 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         #self.station_name.setText('')
         #self.station_name.clear()
         #self.station_name.addItems(name.optional_values)
-        self.station_name.setText(name.value)
+        if not self.file_list.currentItem().station is None:
+                self.station_name.setText(self.file_list.currentItem().station)
+        else:
+            self.station_name.setText(name.value)
         #font = QFont("Consolas", 11)
         #self.station_name.lineEdit().setFont(font)
         #self.setConfidenceColor(self.station_name, name)

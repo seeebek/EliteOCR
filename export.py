@@ -184,7 +184,7 @@ class Export:
             sent_rows.append(row)
         
         notsent = list(set(range(all_rows))-set(sent_rows))
-
+        """
         if len(to_send) < all_rows:
             QMessageBox.warning(self.parent,"Warning", "Following rows will not be exported to EDDN:\n "+\
             str(notsent)+"\n"+\
@@ -192,6 +192,7 @@ class Export:
             "- Rows were sent already once before\n"+\
             "- Rows contain no system name\n"+\
             "- Rows contain data older than two hours\n")
+        """
         if len(to_send) > 0:
             self.parent.eddn_button.setEnabled(False)
             self.parent.statusbar.clearMessage()
