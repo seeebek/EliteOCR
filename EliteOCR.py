@@ -176,7 +176,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         QTimer.singleShot(60000, self.autoRun)
             
     def checkAppConfigXML(self):
-        path = unicode(self.settings['log_dir']).encode('windows-1252')+"\\..\\AppConfig.xml"
+        path = unicode(self.settings['log_dir']).encode('windows-1252')+os.sep+".."+os.sep+"AppConfig.xml"
         if isfile(path):
             file = codecs.open(path, 'r', "utf-8")
             file_content = file.read()
@@ -189,7 +189,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                 msg = _translate("EliteOCR","You don't have \"Verbose Logging\" enabled in your AppConfig.xml. It is necessary for automatic system name recognition. Do you want EliteOCR to enable it for you?", None)
                 reply = QMessageBox.question(self, 'Change File', msg, _translate("EliteOCR","Yes", None), _translate("EliteOCR","No", None))
                 if reply == 0:
-                    file = codecs.open(unicode(self.settings['log_dir']).encode('windows-1252')+"\\..\\AppConfig_backup.xml", 'w', "utf-8")
+                    file = codecs.open(unicode(self.settings['log_dir']).encode('windows-1252')+os.sep+".."+os.sep+"AppConfig_backup.xml", 'w', "utf-8")
                     file.write(file_content)
                     file.close()
                     

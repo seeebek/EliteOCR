@@ -111,7 +111,7 @@ class CustomQListWidgetItem(QListWidgetItem):
         matchline = "^{[\S]*}\sFindBestIsland:"
         
         stationfound = False
-        for line in reversed(open(path+"\\"+self.log_file).readlines()):
+        for line in reversed(open(path+os.sep+self.log_file).readlines()):
             if stationfound:
                 if re.match(matchline, line):
                     elements = line.split(":")
