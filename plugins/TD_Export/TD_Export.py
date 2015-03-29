@@ -13,6 +13,7 @@
 from __future__ import absolute_import, with_statement, print_function, division, unicode_literals
 
 import datetime         # some time handling
+import os
 
 from os import listdir, remove, makedirs
 from os.path import isdir
@@ -220,7 +221,7 @@ class TD_Export():
             pass
         if not isdir(exportDir):
             makedirs(exportDir)
-        fileName = exportDir+str("\\import.prices")
+        fileName = exportDir+str(os.sep+"import.prices")
 
         # python 2 <-> 3
         try:

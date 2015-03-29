@@ -3,6 +3,7 @@ import cv2
 import re
 import numpy as np
 import pytz
+import os
 from os import listdir
 from os.path import getmtime, getctime, isdir
 from time import gmtime, localtime, strftime
@@ -110,7 +111,7 @@ class CustomQListWidgetItem(QListWidgetItem):
         matchline = "^{[\S]*}\sFindBestIsland:"
         
         stationfound = False
-        for line in reversed(open(path+"\\"+self.log_file).readlines()):
+        for line in reversed(open(path+os.sep+self.log_file).readlines()):
             if stationfound:
                 if re.match(matchline, line):
                     elements = line.split(":")
@@ -151,7 +152,7 @@ class CustomQListWidgetItem(QListWidgetItem):
             
         screenshotfound = False
         for file in candidates:
-            for line in reversed(open(path+"\\"+file).readlines()):
+            for line in reversed(open(path+os.sep+file).readlines()):
                 if screenshotfound:
                     if re.match(matchsystem, line):
                         match = re.search(findname, line)

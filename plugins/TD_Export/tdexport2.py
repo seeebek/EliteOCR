@@ -16,6 +16,7 @@ import datetime         # some time handling
 
 from os import listdir, remove, makedirs
 from os.path import isdir
+import os
 
 ######################################################################
 # Helper Classes
@@ -217,7 +218,7 @@ class TD_Export():
             pass
         if not isdir(exportDir):
             makedirs(exportDir)
-        fileName = exportDir+str("\\import.prices")
+        fileName = exportDir+str(os.sep+"import.prices")
 
         # python 2 <-> 3
         try:
