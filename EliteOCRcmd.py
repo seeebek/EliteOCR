@@ -9,7 +9,7 @@ import json
 import codecs
 from functools import partial
 from datetime import datetime, timedelta
-from time import strftime, strptime, time
+from time import strftime, strptime, time, clock
 from calendar import timegm
 from os.path import split, splitext, isfile, isdir, dirname, realpath, exists, join
 from os import makedirs, listdir, remove
@@ -34,7 +34,7 @@ from export import Export
 from info import InfoDialog
 from xmloutput import XMLOutput
 
-from ocrmethods import OCRAreasFinder
+from engine import OCRAreasFinder
 
 from openpyxl import Workbook
 from ezodf import newdoc, Sheet
@@ -67,7 +67,7 @@ def exception_handler(ex_cls, ex, tb):
         QMessageBox.critical(None,"Error", "An error was encountered. Please read errorlog.txt")
     
 
-sys.excepthook = exception_handler
+#sys.excepthook = exception_handler
 
 class EliteOCR(QMainWindow, Ui_MainWindow):
     def __init__(self, app):            
@@ -75,7 +75,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.app = app
         self.settings = Settings(self)
-        
+        self.auto = True
         self.resizeElements()
         
         self.darkstyle = self.genDarkStyle()
@@ -159,7 +159,19 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                 self.infoDialog.exec_()
         
         self.checkAppConfigXML()
-                
+        #QTimer.singleShot(2000, self.autoRun)
+    
+    def autoRun(self):
+        self.addAllScreenshots()
+        if self.file_list.count() > 0:
+            self.runOCRAll()
+            
+            while self.file_list.currentRow() < self.file_list.count()-1:
+                self.addItemToTable()
+            self.addItemToTable()
+            self.export.eddnExport()
+        QTimer.singleShot(60000, self.autoRun)
+            
     def checkAppConfigXML(self):
         path = unicode(self.settings['log_dir']).encode('windows-1252')+"\\..\\AppConfig.xml"
         if isfile(path):
@@ -277,6 +289,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.settings.reg.sync()
         if not self.busyDialog is None:
             self.busyDialog.close()
+        self.app.setStyleSheet("")
         event.accept()
     
     def toggleMode(self):
@@ -380,7 +393,8 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         files = []
         for file in gen:
             files.append(file)
-        self.addFiles(files)
+        if len(files) > 0:
+            self.addFiles(files)
     
     def addFiles(self, screenshots = None):
         """Add files to the file list."""
@@ -525,22 +539,14 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.busyDialog.show()
         QApplication.processEvents()
         if self.file_list.currentItem().valid_market:
-            self.current_result = OCR(self, self.color_image, self.file_list.currentItem().ocr_areas, self.settings["ocr_language"], self.file_list.currentItem())
+            #start = clock()
+            self.current_result = OCR(self.color_image, self.file_list.currentItem().ocr_areas, self.settings["ocr_language"], self.file_list.currentItem())
+            #end = clock()
+            #print "%.4fs" % (end-start)
             self.busyDialog.close()
-            """
-            try:
-                self.current_result = OCR(self.color_image)
-            except:
-                QMessageBox.critical(self,"Error", "Error while performing OCR.\nPlease report the "+\
-                "problem to the developers through github, sourceforge or forum and provide the "+\
-                "screenshot which causes the problem.")
+            
+            if self.current_result.commodities is None:
                 return
-            if self.current_result.station == None:
-                QMessageBox.critical(self,"Error", "Screenshot not recognized.\n"+\
-                    "Make sure you use a valid screenshot from the commodieties market. Should the "+\
-                    "problem persist, please recalibrate the OCR areas with Settings->Calibrate.")
-                return
-            """
             if len(self.current_result.commodities) < 1:
                 QMessageBox.critical(self,"Error", "No results found!\nYou might be using an unsupported HUD color. Please read help for more information.")
                 return 
@@ -551,8 +557,8 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
             self.enableButton(self.save_button, True)
             self.processOCRLine()
             self.system_name.setFocus()
-            if self.settings['create_nn_images']:
-                self.saveStationForTraining()
+            #if self.settings['create_nn_images']:
+            #    self.saveStationForTraining()
         else:
             self.nextFile()
         
@@ -616,11 +622,50 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         h = len(self.current_result.contrast_commodities_img[0])
         for index, field, canvas, item in zip(range(0, len(self.canvases) - 1),
                                               self.fields, self.canvases, res.items):
+            if not item is None:
+                for unit, letter in zip(item.units,unicode(field.text()).replace(" ", "")):
+                    if letter in ["1","2","3","4","5","6","7","8","9","0",",","-","."]:
+                        let = letter.replace(".",",").upper()
+                        image = cres.commodities_img[unit[2]:unit[3]+1,unit[0]:unit[1]]
+                        h = res.h
+                        if len(image) > 0:
+                            if ((h*0.1)/len(image[0])) > 3:
+                                image = cres.commodities_img[res.y1:unit[3], unit[0]:unit[1]]
+                                border = (h - len(image[0]))/2
+                                image = cv2.copyMakeBorder(image,0,0,border,border,cv2.BORDER_CONSTANT,value=(255,255,255))
 
+                            if len(image) < (h*0.1)/1.5:
+                                image = cres.commodities_img[res.y1:res.y2, unit[0]:unit[1]]
+                                border = (h - len(image[0]))/2
+                                image = cv2.copyMakeBorder(image,0,0,border,border,cv2.BORDER_CONSTANT,value=(255,255,255))
+                        if not exists(".\\numbers\\"+let):
+                            makedirs(".\\numbers\\"+let)
+                        cv2.imwrite(".\\numbers\\"+let+"\\"+str(random.randint(1, 100000))+".png",image)
+                    else:
+                        let = letter.upper()
+                        image = cres.commodities_img[unit[2]:unit[3]+1,unit[0]:unit[1]]
+                        h = res.h
+                        if len(image) > 0:
+                            if ((h*1.0)/len(image[0])) > 3:
+                                image = cres.commodities_img[res.y1:unit[3], unit[0]:unit[1]]
+                                border = (h - len(image[0]))/2
+                                image = cv2.copyMakeBorder(image,0,0,border,border,cv2.BORDER_CONSTANT,value=(255,255,255))
+
+                            if len(image) < (h*1.0)/1.5:
+                                image = cres.commodities_img[res.y1:res.y2, unit[0]:unit[1]]
+                                border = (h - len(image[0]))/2
+                                image = cv2.copyMakeBorder(image,0,0,border,border,cv2.BORDER_CONSTANT,value=(255,255,255))
+                        if not exists(".\\letters\\"+let):
+                            makedirs(".\\letters\\"+let)
+                        cv2.imwrite(".\\letters\\"+let+"\\"+str(random.randint(1, 100000))+".png",image)
+                    #print letter
+                    #print unit 
+                    #print
+            """
             val = unicode(field.text())#.replace(',', '')
             if field in [self.sell, self.buy, self.demand_num, self.supply_num]:
                 if val:
-                    snippet = self.cutImage(cres.contrast_commodities_img, item)
+                    snippet = self.cutClean(cres.commodities_img, item)
                     #cv2.imshow('snippet', snippet)
                     imageFilepath = self.training_image_dir + u'\\numbers\\' + unicode(val) + u'_' + unicode(w) + u'x' + unicode(h) +\
                                     u'-' + unicode(int(time())) + u'-' +\
@@ -628,13 +673,13 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                     cv2.imwrite(imageFilepath.encode('windows-1252'), snippet)
             elif field in [self.name]:
                 if val:
-                    snippet = self.cutImage(cres.contrast_commodities_img, item)
+                    snippet = self.cutClean(cres.commodities_img, item)
                     #cv2.imshow('snippet', snippet)
                     imageFilepath = self.training_image_dir + u'\\text\\' + unicode(val) + u'_' + unicode(w) + u'x' + unicode(h) +\
                                     u'-' + unicode(int(time())) + u'-' +\
                                     unicode(random.randint(10000, 100000)) + u'.png'
                     cv2.imwrite(imageFilepath.encode('windows-1252'), snippet)
-        
+            """
         
     def saveStationForTraining(self):
         cres = self.current_result
@@ -662,8 +707,6 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
             self.nextFile()
         else:
             if self.settings['delete_files']:
-                print "Deleted (continueOCR 458):"
-                print self.file_list.currentItem().text()
                 remove(self.file_list.currentItem().hiddentext)
                 self.removeFile()
         self.enableButton(self.continue_button, False)
@@ -691,8 +734,6 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                     if self.settings['pause_at_end']:
                         self.enableButton(self.continue_button, True)
                     else:
-                        print "Deleted (nextLine 486):"
-                        print self.file_list.currentItem().text()
                         remove(self.file_list.currentItem().hiddentext)
                         self.removeFile()
                 
@@ -701,8 +742,6 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         """OCR next file"""
         if self.file_list.currentRow() < self.file_list.count()-1:
             if self.settings['delete_files']:
-                print "Deleted (nextFile 496):"
-                print self.file_list.currentItem().text()
                 remove(self.file_list.currentItem().hiddentext)
                 self.softRemoveFile()
             else:
@@ -726,8 +765,6 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                 #self.system_name.selectAll()
         else:
             if self.settings['delete_files']:
-                print "Deleted (nextFile 520):"
-                print self.file_list.currentItem().text()
                 remove(self.file_list.currentItem().hiddentext)
                 self.softRemoveFile()
             
@@ -739,6 +776,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.bpc_button.setEnabled(False)
         self.enableButton(self.eddn_button, False)
         self.disablePluginButtons()
+        #TODO :if file list empty, clear preview image 
     
     def processOCRLine(self):
         """Process current OCR result line."""
@@ -753,8 +791,8 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                 for item in res.items:
                     if item == None:
                         continue
-                    if not item.confidence > 0.83:
-                        autofill = False
+                    #if not item.confidence > 0.83:
+                    #    autofill = False
                 if res.items[0] is None:
                     autofill = False
                 if res.items[1] is None:
@@ -763,8 +801,8 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                 autofill = False
                 self.save_button.setEnabled(False)
                 self.enableButton(self.skip_button, True)
-                QTimer.singleShot(1200, partial(self.enableButton, self.save_button, True));
-                #QTimer.singleShot(1500, partial(self.skip_button.setEnabled, True));
+                QTimer.singleShot(1200, partial(self.enableButton, self.save_button, True))
+                #QTimer.singleShot(1500, partial(self.skip_button.setEnabled, True))
                         
             for field, canvas, item in zip(self.fields, self.canvases, res.items):
                 if item != None:
@@ -773,7 +811,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                     field.setText(item.value)
                     #field.lineEdit().setFont(font)
                     if not(self.settings["auto_fill"] and autofill):
-                        self.setConfidenceColor(field, item)
+                        #self.setConfidenceColor(field, item)
                         self.drawSnippet(canvas, item)
                 else:
                     self.cleanSnippet(canvas)
@@ -823,6 +861,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         res = self.current_result
         name = res.station
         img = self.preview_image
+        item = self.file_list.currentItem()
         
         old_h = img.height()
         old_w = img.width()
@@ -847,28 +886,28 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         bluepen = QPen(Qt.blue)
         greenpen = QPen(Qt.green)
         
-        rect = self.addRect(self.scene, name, ratio_w, ratio_h, greenpen)
+        rect = self.addRect(self.scene, name, ratio_w, ratio_h, item.station_offset[0], item.station_offset[1], greenpen)
         
         counter = 0
         for line in res.commodities:
             if counter < self.OCRline:
-                rect = self.addRect(self.scene, line, ratio_w, ratio_h, greenpen)
+                rect = self.addRect(self.scene, line, ratio_w, ratio_h, item.market_offset[0], item.market_offset[1], greenpen)
             elif counter == self.OCRline:
-                rect = self.addRect(self.scene, line, ratio_w, ratio_h, bluepen)
+                rect = self.addRect(self.scene, line, ratio_w, ratio_h, item.market_offset[0], item.market_offset[1], bluepen)
             else:
                 if line.w < (0.02*old_w):
-                    rect = self.addRect(self.scene, line, ratio_w, ratio_h, redpen)
+                    rect = self.addRect(self.scene, line, ratio_w, ratio_h, item.market_offset[0], item.market_offset[1], redpen)
                 else:
-                    rect = self.addRect(self.scene, line, ratio_w, ratio_h, pen)
+                    rect = self.addRect(self.scene, line, ratio_w, ratio_h, item.market_offset[0], item.market_offset[1], pen)
             
             counter += 1
             self.previewRects.append(rect)
             
         self.previewSetScene(self.scene)
         
-    def addRect(self, scene, item, ratio_w, ratio_h, pen):
+    def addRect(self, scene, item, ratio_w, ratio_h, x_offset, y_offset, pen):
         """Adds a rectangle to scene and returns it."""
-        rect = scene.addRect(item.x1/ratio_w -3, item.y1/ratio_h -3,
+        rect = scene.addRect((item.x1+x_offset)/ratio_w -3 , (item.y1+y_offset)/ratio_h -3,
                               item.w/ratio_w +7, item.h/ratio_h +6, pen)
         return rect
     
@@ -877,8 +916,33 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
     
     def cutImage(self, image, item):
         """Cut image snippet from a big image using points from item."""
-        snippet = image[item.y1 - 5:item.y2 + 5,
-                        item.x1 - 5:item.x2 + 5]
+        h, w = image.shape
+        x1 = item.x1-3
+        if x1 < 0:
+            x1 = 0
+        x2 = item.x2+5
+        if x2 > w:
+            x2 = w
+        y1 = item.y1-3
+        if y1 < 0:
+            y1 = 0
+        y2 = item.y2+5
+        if y2 > h:
+            y2 = h
+        snippet = image[y1:y2,
+                        x1:x2]
+        return snippet
+        
+    def cutClean(self, image, item):
+        """Cut image snippet from a big image using points from item."""
+        snippet = image[item.y1:item.y2,
+                        item.x1:item.x2]
+        return snippet
+        
+    def cutStationImage(self, image, item):
+        """Cut image snippet from a big image using points from item."""
+        snippet = image[item.y1:item.y2+6,
+                        item.x1:item.x2+6]
         return snippet
     
     def drawSnippet(self, graphicsview, item):
@@ -914,16 +978,17 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         #font = QFont("Consolas", 11)
         #self.station_name.lineEdit().setFont(font)
         #self.setConfidenceColor(self.station_name, name)
-        img = self.cutImage(res.contrast_station_img, name)
+        img = self.cutStationImage(res.contrast_station_img, name)
+        #img = cv2.copyMakeBorder(img,5,5,5,5,cv2.BORDER_CONSTANT,value=(255,255,255))
         if self.dark_theme: 
             img = 255 - img
         processedimage = array2qimage(img)
         pix = QPixmap()
         pix.convertFromImage(processedimage)
-        if self.station_name_img.height() < pix.height():
-            pix = pix.scaled(self.station_name_img.size(),
-                             Qt.KeepAspectRatio,
-                             Qt.SmoothTransformation)
+        
+        pix = pix.scaled(self.station_name_img.size(),
+                         Qt.KeepAspectRatio,
+                         Qt.SmoothTransformation)
         scene = QGraphicsScene()
         scene.addPixmap(pix)
         
