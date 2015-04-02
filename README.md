@@ -52,10 +52,6 @@ Goto opencv/build/python/2.7 folder.
 
 Copy cv2.pyd to C:/Python27/lib/site-packages.
 
-###### Python-Tesseract 
-
-[https://bitbucket.org/3togo/python-tesseract/downloads/](https://bitbucket.org/3togo/python-tesseract/downloads/)
-
 ######PyQt4 
 
 [http://www.riverbankcomputing.co.uk/software/pyqt/download](http://www.riverbankcomputing.co.uk/software/pyqt/download)
@@ -89,6 +85,20 @@ pip install lxml
 pip install python-Levenshtein
 
 [https://pypi.python.org/pypi/python-Levenshtein/](https://pypi.python.org/pypi/python-Levenshtein/)
+
+###### PyTZ
+
+pip install pytz
+
+###### tzlocal
+
+pip install tzlocal
+
+###### Requests
+
+pip install requests
+
+
 
 
 Run EliteOCR.py

@@ -1,7 +1,6 @@
 import requests
 import re
 from bs4 import BeautifulSoup
-import wget
 from PyQt4.QtCore import QThread, SIGNAL
 
 class Worker(QThread):
