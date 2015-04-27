@@ -1,0 +1,6 @@
+base_training_data.pck is a python dictionary packed with pickle and gzip and has the following format:
+{"A":[object of type bitarray],
+ "B":[object of type bitarray],
+ ...}
+ 
+ [object of type bitarray] is the series of black and white images (20x20 pixel)

@@ -1,7 +1,9 @@
+# -*- coding: utf-8 -*-
 from PyQt4.QtGui import *
 from PyQt4.QtCore import SIGNAL, QUrl, QThread, QString
 from updateUI import Ui_Update
 from threadworker import Worker
+import os
 from os import makedirs, rename, remove
 from os.path import isdir, isfile
 import os
@@ -48,9 +50,15 @@ class UpdateDialog(QDialog, Ui_Update):
             self.label.setText("Starting download.")
             url = "http://sourceforge.net/projects/eliteocr/files/"+self.newupd[0]+"/EliteOCR."+self.newupd[1]+".zip"
             #url = "http://blog.fancyrhino.com/wp-content/uploads/2014/03/3.jpg"
+<<<<<<< HEAD
+            if not isdir(unicode(self.app_path)+u""+ os.sep +".."+ os.sep +"update"+ os.sep +""):
+                makedirs(unicode(self.app_path)+u""+ os.sep +".."+ os.sep +"update"+ os.sep +"")
+            self.filepath = unicode(self.app_path)+u""+ os.sep +".."+ os.sep +"update"+ os.sep +"EliteOCR."+unicode(self.newupd[1])+u".zip.part"
+=======
             if not isdir(unicode(self.app_path)+os.sep+u".."+os.sep+u"update"+os.sep):
 		    makedirs(unicode(self.app_path)+os.sep+u".."+os.sep+u"update"+os.sep)
             self.filepath = unicode(self.app_path)+os.sep+u".."+os.sep+u"update"+os.sep+u"EliteOCR."+unicode(self.newupd[1])+u".zip.part"
+>>>>>>> master
             #print self.filepath
             self.downloader.get(url, self.filepath)
     
@@ -62,7 +70,11 @@ class UpdateDialog(QDialog, Ui_Update):
         self.progress_bar.setValue(0)
         self.label.setText("Download finished. You can find it in the update directory.")
         
+<<<<<<< HEAD
+        subprocess.Popen(r'explorer /select,"'+unicode(self.app_path).encode(sys.getfilesystemencoding())+ os.sep +".."+ os.sep +"update"+ os.sep +"EliteOCR."+unicode(self.newupd[1]).encode(sys.getfilesystemencoding())+".zip")
+=======
         subprocess.Popen(r'explorer /select,"'+unicode(self.app_path).encode('windows-1252')+os.sep+'..'+os.sep+'update'+os.sep+'EliteOCR.'+unicode(self.newupd[1]).encode('windows-1252')+'.zip"')
+>>>>>>> master
     
     def downloadFinishedError(self):
         self.progress_bar.setMaximum(1)
@@ -72,7 +84,7 @@ class UpdateDialog(QDialog, Ui_Update):
     def updateProgress(self, done, total):
         self.progress_bar.setMaximum(total)
         self.progress_bar.setValue(done)
-        self.label.setText("Downloading: "+str("%.2f" % (done/1048576.0))+"MB / "+str("%.2f" % (total/1048576.0))+"MB")
+        self.label.setText("Downloading: "+unicode("%.2f" % (done/1048576.0))+"MB / "+unicode("%.2f" % (total/1048576.0))+"MB")
 
     def showNoUpdate(self):
         self.label.setText("No updates found.")

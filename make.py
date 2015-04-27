@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from subprocess import call
 from shutil import copy, copytree, rmtree, move
 
@@ -22,14 +23,14 @@ except:
 try:
     retcode = call("pyinstaller --onedir EliteOCR.spec")
     print ""
-    print "pyinstaller finished with code: " + str(retcode)
+    print "pyinstaller finished with code: " + unicode(retcode)
 except:
     print "pyinstaller error"
     
 try:
     retcode = call("pyinstaller --onedir EliteOCRcmd.spec")
     print ""
-    print "pyinstaller finished with code: " + str(retcode)
+    print "pyinstaller finished with code: " + unicode(retcode)
 except:
     print "pyinstaller error"
 
@@ -44,7 +45,7 @@ try:
     print "EliteOCRcmd.exe.manifest copied"
 except:
     print "EliteOCRcmd.exe.manifest not copied"
-
+"""
 try:
     rmtree("./dist/tessdata/")
     print "tessdata deleted"
@@ -62,24 +63,36 @@ try:
     print "tessdata copied to bin"
 except:
     print "tessdata not copied to bin"
-    
+"""    
 try:
     copytree("./translations/", "./dist/EliteOCR/translations/")
     print "translations copied"
 except:
     print "translations not copied"
-    
+"""    
 try:
     copytree("./nn_scripts/", "./dist/EliteOCR/nn_scripts/")
     print "nn_scripts copied"
 except:
     print "nn_scripts not copied"
-
+"""
 try:
-    copy("./text.xml", "./dist/EliteOCR/text.xml")
-    print "text.xml copied"
+    copy("./letters.xml", "./dist/EliteOCR/letters.xml")
+    print "letters.xml copied"
 except:
-    print "text.xml not copied"
+    print "letters.xml not copied"
+    
+try:
+    copy("./numbers.xml", "./dist/EliteOCR/numbers.xml")
+    print "numbers.xml copied"
+except:
+    print "numbers.xml not copied"
+    
+try:
+    copy("./station.xml", "./dist/EliteOCR/station.xml")
+    print "station.xml copied"
+except:
+    print "station.xml not copied"
     
 try:
     copytree("./plugins/", "./dist/EliteOCR/plugins/")
@@ -92,6 +105,12 @@ try:
     print "help copied"
 except:
     print "help not copied"
+    
+try:
+    copytree("./trainingdata/", "./dist/EliteOCR/trainingdata/")
+    print "trainingdata copied"
+except:
+    print "trainingdata not copied"
     
 try:
     copy("./commodities.json", "./dist/EliteOCR/commodities.json")

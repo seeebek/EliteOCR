@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from PyQt4.QtGui import QDialog
 from PyQt4.QtCore import QTimer
 from infoUI import Ui_Info
@@ -13,12 +14,12 @@ class InfoDialog(QDialog, Ui_Info):
         self.ok.clicked.connect(self.accepted)
         self.wait = 10
         self.stimer = QTimer
-        self.ok.setText(str(self.wait))
+        self.ok.setText(unicode(self.wait))
         self.stimer.singleShot(1000, self.updateTimer)
     
     def updateTimer(self):
         self.wait -= 1
-        self.ok.setText(str(self.wait))
+        self.ok.setText(unicode(self.wait))
         if self.wait > 0:
             self.stimer.singleShot(1000, self.updateTimer)
         else:

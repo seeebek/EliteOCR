@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+<<<<<<< HEAD
+import sys
+=======
+>>>>>>> master
 import os
 import codecs
 import json
@@ -7,6 +11,7 @@ from time import strftime, strptime
 from PyQt4.QtGui import QMessageBox, QFileDialog, QTableWidgetItem
 from openpyxl import Workbook
 from ezodf import newdoc, Sheet
+#from pyexcel_ods import ODSWriter
 
 class Export:
     def __init__(self, parent):
@@ -14,8 +19,13 @@ class Export:
         #self.translate()
     
     def translate(self, input):
+<<<<<<< HEAD
+        language = unicode(self.parent.settings["ocr_language"])
+        file = codecs.open(self.parent.settings.app_path + ""+ os.sep +"commodities.json", 'r')
+=======
         language = str(self.parent.settings["ocr_language"])
         file = codecs.open(self.parent.settings.app_path + os.sep + "commodities.json", 'r')
+>>>>>>> master
         self.comm_list = json.loads(file.read())
         if language == "big" or language == "eng":
             return input
@@ -41,7 +51,7 @@ class Export:
     def tableToList(self, allow_horizontal = False, allow_translate = False):
             all_rows = self.parent.result_table.rowCount()
             all_cols = self.parent.result_table.columnCount()
-            result_list = [["System","Station","Commodity","Sell","Buy","Demand","","Supply","","Date"]]
+            result_list = [[u"System",u"Station",u"Commodity",u"Sell",u"Buy",u"Demand",u"",u"Supply",u"",u"Date"]]
             for row in xrange(0, all_rows):
                 line = [self.safeStrToList(self.parent.result_table.item(row,9).text()),
                         self.safeStrToList(self.parent.result_table.item(row,0).text()),
@@ -76,14 +86,14 @@ class Export:
             for cell in row:
                 towrite += unicode(cell)+";"
             towrite += "\n"
-        file = unicode(file).encode('windows-1252')
-        csv_file = codecs.open(file, "w", "windows-1252")
+        file = unicode(file).encode(sys.getfilesystemencoding())
+        csv_file = codecs.open(file, "w", sys.getfilesystemencoding())
         csv_file.write(towrite)
         csv_file.close()
 
     def exportToOds(self, result, file):
-        file = unicode(file).encode('windows-1252')
-        ods = newdoc(doctype='ods', filename=unicode(file))
+        file = unicode(file)#.encode(sys.getfilesystemencoding())
+        ods = newdoc(doctype='ods', filename=file)
         sheet = Sheet('Sheet 1', size=(len(result)+1, len(result[0])+1))
         ods.sheets += sheet
         
@@ -91,6 +101,28 @@ class Export:
             for j in xrange(len(result[0])):
                 sheet[i,j].set_value(result[i][j])
         ods.save()
+    """
+    def exportToOds2(self, result, file):
+        odsresult = []
+        for line in result:
+            newline = []
+            for cell in line:
+                if cell == u"":
+                    newline.append(None)
+                    continue
+                if str(cell)[:4] == u"2015":
+                    newline.append(u"2015")
+                else:
+                    newline.append(cell)
+            odsresult.append(newline)
+        print odsresult
+        file = unicode(file).encode('windows-1252')
+        data = {}
+        data["Sheet 1"] = odsresult
+        writer = ODSWriter(file)
+        writer.write(data)
+        writer.close()
+    """    
 
     def exportToXlsx(self, result, file):
         wb = Workbook()
@@ -100,14 +132,18 @@ class Export:
             for j in xrange(1,len(result[0])+1):
                 ws.cell(row = i, column = j).value = result[i-1][j-1]
                 
-        file = unicode(file).encode('windows-1252')
-        wb.save(unicode(file))
+        file = unicode(file).encode(sys.getfilesystemencoding())
+        wb.save(file)
         
     def bpcExport(self):
         name = unicode(self.parent.current_result.station.name.value).title().replace("'S", "'s")
         system = unicode(self.parent.result_table.item(0,9).text())
         time = strftime("%Y-%m-%dT%H.%M.%S")
+<<<<<<< HEAD
+        dir = self.parent.settings["export_dir"]+ os.sep +system+"."+name+"."+time+".bpc"
+=======
         dir = self.parent.settings["export_dir"]+os.sep+system+"."+name+"."+time+".bpc"
+>>>>>>> master
         if self.parent.settings["native_dialog"]:
             file = QFileDialog.getSaveFileName(None, 'Save', dir, "Slopey's Best Price Calculator CSV-File (*.bpc)",
                                           "Slopey's Best Price Calculator CSV-File (*.bpc)")
@@ -168,13 +204,16 @@ class Export:
                 newitem = QTableWidgetItem("No system name")
                 self.parent.result_table.setItem(row, 11, newitem)
                 continue
-            timescreenshot = datetime.strptime(str(self.parent.result_table.item(row,8).text()),"%Y-%m-%dT%H:%M:%S+00:00")
+                
+            timescreenshot = datetime.strptime(unicode(self.parent.result_table.item(row,8).text()),"%Y-%m-%dT%H:%M:%S+00:00")
+
             if allowedtime > timescreenshot:
                 newitem = QTableWidgetItem("Data too old")
                 self.parent.result_table.setItem(row, 11, newitem)
                 continue
+
             if not self.parent.result_table.item(row,11) is None:
-                if str(self.parent.result_table.item(row,11).text()) == "True":
+                if unicode(self.parent.result_table.item(row,11).text()) == "True":
                     continue
             
             line = result[row]
@@ -188,7 +227,7 @@ class Export:
         """
         if len(to_send) < all_rows:
             QMessageBox.warning(self.parent,"Warning", "Following rows will not be exported to EDDN:\n "+\
-            str(notsent)+"\n"+\
+            unicode(notsent)+"\n"+\
             "Possible reasons:\n"+\
             "- Rows were sent already once before\n"+\
             "- Rows contain no system name\n"+\
@@ -204,7 +243,7 @@ class Export:
         self.parent.eddn_button.setEnabled(True)
         
     def eddnUpdate(self, done, outof):
-        self.parent.statusbar.showMessage("EDDN Export processed "+str(done)+" out of "+str(outof))
+        self.parent.statusbar.showMessage("EDDN Export processed "+unicode(done)+" out of "+unicode(outof))
 
     def exportToFile(self):
         if self.parent.settings['last_export_format'] == "":
@@ -225,7 +264,11 @@ class Export:
         name = unicode(self.parent.current_result.station.name.value).title().replace("'S", "'s")
         system = unicode(self.parent.result_table.item(0,9).text())
         time = strftime("%Y-%m-%dT%H.%M.%S")
+<<<<<<< HEAD
+        dir = self.parent.settings["export_dir"]+ os.sep +system+"."+name+"."+time+"."+self.parent.settings['last_export_format']+'"'
+=======
         dir = self.parent.settings["export_dir"]+os.sep+system+"."+name+"."+time+"."+self.parent.settings['last_export_format']+'"'
+>>>>>>> master
         if self.parent.settings["native_dialog"]:
             file = QFileDialog.getSaveFileName(None, 'Save', dir, "CSV-File (*.csv);;OpenDocument Spreadsheet (*.ods);;Excel Workbook (*.xlsx)",
                                           filter)

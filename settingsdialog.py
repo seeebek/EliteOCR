@@ -1,7 +1,9 @@
-from PyQt4.QtGui import QDialog, QFileDialog
+# -*- coding: utf-8 -*-
+from PyQt4.QtGui import QDialog, QFileDialog, QColorDialog, QColor, QApplication
 from PyQt4.QtCore import QSettings
 from settingsUI import Ui_Settings
 from settings import Settings
+import os
 from os.path import isdir
 from os import listdir
 import os
@@ -36,9 +38,54 @@ class SettingsDialog(QDialog, Ui_Settings):
         self.button_color.setText(self.settings['button_color'])
         self.button_border_color.setText(self.settings['button_border_color'])
         self.border_color.setText(self.settings['border_color'])
+        self.background_color.setText(self.settings['background_color'])
+        """
+        buttons = [self.c1, self.c2, self.c3, self.c4, self.c5]
+        for i in range(len(buttons)):
+            buttons[i].setStyleSheet("background:"+unicode(self.settings['color'+unicode(i+1)]))
+            #'color1': self.reg.value('color1', '#ffffff', type=QString),
+            #color = '#%02x%02x%02x' % palette[i]
+            #self.settings.setValue('color'+unicode(i+1), color)
+            #buttons[i].setStyleSheet("background:"+unicode(color))
         self.browse.clicked.connect(self.browseDir)
+        """
         
         self.lg_browse.clicked.connect(self.browseLogDir)
+        
+        self.label_color_button.clicked.connect(self.getLabelColor)
+        self.label_color.textChanged.connect(self.getLabelColor)
+        self.label_color_button.setStyleSheet("background:"+unicode(self.label_color.text()))
+        
+        self.input_color_button.clicked.connect(self.getInputColor)
+        self.input_color.textChanged.connect(self.getInputColor)
+        self.input_color_button.setStyleSheet("background:"+unicode(self.input_color.text()))
+        
+        self.border_color_button.clicked.connect(self.getBorderColor)
+        self.border_color.textChanged.connect(self.getBorderColor)
+        self.border_color_button.setStyleSheet("background:"+unicode(self.border_color.text()))
+        
+        self.button_color_button.clicked.connect(self.getButtonColor)
+        self.button_color.textChanged.connect(self.getButtonColor)
+        self.button_color_button.setStyleSheet("background:"+unicode(self.button_color.text()))
+        
+        self.button_border_color_button.clicked.connect(self.getButtonBorderColor)
+        self.button_border_color.textChanged.connect(self.getButtonBorderColor)
+        self.button_border_color_button.setStyleSheet("background:"+unicode(self.button_border_color.text()))
+        
+        self.background_color_button.clicked.connect(self.getBackgroundColor)
+        self.background_color.textChanged.connect(self.getBackgroundColor)
+        self.background_color_button.setStyleSheet("background:"+unicode(self.background_color.text()))
+        
+        self.b1.setStyleSheet("background:"+unicode(self.settings["color1"]))
+        self.b2.setStyleSheet("background:"+unicode(self.settings["color2"]))
+        self.b3.setStyleSheet("background:"+unicode(self.settings["color3"]))
+        self.b4.setStyleSheet("background:"+unicode(self.settings["color4"]))
+        self.b5.setStyleSheet("background:"+unicode(self.settings["color5"]))
+        self.b1.clicked.connect(lambda: self.changeColor("color1"))
+        self.b2.clicked.connect(lambda: self.changeColor("color2"))
+        self.b3.clicked.connect(lambda: self.changeColor("color3"))
+        self.b4.clicked.connect(lambda: self.changeColor("color4"))
+        self.b5.clicked.connect(lambda: self.changeColor("color5"))
         
         self.fillUILang()
         self.fillOCRLang()
@@ -46,21 +93,85 @@ class SettingsDialog(QDialog, Ui_Settings):
         if self.settings['theme'] == "dark":
             self.theme.setCurrentIndex(1)
     
+    def changeColor(self, color):
+        self.clicked_color.setText(self.settings[color])
+    
+    def getLabelColor(self):
+        color = QColorDialog.getColor(QColor(self.label_color.text()))
+        if not color.isValid():
+            return
+        if not color is None:
+            self.label_color.setText(color.name())
+            self.label_color_button.setStyleSheet("background:"+unicode(color.name()))
+            
+    def getInputColor(self):
+        color = QColorDialog.getColor(QColor(self.input_color.text()))
+        if not color.isValid():
+            return
+        if not color is None:
+            self.input_color.setText(color.name())
+            self.input_color_button.setStyleSheet("background:"+unicode(color.name()))
+    
+    def getBorderColor(self):
+        color = QColorDialog.getColor(QColor(self.border_color.text()))
+        if not color.isValid():
+            return
+        if not color is None:
+            self.border_color.setText(color.name())
+            self.border_color_button.setStyleSheet("background:"+unicode(color.name()))
+            
+    def getButtonColor(self):
+        color = QColorDialog.getColor(QColor(self.button_color.text()))
+        if not color.isValid():
+            return
+        if not color is None:
+            self.button_color.setText(color.name())
+            self.button_color_button.setStyleSheet("background:"+unicode(color.name()))
+            
+    def getButtonBorderColor(self):
+        color = QColorDialog.getColor(QColor(self.button_border_color.text()))
+        if not color.isValid():
+            return
+        if not color is None:
+            self.button_border_color.setText(color.name())
+            self.button_border_color_button.setStyleSheet("background:"+unicode(color.name()))
+            
+    def getBackgroundColor(self):
+        color = QColorDialog.getColor(QColor(self.background_color.text()))
+        if not color.isValid():
+            return
+        if not color is None:
+            self.background_color.setText(color.name())
+            self.background_color_button.setStyleSheet("background:"+unicode(color.name()))
+    
     def fillUILang(self):
-        self.ui_language.addItem("en")
-        path = unicode(self.settings.app_path.decode('windows-1252')+"/translations/")#.encode('windows-1252')
-        if isdir(path):
-            dir = listdir(path)
-            options = []
-            for file in dir:
-                options.append(file[-5:-3])
-            self.ui_language.addItems(options)
+        #self.ui_language.addItem("en")
+        #path = unicode(self.settings.app_path+"/translations/")#.encode('windows-1252')
+        #if isdir(path):
+        #    dir = listdir(path)
+        #    options = []
+        #    for file in dir:
+        #        options.append(file[-5:-3])
+        #    self.ui_language.addItems(options)
         index = self.ui_language.findText(self.settings['ui_language'])
         if index == -1:
             index = 0
         self.ui_language.setCurrentIndex(index)
         
     def fillOCRLang(self):
+<<<<<<< HEAD
+        #self.ocr_language.addItem("eng")
+        #path = ""
+        #if isdir(unicode(self.settings.app_path+ os.sep +".."+ os.sep +"tessdata"+ os.sep +"")):
+        #    path = unicode(self.settings.app_path+ os.sep +".."+ os.sep +"tessdata"+ os.sep +"")
+        #if isdir(unicode(self.settings.app_path+ os.sep +"tessdata"+ os.sep +"")):
+        #    path = unicode(self.settings.app_path+ os.sep +"tessdata"+ os.sep +"")
+        #if isdir(path):
+        #    dir = listdir(path)
+        #    dir.remove("big.traineddata")
+        #    dir = [d[:3] for d in dir]
+        #    self.ocr_language.addItems(dir)
+=======
         self.ocr_language.addItem("eng")
         path = ""
         if isdir(unicode(self.settings.app_path.decode('windows-1252')+os.sep+".."+os.sep+"tessdata"+os.sep)):
@@ -72,6 +183,7 @@ class SettingsDialog(QDialog, Ui_Settings):
             dir.remove("big.traineddata")
             dir = [d[:3] for d in dir]
             self.ocr_language.addItems(dir)
+>>>>>>> master
         index = self.ocr_language.findText(self.settings['ocr_language'])
         if index == -1:
             index = 0
@@ -120,5 +232,6 @@ class SettingsDialog(QDialog, Ui_Settings):
         self.settings.setValue('button_color', self.button_color.text())
         self.settings.setValue('button_border_color', self.button_border_color.text())
         self.settings.setValue('border_color', self.border_color.text())
+        self.settings.setValue('background_color', self.background_color.text())
         self.settings.sync()
         self.close()

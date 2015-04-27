@@ -1,5 +1,7 @@
+# -*- coding: utf-8 -*-
 import sys
 import random
+import os
 from os import environ
 from os.path import isdir, dirname, split, realpath
 from PyQt4.QtCore import QSettings, QString
@@ -11,18 +13,16 @@ class Settings():
         self.app_path = self.getPathToSelf()
         self.values = {}
         self.reg = QSettings('seeebek', 'eliteOCR')
+        self.userprofile = self.getUserProfile()
         if self.reg.contains('settings_version'):
-            if float(self.reg.value('settings_version', type=QString)) < 1.4:
+            if float(self.reg.value('settings_version', type=QString)) < 1.6:
                 self.cleanReg()
                 self.setAllDefaults()
                 self.reg.sync()
                 self.values = self.loadSettings()
-            if float(self.reg.value('settings_version', type=QString)) < 1.5:
-                self.reg.setValue('settings_version', "1.5")
-                self.reg.sync()
-                self.values = self.loadSettings()
             else:
                 self.values = self.loadSettings()
+                self.values['create_nn_images'] = False
         else:
             self.cleanReg()
             self.setAllDefaults()
@@ -51,7 +51,8 @@ class Settings():
 
     def loadSettings(self):
         """Load all settings to a dict"""
-        set = {'screenshot_dir': self.reg.value('screenshot_dir', type=QString),
+        set = {'first_run': self.reg.value('first_run', True, type=bool),
+               'screenshot_dir': self.reg.value('screenshot_dir', type=QString),
                'export_dir': self.reg.value('export_dir', type=QString),
                'horizontal_exp': self.reg.value('horizontal_exp', type=bool),
                'last_export_format': self.reg.value('last_export_format', type=QString),
@@ -76,7 +77,14 @@ class Settings():
                'input_color': self.reg.value('input_color', '#ffffff', type=QString),
                'button_color': self.reg.value('button_color', '#ffffff', type=QString),
                'button_border_color': self.reg.value('button_border_color', '#ffffff', type=QString),
-               'border_color': self.reg.value('border_color', '#ffffff', type=QString)}
+               'border_color': self.reg.value('border_color', '#ffffff', type=QString),
+               'background_color': self.reg.value('background_color', '#000000', type=QString),
+               'color1': self.reg.value('color1', '#ffffff', type=QString),
+               'color2': self.reg.value('color2', '#ffffff', type=QString),
+               'color3': self.reg.value('color3', '#ffffff', type=QString),
+               'color4': self.reg.value('color4', '#ffffff', type=QString),
+               'color5': self.reg.value('color5', '#ffffff', type=QString),
+               'contrast': self.reg.value('contrast', 85.0, type=float)}
         return set
         
     def setAllDefaults(self):
@@ -97,7 +105,7 @@ class Settings():
         self.setSettingsVersion()
         
     def setSettingsVersion(self):
-        self.reg.setValue('settings_version', "1.2")
+        self.reg.setValue('settings_version', "1.6")
         
     def setUserID(self):
         self.reg.setValue('userID', "EO"+''.join(random.choice('0123456789abcdef') for i in range(8)))
@@ -135,27 +143,35 @@ class Settings():
         self.reg.setValue('native_dialog', False)
         
     def setDefaultScreenshotDir(self):
-        if isdir(environ['USERPROFILE']+'\\Pictures\\Frontier Developments\\Elite Dangerous'):
-            dir = environ['USERPROFILE']+'\\Pictures\\Frontier Developments\\Elite Dangerous'
+        if isdir(self.userprofile+ os.sep +"Pictures"+ os.sep +"Frontier Developments"+ os.sep +"Elite Dangerous"):
+            dir = self.userprofile+ os.sep +"Pictures"+ os.sep +"Frontier Developments"+ os.sep +"Elite Dangerous"
         else:
             dir = self.app_path
         self.reg.setValue('screenshot_dir', dir)
         
     def setDefaultLogDir(self):
-        if isdir(environ['USERPROFILE']+'\\AppData\\Local\\Frontier_Developments\\Products\\FORC-FDEV-D-1002\\Logs'):
-            logdir = environ['USERPROFILE']+'\\AppData\\Local\\Frontier_Developments\\Products\\FORC-FDEV-D-1002\\Logs'
+        if isdir(self.userprofile+ os.sep +"AppData"+ os.sep +"Local"+ os.sep +"Frontier_Developments"+ os.sep +"Products"+ os.sep +"FORC-FDEV-D-1002"+ os.sep +"Logs"):
+            logdir = self.userprofile+ os.sep +"AppData"+ os.sep +"Local"+ os.sep +"Frontier_Developments"+ os.sep +"Products"+ os.sep +"FORC-FDEV-D-1002"+ os.sep +"Logs"
             self.reg.setValue('log_dir', logdir)
         else:
             self.reg.setValue('log_dir', self.app_path)
                 
     def setDefaultExportDir(self):
         self.reg.setValue('export_dir', self.app_path)
-        
+    
+    def getUserProfile(self):
+        if 'USERPROFILE' in environ:
+            return environ['USERPROFILE'].decode(sys.getfilesystemencoding())
+        else:
+            return u"."
+    
     def getPathToSelf(self):
         """Return the path to EliteOCR.py or EliteOCR.exe"""
         if getattr(sys, 'frozen', False):
-            application_path = dirname(sys.executable)
+            application_path = dirname(sys.executable).decode(sys.getfilesystemencoding())
         elif __file__:
-            application_path = dirname(__file__)
+            application_path = dirname(__file__).decode(sys.getfilesystemencoding())
+        else:
+            application_path = u"."
         return application_path
         

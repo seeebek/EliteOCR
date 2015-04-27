@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="ico">
+    <file>loader.gif</file>
     <file>arrow.png</file>
     <file>icon.ico</file>
     <file>minus.png</file>
