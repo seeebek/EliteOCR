@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'eliteOCRGUI.ui'
 #
-# Created: Mon Feb 09 01:30:00 2015
+# Created: Mon Apr 27 13:47:22 2015
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(1272, 801)
+        MainWindow.resize(1110, 625)
         MainWindow.setFocusPolicy(QtCore.Qt.TabFocus)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/ico/icon.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -38,7 +38,25 @@ class Ui_MainWindow(object):
         self.centralwidget.setFont(font)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.verticalLayout_4 = QtGui.QVBoxLayout(self.centralwidget)
+        self.verticalLayout_4.setContentsMargins(-1, 1, -1, -1)
         self.verticalLayout_4.setObjectName(_fromUtf8("verticalLayout_4"))
+        self.horizontalLayout_6 = QtGui.QHBoxLayout()
+        self.horizontalLayout_6.setSpacing(1)
+        self.horizontalLayout_6.setObjectName(_fromUtf8("horizontalLayout_6"))
+        self.label_2 = QtGui.QLabel(self.centralwidget)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Minimum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.label_2.sizePolicy().hasHeightForWidth())
+        self.label_2.setSizePolicy(sizePolicy)
+        self.label_2.setMaximumSize(QtCore.QSize(16777215, 15))
+        self.label_2.setTextFormat(QtCore.Qt.RichText)
+        self.label_2.setOpenExternalLinks(True)
+        self.label_2.setObjectName(_fromUtf8("label_2"))
+        self.horizontalLayout_6.addWidget(self.label_2)
+        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_6.addItem(spacerItem)
+        self.verticalLayout_4.addLayout(self.horizontalLayout_6)
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
         self.verticalLayout_2 = QtGui.QVBoxLayout()
@@ -99,8 +117,8 @@ class Ui_MainWindow(object):
         self.ocr_all.setEnabled(False)
         self.ocr_all.setObjectName(_fromUtf8("ocr_all"))
         self.horizontalLayout_7.addWidget(self.ocr_all)
-        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_7.addItem(spacerItem)
+        spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_7.addItem(spacerItem1)
         self.verticalLayout_3.addLayout(self.horizontalLayout_7)
         self.horizontalLayout_8 = QtGui.QHBoxLayout()
         self.horizontalLayout_8.setObjectName(_fromUtf8("horizontalLayout_8"))
@@ -426,8 +444,8 @@ class Ui_MainWindow(object):
         self.zoom_button = QtGui.QPushButton(self.centralwidget)
         self.zoom_button.setObjectName(_fromUtf8("zoom_button"))
         self.horizontalLayout_4.addWidget(self.zoom_button)
-        spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_4.addItem(spacerItem1)
+        spacerItem2 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_4.addItem(spacerItem2)
         self.clear_table = QtGui.QPushButton(self.centralwidget)
         self.clear_table.setEnabled(False)
         self.clear_table.setObjectName(_fromUtf8("clear_table"))
@@ -453,7 +471,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_4.addWidget(self.progress_bar)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1272, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1110, 21))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
         self.menuFile.setObjectName(_fromUtf8("menuFile"))
@@ -483,10 +501,19 @@ class Ui_MainWindow(object):
         self.actionUpdate.setObjectName(_fromUtf8("actionUpdate"))
         self.actionAbout = QtGui.QAction(MainWindow)
         self.actionAbout.setObjectName(_fromUtf8("actionAbout"))
+        self.actionSetup_Wizard = QtGui.QAction(MainWindow)
+        self.actionSetup_Wizard.setObjectName(_fromUtf8("actionSetup_Wizard"))
+        self.actionColor_Calibration = QtGui.QAction(MainWindow)
+        self.actionColor_Calibration.setObjectName(_fromUtf8("actionColor_Calibration"))
+        self.actionLearning_Wizard = QtGui.QAction(MainWindow)
+        self.actionLearning_Wizard.setObjectName(_fromUtf8("actionLearning_Wizard"))
         self.menuFile.addAction(self.actionOpen)
         self.menuFile.addAction(self.actionExit)
         self.menuSettings.addAction(self.actionPreferences)
         self.menuSettings.addAction(self.actionCommodity_Editor)
+        self.menuSettings.addAction(self.actionSetup_Wizard)
+        self.menuSettings.addAction(self.actionColor_Calibration)
+        self.menuSettings.addAction(self.actionLearning_Wizard)
         self.menuSettings.addAction(self.actionPublic_Mode)
         self.menuHelp.addAction(self.actionHelp)
         self.menuHelp.addAction(self.actionUpdate)
@@ -526,6 +553,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_translate("MainWindow", "EliteOCR", None))
+        self.label_2.setText(_translate("MainWindow", "<html><head/><body><p>If you have any problems please read &quot;Help&quot;. Please send any bug reports, issues or suggestions to eliteocr@gmail.com or post them in the <a href=\"https://forums.frontier.co.uk/showthread.php?t=68771\"><span style=\" text-decoration: underline; color:#0000ff;\">forum.</span></a></p></body></html>", None))
         self.add_button.setText(_translate("MainWindow", "...", None))
         self.add_button.setShortcut(_translate("MainWindow", "Alt+Q", None))
         self.remove_button.setText(_translate("MainWindow", "...", None))
@@ -593,6 +621,9 @@ class Ui_MainWindow(object):
         self.actionHelp.setText(_translate("MainWindow", "Help", None))
         self.actionUpdate.setText(_translate("MainWindow", "Update", None))
         self.actionAbout.setText(_translate("MainWindow", "About", None))
+        self.actionSetup_Wizard.setText(_translate("MainWindow", "Setup Wizard", None))
+        self.actionColor_Calibration.setText(_translate("MainWindow", "Color Calibration", None))
+        self.actionLearning_Wizard.setText(_translate("MainWindow", "Learning Wizard", None))
 
 from customqtablewidget import CustomQTableWidget
 import res_rc

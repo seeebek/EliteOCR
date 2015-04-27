@@ -1,23 +1,51 @@
 # -*- coding: utf-8 -*-
 from __future__ import division
+import sys
 import os
+from os.path import isfile
 import cv2
+import json
+import codecs
+import random
 import numpy as np
 from math import pi
 from operator import itemgetter
 from imageprocessing import contBright
-import random
-
+from Levenshtein import ratio, distance
 
 class OCRAreasFinder:
-    def __init__(self, image):
+    def __init__(self, image, contrast = None):
         self.station_name = None
         self.market_table = None
         self.market_width = 0
         self.valid = False
         self.areas = None
-        self.findMarket(image)
-        
+        self.contrast = None
+        if contrast is None:
+            for i in xrange(10, 250, 10):
+                img = contBright(image, i, i+5.0)
+                self.findMarket(img)
+                if self.valid:
+                    self.contrast = i
+                    break
+        else:
+            img = contBright(image, contrast, contrast+5.0)
+            self.findMarket(img)
+
+    def getValidRange(self, image):
+        min_valid = None
+        max_valid = None
+        for i in xrange(5, 250, 5):
+            img = contBright(image, i, i+5.0)
+            self.findMarket(img)
+            if min_valid is None:
+                if self.valid:
+                    min_valid = i
+            if not min_valid is None:
+                if self.valid:
+                    max_valid = i
+        return (min_valid, max_valid)
+    
     def findMarket(self, input):
         img = cv2.cvtColor(input, cv2.COLOR_BGR2GRAY)
         imgheight, imgwidth = img.shape
@@ -27,6 +55,8 @@ class OCRAreasFinder:
         lines = cv2.HoughLinesP(thresh1, 1, pi/2, 2, None, imgheight/2, 1)
         
         loi = self.getLinesOfInterest(lines)
+        if len(loi) == 0:
+            return
         #print loi
         longestline = max(loi,key=itemgetter(2))
         self.market_width = longestline[2]
@@ -39,8 +69,8 @@ class OCRAreasFinder:
         x2 = int((longestline[0]+longestline[2])*0.839)
         x2_station = longestline[0]+longestline[2]
         y2 = longestline[1]
-        y1_station = longestline[1]-int(longestline[2]*0.7428)
-        y2_station = longestline[1]-int(longestline[2]*0.72)
+        y1_station = longestline[1]-int(longestline[2]*0.745)
+        y2_station = longestline[1]-int(longestline[2]*0.717)
         
         self.areas = self.getAreas(x1, x2)
           
@@ -95,7 +125,7 @@ class OCRAreasFinder:
         return new_areas
         
 class MLP:
-    def __init__(self, image, path, areas, isstation):
+    def __init__(self, image, path, areas, isstation, calibration = False):
         #full old
         """
         layers = np.array([400,32,46])
@@ -106,6 +136,7 @@ class MLP:
         #numbers
         self.numbers = TrainedDataNumbers(path)
         self.letters = TrainedDataLetters(path)
+        self.station = TrainedDataStation(path)
         """
         layers = np.array([400,36,12])
         self.nnetwork = cv2.ANN_MLP(layers, 1,0.6,1)
@@ -115,7 +146,7 @@ class MLP:
         """
         self.result = []
         self.areas = areas
-        self.ocrImage(image, isstation)
+        self.ocrImage(image, isstation, calibration)
 
     def findLines(self, input):
         """ finds boundaries of text lines in the market table """
@@ -133,7 +164,7 @@ class MLP:
         
         for i in xrange(rows):
             blackflag = False
-            for j in xrange(cols):
+            for j in xrange(int(rows/146),cols):
                 if input.item(i,j) < 250:
                     whitecount = 0
                     blackflag = True
@@ -155,7 +186,7 @@ class MLP:
                 start = cols
                 end = 0
 
-        if firstflag and not blackflag and whitecount > (rows/183):
+        if firstflag:
             last = rows - whitecount
             firstflag = False
             lines.append([start, end, first, last])
@@ -164,8 +195,8 @@ class MLP:
         
         #for line in lines:
         #    cv2.rectangle(input,(line[0],line[2]),(line[1],line[3]),(0,0,0),1)   
-        #cv2.imshow("x", input)
-        #cv2.waitKey(0)
+        #    cv2.imshow("x", input)
+        #    cv2.waitKey(0)
         return lines
         
         
@@ -177,7 +208,8 @@ class MLP:
         
         #cv2.imshow("x", input)
         #cv2.waitKey(0)
-        
+        #print (w, h)
+        #print len(lines)
         boxes = []
         for line in lines:
             boxline = []
@@ -200,16 +232,26 @@ class MLP:
             
             firstchar = 0
             
-            j_to = line[3]+1
-            #if line[3]+2 >= h:
-            #    j_to = h-1
-            i_to = line[1]+2
-            #if line[1]+2 >= w:
-            #    i_to = w-1
+            j_from = line[2]-2
             
-            for i in xrange(line[0]-2,i_to):
+            if j_from < 0:
+                j_from = 0
+
+            i_from = line[0]-2
+            
+            if i_from < 0:
+                i_from = 0
+
+            j_to = line[3]+1
+            if j_to >= h:
+                j_to = h
+            i_to = line[1]+2
+            if i_to >= w:
+                i_to = w
+            
+            for i in xrange(i_from,i_to):
                 blackflag = False
-                for j in xrange(line[2]-2,j_to):
+                for j in xrange(j_from,j_to):
                     #print(j,i)
                     if input.item(j,i) < 250:
                         whitecount = 0
@@ -240,8 +282,8 @@ class MLP:
                     startchar = line[3]+2
                     endchar = 0
                 
-                if firstflag and not blackflag and whitecount > (line[3] - line[2])/2.2:
-                    h = line[3] - line[2]
+                if firstflag and not blackflag and whitecount > (line[3] - line[2])/2.6:
+                    #h = line[3] - line[2]
                     last = i - whitecount + 1
                     whitecount = 0
                     firstflag = False
@@ -256,14 +298,16 @@ class MLP:
                 firstflag = False
                 boxline.append({"line":line,"box":[first,last, start, end], "units":charboxes})
                 charboxes = []
-
+            out = ""
             boxes.append(boxline)
-        
-            #for box in boxline:
-            #    cv2.rectangle(input,(box["box"][0],box["box"][2]),(box["box"][1],box["box"][3]),(0,0,0),1)   
-            #    cv2.imshow("x", input)
-            #    cv2.waitKey(0)
+            """
+            for box in boxline:
+                for unit in box["units"]:
+                    cv2.rectangle(input,(unit[0],unit[2]),(unit[1],unit[3]),(0,0,0),1)   
+                    cv2.imshow("x", input)
+                    cv2.waitKey(0)
             #return boxes
+            """
         return boxes
     
     def mlpocr(self, input, box, type):
@@ -278,13 +322,17 @@ class MLP:
                 if (h/len(image[0])) > 3:
                     image = input[box["line"][2]:letter[3], letter[0]:letter[1]]
                     border = int((h - len(image[0]))/2)
+                    if border < 0:
+                        border = 0
                     image = cv2.copyMakeBorder(image,0,0,border,border,cv2.BORDER_CONSTANT,value=(255,255,255))
 
-                if len(image) < h/1.5:
+                if len(image) < h/2.0:
                     image = input[box["line"][2]:box["line"][3], letter[0]:letter[1]]
                     border = int((h - len(image[0]))/2)
+                    if border < 0:
+                        border = 0
                     image = cv2.copyMakeBorder(image,0,0,border,border,cv2.BORDER_CONSTANT,value=(255,255,255))
-                #cv2.imwrite("test\\"+str(random.randint(1, 100000))+".png",image)
+                #cv2.imwrite("test"+ os.sep +unicode(random.randint(1, 1000000))+".png",image)
                 
                 image = cv2.resize(image, (20, 20))
                 ret,image = cv2.threshold(image,250,255,cv2.THRESH_BINARY)
@@ -313,6 +361,10 @@ class MLP:
                 resultclasses = -1 * np.ones((len(data),self.letters.keys), dtype='float32')
                 self.letters.nnetwork.predict(data, resultclasses)
                 classdict = self.letters.classdict
+            elif type == "station":
+                resultclasses = -1 * np.ones((len(data),self.station.keys), dtype='float32')
+                self.station.nnetwork.predict(data, resultclasses)
+                classdict = self.station.classdict
             
             
             for k in range(len(resultclasses)):
@@ -320,7 +372,7 @@ class MLP:
                 restext += classdict[np.argmax(resultclasses[k])].decode('utf-8')    
         return restext    
 
-    def ocrImage(self, input, isstation):
+    def ocrImage(self, input, isstation, calibration):
         """ require grayscale market table only """
         
         tableheight, tablewidth = input.shape
@@ -336,7 +388,7 @@ class MLP:
         for line in boxes:
 
             if len(line) > 0:
-                if line[0]["line"][0] > tableheight/18:
+                if calibration or (line[0]["line"][0] > tableheight/18):
                     newline = OCRLine(line[0]["line"], self.areas)
                     conf_mod = 1.0
                     lineheight = line[0]["line"][3]-line[0]["line"][2]
@@ -344,21 +396,108 @@ class MLP:
                         conf_mod = 0.5
                     
                     for word in line:
-                        self.areas
-                        if word["box"][1] < self.areas[0][1]:
-                            result = self.mlpocr(input, word, "letters")
-                        elif word["box"][0] > self.areas[4][0] and word["box"][1] < self.areas[4][1]:
-                            result = self.mlpocr(input, word, "letters")
-                        elif word["box"][0] > self.areas[6][0] and word["box"][1] < self.areas[6][1]:
-                            result = self.mlpocr(input, word, "letters")    
+                        if isstation:
+                            result = self.mlpocr(input, word, "station")
                         else:
-                            result = self.mlpocr(input, word, "numbers")
+                            if word["box"][1] < self.areas[0][1]:
+                                result = self.mlpocr(input, word, "letters")
+                            elif word["box"][0] > self.areas[4][0] and word["box"][1] < self.areas[4][1]:
+                                result = self.mlpocr(input, word, "letters")
+                            elif word["box"][0] > self.areas[6][0] and word["box"][1] < self.areas[6][1]:
+                                result = self.mlpocr(input, word, "letters")    
+                            else:
+                                result = self.mlpocr(input, word, "numbers")
                         
                         newline.addWord(OCRbox(word["box"], result, word["units"]), isstation)
                         
                     #print newline
                     self.result.append(newline)
         #print self.result
+
+class Levenshtein:
+    def __init__(self, ocr_data, path, language = "big", levels = True):
+        if language == "big":
+            self.lang = u"eng"
+        else:
+            self.lang = unicode(language)
+        
+        self.levels = {u"eng": [u'LOW', u'MED', u'HIGH'],
+                       u"deu": [u'NIEDRIG', u'MITTEL', u'HOCH'], 
+                       u"fra": [u'FAIBLE', u'MOYEN', u'ÉLEVÉ']}
+        file = codecs.open(path + ""+ os.sep +"commodities.json", 'r', "utf-8")
+        self.comm_list = json.loads(file.read())
+        file.close()
+        #print self.comm_list
+        #self.comm_list.sort(key = len)
+        if language == "big" or language == "eng":
+            self.comm_list = [k for k, v in self.comm_list.iteritems()]
+        else:
+            self.comm_list = [v[self.lang] for k, v in self.comm_list.iteritems()]
+
+        self.result = self.cleanCommodities(ocr_data, levels)
+        
+    def cleanCommodities(self, data, levels):
+        for i in xrange(len(data)):
+            if not data[i][0] is None:
+                mindist = 100
+                topcomm = ""
+                alternatives = []
+                for comm in self.comm_list:
+                    #print data[i][0].value
+                    #print unicode(comm)
+                    dist = distance(unicode(data[i][0].value), unicode(comm))
+                    if dist < 7:
+                        alternatives.append((unicode(comm), dist))
+                    if dist < mindist:
+                        mindist = dist
+                        topcomm = comm
+                    if dist == 0:
+                        data[i][0].value = topcomm
+                        data[i][0].confidence = 1.0
+                        break
+                #print unicode(data[i][0].value)
+                #print topcomm
+                #print
+                alternatives.sort(key=lambda x: x[1])
+                optional_values = [j[0] for j in alternatives]
+                
+                maxdist = 4
+                if len(data[i][0].value) < 5:
+                    maxdist = 3
+
+                if mindist < maxdist:
+                    data[i][0].value = topcomm
+                    if mindist < 2:
+                        data[i][0].confidence = 1.0
+                    else:
+                        data[i][0].confidence = 0.7
+                    if mindist != 0:
+                        data[i][0].optional_values = [data[i][0].value] + optional_values
+                else:
+                    data[i][0].confidence = 0.0
+                    data[i][0].optional_values = [data[i][0].value] + optional_values
+            # LOW MED HIGH
+            if not data[i][4] is None and levels:
+                topratio = 0.0
+                toplev = ""
+                for lev in self.levels[self.lang]:
+                    if data[i][4].value is None:
+                        print "None!"
+                    rat = ratio(unicode(data[i][4].value), unicode(lev))
+                    if rat > topratio:
+                        topratio = rat
+                        toplev = lev
+                data[i][4].value = toplev
+            if not data[i][6] is None:
+                topratio = 0.0
+                toplev = ""
+                for lev in self.levels[self.lang]:
+                    rat = ratio(data[i][6].value, unicode(lev))
+                    if rat > topratio:
+                        topratio = rat
+                        toplev = lev
+                data[i][6].value = toplev
+
         
 class OCRLine():
     """Class providing a recognised line of text as an object, 
@@ -411,6 +550,8 @@ class OCRLine():
             self.items[1] = self.sell
             return
         if x1 > self.areas_x[2][0] and x2 < self.areas_x[2][1]:
+            if word.value == "-" or word.value == ",":
+                return
             if self.buy is None:
                 self.buy = word
             else:
@@ -482,6 +623,7 @@ class OCRbox():
         self.box = [self.x1, self.y1, self.x2, self.y2]
         self.boxes = []
         self.value = text.strip()
+        self.confidence = 1.0
         
     def __str__(self):
         return "OCRbox: "+ unicode(self.value)
@@ -499,22 +641,44 @@ class TrainedDataNumbers():
     def __init__(self, path):
         self.revclassdict = {"0":0,"1":1,"2":2,"3":3,"4":4,"5":5,"6":6,"7":7,"8":8,"9":9,",":10,"-":11,}
         self.keys = len(self.revclassdict)
-        layers = np.array([400,36,self.keys])
-        self.nnetwork = cv2.ANN_MLP(layers, 1,0.6,1)
-        self.nnetwork.load(path + os.sep + "numbers.xml", "OCRMLP")
+        layers = np.array([400,71,self.keys])
+        self.nnetwork = cv2.ANN_MLP(layers, 1,0.65,1)
+        datapath = (path + os.sep + "user_numbers.xml").encode(sys.getfilesystemencoding())
+        if isfile(datapath):
+            self.nnetwork.load(datapath, "OCRMLP")
+        else:
+            datapath = (path + os.sep + "numbers.xml").encode(sys.getfilesystemencoding())
+            self.nnetwork.load(datapath, "OCRMLP")
         self.classdict = dict((v,k.decode("utf-8")) for k,v in self.revclassdict.iteritems())
         
         
 class TrainedDataLetters():
     def __init__(self, path):
-        self.revclassdict = {"A":0,"B":1,"C":2,"D":3,"E":4,"F":5,"G":6,"H":7,"I":8,"J":9,"K":10,"L":11,"M":12,"N":13,"O":14,"P":15,"Q":16,"R":17,"S":18,"T":19,"U":20,"V":21,"W":22,"X":23,"Y":24,"Z":25,"-":26,".":27}
+        self.revclassdict = {"A":0,"B":1,"C":2,"D":3,"E":4,"F":5,"G":6,"H":7,"I":8,"J":9,"K":10,"L":11,"M":12,"N":13,"O":14,"P":15,"Q":16,"R":17,"S":18,"T":19,"U":20,"V":21,"W":22,"X":23,"Y":24,"Z":25,"-":26,".":27,"'":28}
         self.keys = len(self.revclassdict)
-        layers = np.array([400,36,self.keys])
-        self.nnetwork = cv2.ANN_MLP(layers, 1,0.6,1)
-        self.nnetwork.load(path + os.sep + "letters.xml", "OCRMLP")
+        layers = np.array([400,71,self.keys])
+        self.nnetwork = cv2.ANN_MLP(layers, 1,0.65,1)
+        datapath = (path + os.sep + "user_letters.xml").encode(sys.getfilesystemencoding())
+        if isfile(datapath):
+            self.nnetwork.load(datapath, "OCRMLP")
+        else:
+            datapath = (path + os.sep + "letters.xml").encode(sys.getfilesystemencoding())
+            self.nnetwork.load(datapath, "OCRMLP")
         self.classdict = dict((v,k.decode("utf-8")) for k,v in self.revclassdict.iteritems())
         
-        
+class TrainedDataStation():
+    def __init__(self, path):
+        self.revclassdict = {"A":0,"B":1,"C":2,"D":3,"E":4,"F":5,"G":6,"H":7,"I":8,"J":9,"K":10,"L":11,"M":12,"N":13,"O":14,"P":15,"Q":16,"R":17,"S":18,"T":19,"U":20,"V":21,"W":22,"X":23,"Y":24,"Z":25,"1":26,"2":27,"3":28,"4":29,"5":30,"6":31,"7":32,"8":33,"9":34,"-":35,".":36,"'":37,"&":38,"[":39,"]":40}
+        self.keys = len(self.revclassdict)
+        layers = np.array([400,71,self.keys])
+        self.nnetwork = cv2.ANN_MLP(layers, 1,0.65,1)
+        datapath = (path + os.sep + "user_station.xml").encode(sys.getfilesystemencoding())
+        if isfile(datapath):
+            self.nnetwork.load(datapath, "OCRMLP")
+        else:
+            datapath = (path + os.sep + "station.xml").encode(sys.getfilesystemencoding())
+            self.nnetwork.load(datapath, "OCRMLP")
+        self.classdict = dict((v,k.decode("utf-8")) for k,v in self.revclassdict.iteritems())        
         
         
         

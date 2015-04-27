@@ -1,4 +1,5 @@
-import requests
+# -*- coding: utf-8 -*-
+import grequests
 import json
 import time
 from PyQt4.QtCore import QThread, SIGNAL
@@ -7,42 +8,52 @@ class EDDNExport(QThread):
     def __init__(self, parent = None):
         QThread.__init__(self, parent)
         self.parent = parent
+        self.counter = 0
+        self.outcomeok = []
+        self.outcomefail = []
     
     def execute(self, data, userID):
         self.data = data
         self.userID = userID
         self.start()
     
+    def getEDDNResponse(self, response,  **kwargs):
+        if response.text.strip() == "OK":
+            self.outcomeok.append("OK")
+        else:
+            self.outcomefail.append("Fail")
+        self.counter += 1
+        self.emit(SIGNAL("update(int,int)"), self.counter, self.toprocess)
+        if self.counter == self.toprocess:
+            self.exportFinished()
+            
+    def exportFinished(self):
+        self.result = "Success: "+unicode(len(self.outcomeok))+" Fail: "+unicode(len(self.outcomefail))
+        self.emit(SIGNAL("finished(QString)"), self.result)
+    
     def run(self):
+        self.counter = 0
         parent = self.parent
         data = self.data
         userID = self.userID
         #print data
-        outcomeok = []
-        outcomefail = []
-        toprocess = len(data)
+        self.outcomeok = []
+        self.outcomefail = []
+        self.toprocess = len(data)
         counter = 0
+        
+        req_list = []
         for line in data:
-            try:
-                postdata = json.dumps(self.createRequest(line, userID))
-
-                r = requests.post("http://eddn-gateway.elite-markets.net:8080/upload/", data=postdata)
-                #print postdata
-                #time.sleep(1)
-                if r.text.strip() == "OK":
-                    outcomeok.append("OK")
-                else:
-                    print(line[2] + " failed")
-                    outcomefail.append("Fail")
-            except:
-                outcomefail.append("Fail")
-                print(line[2] + " failed")
-                #pass
-            counter += 1
-            self.emit(SIGNAL("update(int,int)"), counter, toprocess)
+            req_list.append(json.dumps(self.createRequest(line, userID)))
             
-        self.result = "Success: "+str(len(outcomeok))+" Fail: "+str(len(outcomefail))
-        self.emit(SIGNAL("finished(QString)"), self.result)
+        async_list = []
+
+        for d in req_list:
+            action_item = grequests.post("http://eddn-gateway.elite-markets.net:8080/upload/", data=d, hooks = {'response' : self.getEDDNResponse})
+            async_list.append(action_item)
+
+        # Do our list of things to do via async
+        grequests.map(async_list)
         
         
     def createRequest(self, line, userID):

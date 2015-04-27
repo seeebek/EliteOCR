@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from PyQt4.QtGui import QTableWidget
 from PyQt4.QtCore import Qt
 

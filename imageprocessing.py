@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import cv2
 import sys
 import numpy as np
@@ -31,8 +32,23 @@ def toCV(value):
     value = value.astype(np.uint8)
     return value
     
-
-
-    
-    
+def whiteBalance(value):
+    hist = cv2.calcHist([value],[0],None,[100],[0,256])
+    cv2.normalize(hist,hist,0,1000,cv2.NORM_MINMAX)
+    #print max(hist)
+    minimum = 0
+    min_flag = True
+    maximum = 255
+    for i in range(len(hist)):
+        if min_flag and hist[i] < 990:
+            minimum = i
+        else:
+            min_flag = False
+        if not min_flag and hist[i] > 0.75:
+            maximum = i
+            
+    #if maximum > 240:
+    #    maximum = 240
+    value = contBright(value, maximum+30, maximum+40)
+    return value
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1272</width>
-    <height>801</height>
+    <width>1110</width>
+    <height>625</height>
    </rect>
   </property>
   <property name="focusPolicy">
@@ -28,6 +28,54 @@
     </font>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_4">
+    <property name="topMargin">
+     <number>1</number>
+    </property>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_6">
+      <property name="spacing">
+       <number>1</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="label_2">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>15</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If you have any problems please read &amp;quot;Help&amp;quot;. Please send any bug reports, issues or suggestions to eliteocr@gmail.com or post them in the &lt;a href=&quot;https://forums.frontier.co.uk/showthread.php?t=68771&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;forum.&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::RichText</enum>
+        </property>
+        <property name="openExternalLinks">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0">
       <item>
@@ -978,7 +1026,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1272</width>
+     <width>1110</width>
      <height>21</height>
     </rect>
    </property>
@@ -995,6 +1043,9 @@
     </property>
     <addaction name="actionPreferences"/>
     <addaction name="actionCommodity_Editor"/>
+    <addaction name="actionSetup_Wizard"/>
+    <addaction name="actionColor_Calibration"/>
+    <addaction name="actionLearning_Wizard"/>
     <addaction name="actionPublic_Mode"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -1054,6 +1105,21 @@
   <action name="actionAbout">
    <property name="text">
     <string>About</string>
+   </property>
+  </action>
+  <action name="actionSetup_Wizard">
+   <property name="text">
+    <string>Setup Wizard</string>
+   </property>
+  </action>
+  <action name="actionColor_Calibration">
+   <property name="text">
+    <string>Color Calibration</string>
+   </property>
+  </action>
+  <action name="actionLearning_Wizard">
+   <property name="text">
+    <string>Learning Wizard</string>
    </property>
   </action>
  </widget>

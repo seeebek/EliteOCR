@@ -1,5 +1,7 @@
+# -*- coding: utf-8 -*-
 from PyQt4.QtGui import QDialog, QTableWidgetItem
 from editorUI import Ui_Editor
+import os
 import json
 import codecs
 
@@ -12,18 +14,19 @@ class EditorDialog(QDialog, Ui_Editor):
         self.add_button.clicked.connect(self.addCommodity)
         self.delete_button.clicked.connect(self.deleteCommodity)
 
-        file = codecs.open(self.settings.app_path + "\\commodities.json", 'r', "utf-8")
+        file = codecs.open(self.settings.app_path + ""+ os.sep +"commodities.json", 'r', "utf-8")
         file_content = file.read()
         commdict = json.loads(file_content)
         file.close()
+        # WTF? Clean it!
         titles = []
         for k, v in commdict.iteritems():
             titles = commdict[k].keys()
             break
         titles.remove("rare")
-        if str(self.settings["ocr_language"]) in titles:
-            titles.remove(str(self.settings["ocr_language"]))
-            titles.insert(0,str(self.settings["ocr_language"]))
+        if unicode(self.settings["ocr_language"]) in titles:
+            titles.remove(unicode(self.settings["ocr_language"]))
+            titles.insert(0,unicode(self.settings["ocr_language"]))
         
         self.table.setColumnCount(len(titles)+2)
         self.table.setHorizontalHeaderLabels(["rare", "eng"]+titles)
@@ -65,7 +68,7 @@ class EditorDialog(QDialog, Ui_Editor):
                     #line = self.result_table.item(row,9).text()
         #print save_dict
         
-        file = codecs.open(self.settings.app_path + "\\commodities.json", 'w', "utf-8")
+        file = codecs.open(self.settings.app_path + ""+ os.sep +"commodities.json", 'w', "utf-8")
         file.write(json.dumps(save_dict, indent=2, separators=(',', ': '), ensure_ascii=False))
         file.close()
         

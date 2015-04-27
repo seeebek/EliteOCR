@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from PyQt4.QtGui import QDialog
 from PyQt4.QtCore import Qt
 from busyUI import Ui_busywidget

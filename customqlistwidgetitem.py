@@ -1,18 +1,22 @@
 # -*- coding: utf-8 -*-
 import cv2
 import re
+# -*- coding: utf-8 -*-
 import numpy as np
 import pytz
+import os
 from os import listdir
 from os.path import getmtime, getctime, isdir
 from time import gmtime, localtime, strftime
 from tzlocal import get_localzone
 from datetime import datetime, timedelta
 from PyQt4.QtGui import QListWidgetItem, QPixmap
+from PyQt4.QtCore import QRect
 from qimage2ndarray import array2qimage
 from imageprocessing import *
 #from ocrmethods import OCRAreasFinder
 from engine import OCRAreasFinder
+
 
 class CustomQListWidgetItem(QListWidgetItem):
     def __init__(self, text, hiddentext, settings):
@@ -43,6 +47,9 @@ class CustomQListWidgetItem(QListWidgetItem):
     def loadPreviewImage(self, color_image, parent = None):
         return self.addPreviewImage(color_image, parent)
     
+    def loadTestImage(self):
+        return self.addTestImage(self.hiddentext)
+    
     def addImage(self, imagepath):
         image = cv2.imread(imagepath)
         h, w, c = image.shape
@@ -55,6 +62,35 @@ class CustomQListWidgetItem(QListWidgetItem):
             return cut
         return image
     
+    def addTestImage(self, color_image):
+        self.ocr_areas = OCRAreasFinder(color_image, self.settings["contrast"])
+        self.market_width = self.ocr_areas.market_width
+        self.valid_market = self.ocr_areas.valid
+        img = QPixmap(self.hiddentext)
+        width = img.width()
+        height = img.height()
+        aspect_ratio = float(width)/height
+        if aspect_ratio > 1.78:
+            new_w = int(1.77778*height)
+            rect = QRect((width-new_w)/2, 0, new_w, height)
+            img = img.copy(rect)
+            
+        if self.valid_market:
+            points = self.ocr_areas.market_table
+            self.market_offset = (points[0][0], points[0][1])
+            station = self.ocr_areas.station_name
+            self.station_offset = (station[0][0], station[0][1])
+            rect = QRect(0, 0, points[1][0] + 20, points[1][1] + 20)
+            cut = img.copy(rect)
+            return cut
+        else:
+            self.market_offset = (0, 0)
+            self.station_offset = (0, 0)
+
+            
+        
+        return img
+        
     def addPreviewImage(self, color_image, parent = None):
         image = color_image
         image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -62,20 +98,24 @@ class CustomQListWidgetItem(QListWidgetItem):
             parent.progress_bar.setValue(12)
         h, w = image.shape
         self.img_height = h
-        self.ocr_areas = OCRAreasFinder(color_image)
+        self.ocr_areas = OCRAreasFinder(color_image, self.settings["contrast"])
         self.market_width = self.ocr_areas.market_width
         if not parent is None:
             parent.progress_bar.setValue(14)
-        points = self.ocr_areas.market_table
-        self.market_offset = (points[0][0], points[0][1])
-        station = self.ocr_areas.station_name
-        self.station_offset = (station[0][0], station[0][1])
+        
         self.valid_market = self.ocr_areas.valid
         if self.valid_market:
+            points = self.ocr_areas.market_table
+            self.market_offset = (points[0][0], points[0][1])
+            station = self.ocr_areas.station_name
+            self.station_offset = (station[0][0], station[0][1])
             cut = image[0:points[1][1] + 20,
                         0:points[1][0] + 20]
         else:
             cut = image[:]
+            self.market_offset = (0, 0)
+            self.station_offset = (0, 0)
+            
         processedimage = array2qimage(cut)
         if not parent is None:
             parent.progress_bar.setValue(16)
@@ -108,12 +148,12 @@ class CustomQListWidgetItem(QListWidgetItem):
         return [year, month, day, hour, minute, second]
 
     def getStationName(self, search_time):
-        path = unicode(self.settings['log_dir']).encode('windows-1252')
+        path = unicode(self.settings['log_dir']).encode(sys.getfilesystemencoding())
         matchscreen = "^{"+search_time[0]+":"+search_time[1]+":..}"
         matchline = "^{[\S]*}\sFindBestIsland:"
         
         stationfound = False
-        for line in reversed(open(path+"\\"+self.log_file).readlines()):
+        for line in reversed(open(path + os.sep +self.log_file).readlines()):
             if stationfound:
                 if re.match(matchline, line):
                     elements = line.split(":")
@@ -126,7 +166,7 @@ class CustomQListWidgetItem(QListWidgetItem):
     
     def getSystemName(self):
         """Get system name from log files"""
-        path = unicode(self.settings['log_dir']).encode('windows-1252')
+        path = unicode(self.settings['log_dir']).encode(sys.getfilesystemencoding())
         if not isdir(path):
             return ""
         dir = listdir(path)
@@ -154,7 +194,7 @@ class CustomQListWidgetItem(QListWidgetItem):
             
         screenshotfound = False
         for file in candidates:
-            for line in reversed(open(path+"\\"+file).readlines()):
+            for line in reversed(open(path + os.sep +file).readlines()):
                 if screenshotfound:
                     if re.match(matchsystem, line):
                         match = re.search(findname, line)
