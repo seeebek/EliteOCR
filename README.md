@@ -100,6 +100,10 @@ pip install requests
 
 pip install grequests
 
+###### bitarray
+
+pip install bitarray
+
 
 Run EliteOCR.py
 
