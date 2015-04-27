@@ -153,11 +153,7 @@ class CustomQListWidgetItem(QListWidgetItem):
         matchline = "^{[\S]*}\sFindBestIsland:"
         
         stationfound = False
-<<<<<<< HEAD
         for line in reversed(open(path + os.sep +self.log_file).readlines()):
-=======
-        for line in reversed(open(path+os.sep+self.log_file).readlines()):
->>>>>>> master
             if stationfound:
                 if re.match(matchline, line):
                     elements = line.split(":")
@@ -198,11 +194,7 @@ class CustomQListWidgetItem(QListWidgetItem):
             
         screenshotfound = False
         for file in candidates:
-<<<<<<< HEAD
             for line in reversed(open(path + os.sep +file).readlines()):
-=======
-            for line in reversed(open(path+os.sep+file).readlines()):
->>>>>>> master
                 if screenshotfound:
                     if re.match(matchsystem, line):
                         match = re.search(findname, line)

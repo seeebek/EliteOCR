@@ -24,6 +24,7 @@ class SetupWizard(QWizard, Ui_SetupWizard):
         
         self.wizardPage1.fullfilled = True
         self.wizardPage2.pageCreated.connect(self.logWork)
+        self.wizardPage2.fullfilled = True
         self.wizardPage3.pageCreated.connect(self.AppConfigWork)
         self.wizardPage3.fullfilled = True
         self.wizardPage4.pageCreated.connect(self.PathsWork)

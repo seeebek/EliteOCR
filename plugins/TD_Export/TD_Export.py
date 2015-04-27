@@ -13,7 +13,6 @@
 from __future__ import absolute_import, with_statement, print_function, division, unicode_literals
 
 import datetime         # some time handling
-import os
 
 from os import listdir, remove, makedirs
 from os.path import isdir
@@ -125,11 +124,12 @@ class TD_Export():
         # TD needs a Category and is case sensitive for Category and Item names!
         self.mapOCR2TD["ADVANCED CATALYSERS"] = [ "Advanced Catalysers", "Technology" ]
         self.mapOCR2TD["AGRI-MEDICINES"] = [ "Agri-Medicines", "Medicines" ]
+        self.mapOCR2TD["AI RELICS"] = [ "AI Relics", "Salvage" ]
         self.mapOCR2TD["ALGAE"] = [ "Algae", "Foods" ]
-
         self.mapOCR2TD["ALUMINIUM"] = [ "Aluminium", "Metals" ]
         self.mapOCR2TD["ANIMAL MEAT"] = [ "Animal Meat", "Foods" ]
         self.mapOCR2TD["ANIMAL MONITORS"] = [ "Animal Monitors", "Technology" ]
+        self.mapOCR2TD["ANTIQUITIES"] = [ "Antiquities", "Salvage" ]
         self.mapOCR2TD["AQUAPONIC SYSTEMS"] = [ "Aquaponic Systems", "Technology" ]
         self.mapOCR2TD["ATMOSPHERIC PROCESSORS"] = [ "Atmospheric Processors", "Machinery" ]
         self.mapOCR2TD["AUTO-FABRICATORS"] = [ "Auto-Fabricators", "Technology" ]
@@ -221,7 +221,7 @@ class TD_Export():
             pass
         if not isdir(exportDir):
             makedirs(exportDir)
-        fileName = exportDir+str(os.sep+"import.prices")
+        fileName = exportDir+str("\\import.prices")
 
         # python 2 <-> 3
         try:

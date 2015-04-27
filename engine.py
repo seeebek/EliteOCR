@@ -639,7 +639,7 @@ class OCRbox():
         
 class TrainedDataNumbers():
     def __init__(self, path):
-        self.revclassdict = {"0":0,"1":1,"2":2,"3":3,"4":4,"5":5,"6":6,"7":7,"8":8,"9":9,",":10,"-":11,}
+        self.revclassdict = {"0":0,"1":1,"2":2,"3":3,"4":4,"5":5,"6":6,"7":7,"8":8,"9":9,",":10,"-":11}
         self.keys = len(self.revclassdict)
         layers = np.array([400,71,self.keys])
         self.nnetwork = cv2.ANN_MLP(layers, 1,0.65,1)
