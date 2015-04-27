@@ -9,10 +9,8 @@ EliteOCR is capable of reading the entries in Elite: Dangerous markets screensho
 Best results are achieved with screenshots of 3840 by 2160 pixel (4K) or more.
 You can make screenshots in game by pressing F10. You find them usually in
 C:\Users\USERNAME\Pictures\Frontier Developments\Elite Dangerous
-Screenshots made with ALT+F10 have lower recognition rate!
+Screenshots made with ALT+F10 are ignored due to memory errors!
 
-Owners of Nvidia video cards can use DSR technology to increase the resolution 
-for screenshots and revert it back to normal without leaving the game.
 
 Usage
 --------------
@@ -98,7 +96,9 @@ pip install tzlocal
 
 pip install requests
 
+###### Grequests
 
+pip install grequests
 
 
 Run EliteOCR.py
