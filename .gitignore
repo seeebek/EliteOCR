@@ -225,3 +225,6 @@ compiled
 
 # Neural Net training/source data
 nn_training_images
+
+# pyinstaller spec
+EliteOCR.spec

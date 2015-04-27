@@ -6,6 +6,7 @@ from settings import Settings
 import os
 from os.path import isdir
 from os import listdir
+import os
 
 class SettingsDialog(QDialog, Ui_Settings):
     def __init__(self, settings):
@@ -158,6 +159,7 @@ class SettingsDialog(QDialog, Ui_Settings):
         self.ui_language.setCurrentIndex(index)
         
     def fillOCRLang(self):
+<<<<<<< HEAD
         #self.ocr_language.addItem("eng")
         #path = ""
         #if isdir(unicode(self.settings.app_path+ os.sep +".."+ os.sep +"tessdata"+ os.sep +"")):
@@ -169,6 +171,19 @@ class SettingsDialog(QDialog, Ui_Settings):
         #    dir.remove("big.traineddata")
         #    dir = [d[:3] for d in dir]
         #    self.ocr_language.addItems(dir)
+=======
+        self.ocr_language.addItem("eng")
+        path = ""
+        if isdir(unicode(self.settings.app_path.decode('windows-1252')+os.sep+".."+os.sep+"tessdata"+os.sep)):
+            path = unicode(self.settings.app_path.decode('windows-1252')+os.sep+".."+os.sep+"tessdata"+os.sep)
+        if isdir(unicode(self.settings.app_path.decode('windows-1252')+os.sep+"tessdata"+os.sep)):
+            path = unicode(self.settings.app_path.decode('windows-1252')+os.sep+"tessdata"+os.sep)
+        if isdir(path):
+            dir = listdir(path)
+            dir.remove("big.traineddata")
+            dir = [d[:3] for d in dir]
+            self.ocr_language.addItems(dir)
+>>>>>>> master
         index = self.ocr_language.findText(self.settings['ocr_language'])
         if index == -1:
             index = 0
