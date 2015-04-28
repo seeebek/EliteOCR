@@ -113,3 +113,19 @@ To create a standalone exe file
 pip install pyinstaller
 
 pyinstaller --onedir EliteOCR.py
+
+Run on Ubuntu
+--------------
+
+It is useful to run EliteOCR from a separate computer and access the files as network shares
+ (screehnshots, log files and AppConfig.xml). To run on Ubuntu do the following:
+
+###### Install dependencies
+
+sudo apt-get install python-pip python-qt4 python-opencv python-numpy python-openpyxl python-requests python-bitarray python-tz python-gevent python-levenshtein python-lxml
+
+sudo pip install tzlocal grequests qimage2ndarray ezodf
+
+###### Execute:
+
+python EliteOCR.py
