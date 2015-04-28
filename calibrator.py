@@ -45,6 +45,7 @@ class Calibrator(QThread):
         self.image_data = []
         
         for file in self.imglist:
+            print file
             #print file
             image = cv2.imread(unicode(file).encode(sys.getfilesystemencoding()))
             h, w, c = image.shape
@@ -101,10 +102,10 @@ class Calibrator(QThread):
         #self.emit(SIGNAL("update(int,int)"), counter, toprocess)
         #self.result = "Success: "+unicode(len(outcomeok))+" Fail: "+unicode(len(outcomefail))
         
-        #ct = ColorThief(image)
-        #palette = ct.get_palette()
-        #for i in xrange(1,6):
-        #    self.settings.reg.setValue('color'+str(i), QColor(*(palette[i-1])).name())
+        ct = ColorThief(image)
+        palette = ct.get_palette()
+        for i in xrange(1,6):
+            self.settings.reg.setValue('color'+str(i), QColor(*(palette[i-1])).name())
         
         self.emit(SIGNAL("finished(float, int, PyQt_PyObject)"), self.bestcontrast, self.error, self.image_data)
     
@@ -184,9 +185,15 @@ class Calibrator(QThread):
         if self.contrast is None:
             self.contrast = self.ocr_areas.contrast
         valid_market = self.ocr_areas.valid
+        
+        # if market table not recognized, try again
+        if (not self.contrast is None) and not valid_market:
+            self.ocr_areas = OCRAreasFinder(image, None)
+            self.contrast = self.ocr_areas.contrast
+            valid_market = self.ocr_areas.valid
+            
         self.image_data.append([valid_market, w, h, self.ocr_areas.market_width])
-        #print self.ocr_areas.market_table
-
+        
         if valid_market:
             market = self.ocr_areas.market_table
             market_offset = (market[0][0], market[0][1])

@@ -15,12 +15,15 @@ from Levenshtein import ratio, distance
 
 class OCRAreasFinder:
     def __init__(self, image, contrast = None):
+        #color = image
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         self.station_name = None
         self.market_table = None
         self.market_width = 0
         self.valid = False
         self.areas = None
         self.contrast = None
+        self.xline = None
         if contrast is None:
             for i in xrange(10, 250, 10):
                 img = contBright(image, i, i+5.0)
@@ -31,6 +34,13 @@ class OCRAreasFinder:
         else:
             img = contBright(image, contrast, contrast+5.0)
             self.findMarket(img)
+            #print self.areas
+            #cv2.rectangle(color,(int(self.market_table[0][0]),int(self.market_table[0][1])),(int(self.market_table[1][0]),int(self.market_table[1][1])),(0,0,255),1) 
+            #for area in self.areas:
+            #    cv2.rectangle(color,(int(area[0]+self.market_table[0][0]),200),(int(area[1]+self.market_table[0][0]),int(self.market_table[1][1])),(255,255,255),1) 
+            #cv2.imshow("x", color)
+            #cv2.waitKey(0)
+            
 
     def getValidRange(self, image):
         min_valid = None
@@ -47,7 +57,7 @@ class OCRAreasFinder:
         return (min_valid, max_valid)
     
     def findMarket(self, input):
-        img = cv2.cvtColor(input, cv2.COLOR_BGR2GRAY)
+        img = input
         imgheight, imgwidth = img.shape
         
         ret,thresh1 = cv2.threshold(img,70,255,cv2.THRESH_BINARY)
@@ -59,14 +69,25 @@ class OCRAreasFinder:
             return
         #print loi
         longestline = max(loi,key=itemgetter(2))
+        self.xline = longestline
         self.market_width = longestline[2]
         
         #validate:
         self.validate(longestline, loi)
-
+        
+        """
         x1 = longestline[0]
         y1 = longestline[1]-int(longestline[2]*0.6653)
         x2 = int((longestline[0]+longestline[2])*0.839)
+        x2_station = longestline[0]+longestline[2]
+        y2 = longestline[1]
+        y1_station = longestline[1]-int(longestline[2]*0.745)
+        y2_station = longestline[1]-int(longestline[2]*0.717)
+        """
+        
+        x1 = longestline[0]
+        y1 = longestline[1]-int(longestline[2]*0.6653)
+        x2 = int(longestline[0]+(longestline[2]*0.832))
         x2_station = longestline[0]+longestline[2]
         y2 = longestline[1]
         y1_station = longestline[1]-int(longestline[2]*0.745)
@@ -109,12 +130,12 @@ class OCRAreasFinder:
     
     def getAreas(self, x1, x2):
         areas = [[0.0, 0.357],
-                 [0.361, 0.444],
-                 [0.448, 0.531],
+                 [0.361, 0.447],
+                 [0.448, 0.533],
                  [0.625, 0.731],
                  [0.732, 0.802],
-                 [0.805, 0.912],
-                 [0.913, 0.999]]
+                 [0.805, 0.909],
+                 [0.911, 0.999]]
 
         new_areas = []
         x = x2 - x1
@@ -407,7 +428,7 @@ class MLP:
                                 result = self.mlpocr(input, word, "letters")    
                             else:
                                 result = self.mlpocr(input, word, "numbers")
-                        
+                                
                         newline.addWord(OCRbox(word["box"], result, word["units"]), isstation)
                         
                     #print newline
@@ -478,25 +499,31 @@ class Levenshtein:
                     data[i][0].optional_values = [data[i][0].value] + optional_values
             # LOW MED HIGH
             if not data[i][4] is None and levels:
-                topratio = 0.0
-                toplev = ""
-                for lev in self.levels[self.lang]:
-                    if data[i][4].value is None:
-                        print "None!"
-                    rat = ratio(unicode(data[i][4].value), unicode(lev))
-                    if rat > topratio:
-                        topratio = rat
-                        toplev = lev
-                data[i][4].value = toplev
-            if not data[i][6] is None:
-                topratio = 0.0
-                toplev = ""
-                for lev in self.levels[self.lang]:
-                    rat = ratio(data[i][6].value, unicode(lev))
-                    if rat > topratio:
-                        topratio = rat
-                        toplev = lev
-                data[i][6].value = toplev
+                try:
+                    topratio = 0.0
+                    toplev = ""
+                    for lev in self.levels[self.lang]:
+                        if data[i][4].value is None:
+                            print "None!"
+                        rat = ratio(unicode(data[i][4].value), unicode(lev))
+                        if rat > topratio:
+                            topratio = rat
+                            toplev = lev
+                    data[i][4].value = toplev
+                except:
+                    pass
+            if not data[i][6] is None and levels:
+                try:
+                    topratio = 0.0
+                    toplev = ""
+                    for lev in self.levels[self.lang]:
+                        rat = ratio(data[i][6].value, unicode(lev))
+                        if rat > topratio:
+                            topratio = rat
+                            toplev = lev
+                    data[i][6].value = toplev
+                except:
+                    pass
 
         
 class OCRLine():
@@ -537,11 +564,11 @@ class OCRLine():
         x1 = word.x1
         x2 = word.x2
         #for x in xrange(0, len(self.areas_x)):
-        if x2 < self.areas_x[0][1]:
+        if x2 <= self.areas_x[0][1]:
             self.addName(word)
             self.items[0] = self.name
             return
-        if x1 > self.areas_x[1][0] and x2 < self.areas_x[1][1]:
+        if x1 >= int(self.areas_x[1][0]) and x2 <= int(self.areas_x[1][1]):
             if self.sell is None:
                 self.sell = word
             else:
@@ -549,7 +576,7 @@ class OCRLine():
             self.sell.value = self.sell.value.replace('.', ',')
             self.items[1] = self.sell
             return
-        if x1 > self.areas_x[2][0] and x2 < self.areas_x[2][1]:
+        if x1 >= self.areas_x[2][0] and x2 <= self.areas_x[2][1]:
             if word.value == "-" or word.value == ",":
                 return
             if self.buy is None:
@@ -559,7 +586,7 @@ class OCRLine():
             self.buy.value = self.buy.value.replace('.', ',')
             self.items[2] = self.buy
             return
-        if x1 > self.areas_x[3][0] and x2 < self.areas_x[3][1]:
+        if x1 >= self.areas_x[3][0] and x2 <= self.areas_x[3][1]:
             if self.demand_num is None:
                 self.demand_num = word
             else:
@@ -567,11 +594,11 @@ class OCRLine():
             self.demand_num.value = self.demand_num.value.replace('.', ',')
             self.items[3] = self.demand_num
             return
-        if x1 > self.areas_x[4][0] and x2 < self.areas_x[4][1]:
+        if x1 >= self.areas_x[4][0] and x2 <= self.areas_x[4][1]:
             self.demand = word
             self.items[4] = self.demand
             return
-        if x1 > self.areas_x[5][0] and x2 < self.areas_x[5][1]:
+        if x1 >= self.areas_x[5][0] and x2 <= self.areas_x[5][1]:
             if self.supply_num is None:
                 self.supply_num = word
             else:
@@ -579,7 +606,7 @@ class OCRLine():
             self.supply_num.value = self.supply_num.value.replace('.', ',')
             self.items[5] = self.supply_num
             return
-        if x1 > self.areas_x[6][0] and x2 < self.areas_x[6][1]:
+        if x1 >= self.areas_x[6][0] and x2 <= self.areas_x[6][1]:
             self.supply = word
             self.items[6] = self.supply
             return
