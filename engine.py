@@ -88,9 +88,9 @@ class OCRAreasFinder:
         x1 = longestline[0]
         y1 = longestline[1]-int(longestline[2]*0.6653)
         x2 = int(longestline[0]+(longestline[2]*0.832))
-        x2_station = longestline[0]+longestline[2]
+        x2_station = int(longestline[0]+(longestline[2]*0.832))
         y2 = longestline[1]
-        y1_station = longestline[1]-int(longestline[2]*0.745)
+        y1_station = longestline[1]-int(longestline[2]*0.740)
         y2_station = longestline[1]-int(longestline[2]*0.717)
         
         self.areas = self.getAreas(x1, x2)

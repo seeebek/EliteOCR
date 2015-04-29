@@ -17,6 +17,7 @@ class OCR():
         self.image = cv2.cvtColor(color_image, cv2.COLOR_BGR2GRAY)
         
         self.contrast_station_img = self.makeStationImgClean(ocr_areas.station_name)
+
         self.contrast_commodities_img = self.makeMarketImgClean(ocr_areas.market_table)
         
         self.station_img = self.makeStationImg(ocr_areas.station_name)
@@ -58,22 +59,25 @@ class OCR():
         #cv2.imshow("x", img)
         #cv2.waitKey(0)
         img = 255 - contBright(img, 250.0, 255.0)
-        #cv2.imshow("x", img)
-        #cv2.waitKey(0)
-        #cv2.imshow("x", img)
-        #cv2.waitKey(0)
+        try:
+            h, w = img.shape
+            if w == 0 or h == 0:
+                img = np.ones((1,1), dtype='float32')
+        except:
+            img = np.ones((1,1), dtype='float32')
         return img
         
     def makeMarketImg(self, market):
         img = self.image[market[0][1]:market[1][1], market[0][0]:market[1][0]]
-        #cv2.imshow("x", img)
-        #cv2.waitKey(0)
         img = contBright(img, self.contrast, self.contrast+5.0)
-        #img = contBright(img, 62.0, 67.0)
         #cv2.imshow("x", img)
         #cv2.waitKey(0)
         img = 255 - img
-        #cv2.imshow("x", img)
-        #cv2.waitKey(0)
+        try:
+            h, w = img.shape
+            if w == 0 or h == 0:
+                img = np.ones((1,1), dtype='float32')
+        except:
+            img = np.ones((1,1), dtype='float32')
         return img
     

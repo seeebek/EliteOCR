@@ -11,8 +11,6 @@ __version__ = '0.2-dev'
 import math
 import cv2
 
-#from PIL import Image
-
 
 class cached_property(object):
     """Decorator that creates converts a method with a single
