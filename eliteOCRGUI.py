@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'eliteOCRGUI.ui'
 #
-# Created: Mon Apr 27 13:47:22 2015
+# Created: Mon May 04 19:58:58 2015
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -553,7 +553,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_translate("MainWindow", "EliteOCR", None))
-        self.label_2.setText(_translate("MainWindow", "<html><head/><body><p>If you have any problems please read &quot;Help&quot;. Please send any bug reports, issues or suggestions to eliteocr@gmail.com or post them in the <a href=\"https://forums.frontier.co.uk/showthread.php?t=68771\"><span style=\" text-decoration: underline; color:#0000ff;\">forum.</span></a></p></body></html>", None))
+        self.label_2.setText(_translate("MainWindow", "<html><head/><body><p>If you have any problems please <span style=\" font-weight:600; text-decoration: underline;\">read &quot;Help&quot;</span>. Please send any bug reports, issues or suggestions to eliteocr@gmail.com or post them in the <a href=\"https://forums.frontier.co.uk/showthread.php?t=68771\"><span style=\" text-decoration: underline; color:#0000ff;\">forum.</span></a></p></body></html>", None))
         self.add_button.setText(_translate("MainWindow", "...", None))
         self.add_button.setShortcut(_translate("MainWindow", "Alt+Q", None))
         self.remove_button.setText(_translate("MainWindow", "...", None))

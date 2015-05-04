@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'settingsUI.ui'
 #
-# Created: Mon Apr 27 11:47:15 2015
+# Created: Mon May 04 20:23:36 2015
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -360,11 +360,9 @@ class Ui_Settings(object):
         self.horizontal_exp = QtGui.QCheckBox(self.tab_3)
         self.horizontal_exp.setObjectName(_fromUtf8("horizontal_exp"))
         self.verticalLayout_6.addWidget(self.horizontal_exp)
-        self.create_nn_images = QtGui.QCheckBox(self.tab_3)
-        self.create_nn_images.setEnabled(False)
-        self.create_nn_images.setChecked(False)
-        self.create_nn_images.setObjectName(_fromUtf8("create_nn_images"))
-        self.verticalLayout_6.addWidget(self.create_nn_images)
+        self.gray_preview = QtGui.QCheckBox(self.tab_3)
+        self.gray_preview.setObjectName(_fromUtf8("gray_preview"))
+        self.verticalLayout_6.addWidget(self.gray_preview)
         spacerItem6 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout_6.addItem(spacerItem6)
         self.tabWidget.addTab(self.tab_3, _fromUtf8(""))
@@ -422,7 +420,7 @@ class Ui_Settings(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_4), _translate("Settings", "Layout", None))
         self.native_dialog.setText(_translate("Settings", "Use native file dialog (might ignore default paths)", None))
         self.horizontal_exp.setText(_translate("Settings", "Horizontal export", None))
-        self.create_nn_images.setText(_translate("Settings", "Save images for machine learning (not used currently)", None))
+        self.gray_preview.setText(_translate("Settings", "Grayscale preview image", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _translate("Settings", "Misc", None))
 
 import res_rc

@@ -55,6 +55,7 @@ class Settings():
                'screenshot_dir': self.reg.value('screenshot_dir', type=QString),
                'export_dir': self.reg.value('export_dir', type=QString),
                'horizontal_exp': self.reg.value('horizontal_exp', type=bool),
+               'gray_preview': self.reg.value('gray_preview', False, type=bool),
                'last_export_format': self.reg.value('last_export_format', type=QString),
                'log_dir': self.reg.value('log_dir', type=QString),
                'auto_fill': self.reg.value('auto_fill', type=bool),

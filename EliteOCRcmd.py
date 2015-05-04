@@ -3,6 +3,7 @@ import random
 import logging
 import traceback
 import sys
+import re
 import getopt
 #import time
 import json
@@ -55,18 +56,19 @@ except AttributeError:
     def _translate(context, text, disambig):
         return QApplication.translate(context, text, disambig)
 
-appversion = "0.6.0.2"
+appversion = "0.6.0.3"
 gui = False
 logging.basicConfig(format='%(asctime)s %(levelname)s:\n%(message)s',filename='errorlog.txt',level=logging.WARNING)
 
 def exception_handler(ex_cls, ex, tb):
     fulltb = ''.join(traceback.format_tb(tb))
     fulltb = fulltb.replace("<string>", "EliteOCR")
-    fulltb = fulltb.replace("C:"+ os.sep +"Users"+ os.sep +"SEBAST~1"+ os.sep +"Desktop"+ os.sep +"RFACTO~2"+ os.sep +"build"+ os.sep +"EliteOCR"+ os.sep +"out00-PYZ.pyz"+ os.sep +"", "")
-    fulltb = fulltb.replace("C:"+ os.sep +"Users"+ os.sep +"SEBAST~1"+ os.sep +"Desktop"+ os.sep +"RFACTO~2"+ os.sep +"build"+ os.sep +"EliteOCRcmd"+ os.sep +"out00-PYZ.pyz"+ os.sep +"", "")
+    fulltb = re.sub(r"C:.+\.pyz", "", fulltb)
+    #fulltb = fulltb.replace("C:"+ os.sep +"Users"+ os.sep +"SEBAST~1"+ os.sep +"Desktop"+ os.sep +"RFACTO~2"+ os.sep +"build"+ os.sep +"EliteOCR"+ os.sep +"out00-PYZ.pyz"+ os.sep +"", "")
+    #fulltb = fulltb.replace("C:"+ os.sep +"Users"+ os.sep +"SEBAST~1"+ os.sep +"Desktop"+ os.sep +"RFACTO~2"+ os.sep +"build"+ os.sep +"EliteOCRcmd"+ os.sep +"out00-PYZ.pyz"+ os.sep +"", "")
     logging.critical(fulltb+'\n{0}: {1}\n'.format(ex_cls, ex))
     print "An error was encountered. Please read errorlog.txt"
-    print gui
+    #print gui
     if gui:
         QMessageBox.critical(None,"Error", "An error was encountered. Please read errorlog.txt")
     
@@ -414,7 +416,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         dir = unicode(self.settings['screenshot_dir'])
         #gen = (join(dir, file).decode('windows-1252') for file in listdir(dir) if isfile(join(dir, file)))
         gen = [join(dir, file) for file in listdir(dir) if file.endswith('.bmp') and file[:7]!="HighRes"]
-        print gen
+        #print gen
         files = []
         for file in gen:
             files.append(file)

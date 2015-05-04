@@ -18,6 +18,7 @@ class SettingsDialog(QDialog, Ui_Settings):
         self.exp_dir.setText(self.exportdir)
         self.horizontal_exp.setChecked(self.settings['horizontal_exp'])
         self.native_dialog.setChecked(self.settings['native_dialog'])
+        self.gray_preview.setChecked(self.settings['gray_preview'])
         self.exp_browse.clicked.connect(self.browseExportDir)
         
         self.logdir = self.settings['log_dir']
@@ -29,7 +30,6 @@ class SettingsDialog(QDialog, Ui_Settings):
         self.remove_dupli.setChecked(self.settings['remove_dupli'])
         self.delete_files.setChecked(self.settings['delete_files'])
         self.pause_at_end.setChecked(self.settings['pause_at_end'])
-        self.create_nn_images.setChecked(self.settings['create_nn_images'])
         self.input_size.setValue(self.settings['input_size'])
         self.snippet_size.setValue(self.settings['snippet_size'])
         self.label_color.setText(self.settings['label_color'])
@@ -198,6 +198,7 @@ class SettingsDialog(QDialog, Ui_Settings):
         self.settings.setValue('screenshot_dir', self.screenshotdir)
         self.settings.setValue('export_dir', self.exportdir)
         self.settings.setValue('horizontal_exp', self.horizontal_exp.isChecked())
+        self.settings.setValue('gray_preview', self.gray_preview.isChecked())
         self.settings.setValue('native_dialog', self.native_dialog.isChecked())
         self.settings.setValue('log_dir', self.logdir)
         self.settings.setValue('translate_results', self.translate_results.isChecked())
@@ -207,7 +208,6 @@ class SettingsDialog(QDialog, Ui_Settings):
         self.settings.setValue('pause_at_end', self.pause_at_end.isChecked())
         self.settings.setValue('ui_language', self.ui_language.currentText())
         self.settings.setValue('ocr_language', self.ocr_language.currentText())
-        self.settings.setValue('create_nn_images', self.create_nn_images.isChecked())
         self.settings.setValue('theme', self.theme.currentText())
         self.settings.setValue('input_size', self.input_size.value())
         self.settings.setValue('snippet_size', self.snippet_size.value())

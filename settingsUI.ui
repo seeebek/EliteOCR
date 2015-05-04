@@ -726,15 +726,9 @@
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="create_nn_images">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
+        <widget class="QCheckBox" name="gray_preview">
          <property name="text">
-          <string>Save images for machine learning (not used currently)</string>
-         </property>
-         <property name="checked">
-          <bool>false</bool>
+          <string>Grayscale preview image</string>
          </property>
         </widget>
        </item>

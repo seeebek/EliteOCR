@@ -10,8 +10,8 @@ from os.path import getmtime, getctime, isdir
 from time import gmtime, localtime, strftime
 from tzlocal import get_localzone
 from datetime import datetime, timedelta
-from PyQt4.QtGui import QListWidgetItem, QPixmap
-from PyQt4.QtCore import QRect
+from PyQt4.QtGui import QListWidgetItem, QPixmap, QImage, qRgba, qGray, qAlpha
+from PyQt4.QtCore import Qt, QRect
 from qimage2ndarray import array2qimage
 from imageprocessing import *
 #from ocrmethods import OCRAreasFinder
@@ -66,14 +66,20 @@ class CustomQListWidgetItem(QListWidgetItem):
         self.ocr_areas = OCRAreasFinder(color_image, self.settings["contrast"])
         self.market_width = self.ocr_areas.market_width
         self.valid_market = self.ocr_areas.valid
-        img = QPixmap(self.hiddentext)
-        width = img.width()
-        height = img.height()
-        aspect_ratio = float(width)/height
-        if aspect_ratio > 1.78:
-            new_w = int(1.77778*height)
-            rect = QRect((width-new_w)/2, 0, new_w, height)
-            img = img.copy(rect)
+        if self.settings['gray_preview']:
+            img = cv2.imread(unicode(self.hiddentext).encode(sys.getfilesystemencoding()), 0)
+            img = array2qimage(img)
+            pix = QPixmap.fromImage(img)
+        else:
+            pix = QPixmap(self.hiddentext)
+        width = pix.width()
+        height = pix.height()
+        if height > 0:
+            aspect_ratio = float(width)/height
+            if aspect_ratio > 1.78:
+                new_w = int(1.77778*height)
+                rect = QRect((width-new_w)/2, 0, new_w, height)
+                pix = pix.copy(rect)
             
         if self.valid_market:
             points = self.ocr_areas.market_table
@@ -81,15 +87,13 @@ class CustomQListWidgetItem(QListWidgetItem):
             station = self.ocr_areas.station_name
             self.station_offset = (station[0][0], station[0][1])
             rect = QRect(0, 0, points[1][0] + 20, points[1][1] + 20)
-            cut = img.copy(rect)
+            cut = pix.copy(rect)
             return cut
         else:
             self.market_offset = (0, 0)
             self.station_offset = (0, 0)
 
-            
-        
-        return img
+        return pix
         
     def addPreviewImage(self, color_image, parent = None):
         image = color_image
@@ -206,3 +210,4 @@ class CustomQListWidgetItem(QListWidgetItem):
                     if re.match(matchscreen, line):
                         screenshotfound = True
         return ""
+        
