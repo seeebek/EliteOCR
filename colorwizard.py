@@ -44,13 +44,13 @@ class ColorCalibrationWizard(QWizard, Ui_ColorCalibrationWizard):
         information = "Calibration finished.\nResulting optimal contrast value for your HUD color settings: "+unicode(result) +"\n"
         information += "OCR Errors: "+unicode(errors)+"\n\n"
         if rel_error == 0:
-            information += "Your screenshots seem to have perfect size and contrast. OCR accuracy should be almost 100%.\n\n"
+            information += "Your screenshots seem to have perfect size and contrast. OCR accuracy should be almost perfect. Please observe your result and perform OCR training in case there are some mistakes.\n\n"
         elif rel_error < 4:
-            information += "Your screenshots seem to have good size and contrast. OCR accuracy should be high enough for numbers, possible inaccuracies in the text will be corrected by dictionary comparison.\n\n"
+            information += "Your screenshots seem to have good size and contrast. OCR accuracy should be high enough for numbers, possible inaccuracies in the text will be corrected by dictionary comparison. Please observe your result and perform OCR training in case there are some mistakes.\n\n"
         elif rel_error < 10:
-            information += "Your screenshots seem to have sufficient size and contrast. You should check your results for possible errors. Especially 6,8 and 9 could get mixed up. Please consider using higher resolution, lower FOV or higher contrast HUD color.\n\n"
+            information += "Your screenshots seem to have sufficient size and contrast. You should check your results for possible errors. Especially 6,8 and 9 could get mixed up. Please consider using higher resolution, lower FOV or higher contrast HUD color. Observe your result and perform OCR training in case there are mistakes.\n\n"
         else:
-            information += "Your screenshots are not usable for OCR. Use higher resolution, lower FOV or higher contrast HUD colors and perform the calibration again.\n\n"
+            information += "Your screenshots are not usable for OCR. Use higher resolution, lower FOV or higher contrast HUD colors and perform the calibration again. OCR training might help but it is not guaranteed. \n\n"
 
         for i in range(len(result_list)):
             information += "Image "+unicode(i+1)+"\n"
@@ -58,6 +58,7 @@ class ColorCalibrationWizard(QWizard, Ui_ColorCalibrationWizard):
             information += "Resolution: "+unicode(result_list[i][1])+"x"+unicode(result_list[i][2])+"\n"
             information += "Market width: "+unicode(result_list[i][3])+"\n\n"
         
+        information += "You can train the OCR with your screenshots. To perform training go to Settings > Learning wizard.\n\n"
         self.scr_result.setPlainText(information)
         self.wizardPage2.fullfilled = True
         self.wizardPage2.completeChanged.emit()

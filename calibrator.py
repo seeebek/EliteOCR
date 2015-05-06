@@ -45,7 +45,6 @@ class Calibrator(QThread):
         self.image_data = []
         
         for file in self.imglist:
-            print file
             #print file
             image = cv2.imread(unicode(file).encode(sys.getfilesystemencoding()))
             h, w, c = image.shape

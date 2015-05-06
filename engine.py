@@ -90,7 +90,7 @@ class OCRAreasFinder:
         x2 = int(longestline[0]+(longestline[2]*0.832))
         x2_station = int(longestline[0]+(longestline[2]*0.832))
         y2 = longestline[1]
-        y1_station = longestline[1]-int(longestline[2]*0.740)
+        y1_station = longestline[1]-int(longestline[2]*0.742)
         y2_station = longestline[1]-int(longestline[2]*0.717)
         
         self.areas = self.getAreas(x1, x2)
@@ -226,11 +226,6 @@ class MLP:
             words and single charachters 
         """
         h, w = input.shape
-        
-        #cv2.imshow("x", input)
-        #cv2.waitKey(0)
-        #print (w, h)
-        #print len(lines)
         boxes = []
         for line in lines:
             boxline = []
@@ -298,7 +293,7 @@ class MLP:
                 
                 if firstcharflag and not blackflag:
                     last = i+1
-                    charboxes.append([firstchar,last, startchar, endchar])
+                    charboxes.append([firstchar if firstchar >= 0 else 0,last, startchar if startchar >= 0 else 0, endchar])
                     firstcharflag = False
                     startchar = line[3]+2
                     endchar = 0
@@ -321,14 +316,17 @@ class MLP:
                 charboxes = []
             out = ""
             boxes.append(boxline)
+            
             """
             for box in boxline:
                 for unit in box["units"]:
-                    cv2.rectangle(input,(unit[0],unit[2]),(unit[1],unit[3]),(0,0,0),1)   
-                    cv2.imshow("x", input)
-                    cv2.waitKey(0)
-            #return boxes
+                    cv2.rectangle(input,(unit[0],unit[2]),(unit[1],unit[3]),(0,0,0),1)
+                    print unit
+                #cv2.imshow("x", input)
+                #cv2.waitKey(0)
             """
+            #return boxes
+            
         return boxes
     
     def mlpocr(self, input, box, type):
@@ -337,22 +335,31 @@ class MLP:
         temp = []
         for letter in box["units"]:
             temp2 = []
-            image = input[letter[2]:letter[3]+1,letter[0]:letter[1]]
+            y1 = letter[2] if letter[2] >= 0 else 0 
+            y2 = letter[3]
+            x1 = letter[0] if letter[2] >= 0 else 0 
+            x2 = letter[1]
+            line_y1 = box["line"][2] if box["line"][2] >= 0 else 0
+            image = input[y1:y2+1,x1:x2]
             h = box["line"][3]-box["line"][2]
+            #cv2.imshow("x", image)
+            #cv2.waitKey(0)
             if len(image) > 0:
                 if (h/len(image[0])) > 3:
-                    image = input[box["line"][2]:letter[3], letter[0]:letter[1]]
-                    border = int((h - len(image[0]))/2)
-                    if border < 0:
-                        border = 0
-                    image = cv2.copyMakeBorder(image,0,0,border,border,cv2.BORDER_CONSTANT,value=(255,255,255))
+                    image = input[line_y1:letter[3], letter[0]:letter[1]]
+                    if image.shape[0] > 0 and image.shape[1] > 0:
+                        border = int((h - len(image[0]))/2)
+                        if border < 0:
+                            border = 0
+                        image = cv2.copyMakeBorder(image,0,0,border,border,cv2.BORDER_CONSTANT,value=(255,255,255))
 
                 if len(image) < h/2.0:
-                    image = input[box["line"][2]:box["line"][3], letter[0]:letter[1]]
-                    border = int((h - len(image[0]))/2)
-                    if border < 0:
-                        border = 0
-                    image = cv2.copyMakeBorder(image,0,0,border,border,cv2.BORDER_CONSTANT,value=(255,255,255))
+                    image = input[line_y1:box["line"][3], letter[0]:letter[1]]
+                    if image.shape[0] > 0 and image.shape[1] > 0:
+                        border = int((h - len(image[0]))/2)
+                        if border < 0:
+                            border = 0
+                        image = cv2.copyMakeBorder(image,0,0,border,border,cv2.BORDER_CONSTANT,value=(255,255,255))
                 #cv2.imwrite("test"+ os.sep +unicode(random.randint(1, 1000000))+".png",image)
                 
                 image = cv2.resize(image, (20, 20))

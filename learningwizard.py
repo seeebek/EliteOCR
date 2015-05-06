@@ -432,6 +432,12 @@ class LearningWizard(QWizard, Ui_Wizard):
     
     def drawSnippet(self, graphicsview, snippet):
         """Draw single result item to graphicsview"""
+        try:
+            h, w = snippet.shape
+        except:
+            h, w, c = snippet.shape
+        if h < 1 or w <1:
+            return
         processedimage = array2qimage(snippet)
         pix = QPixmap()
         pix.convertFromImage(processedimage)
@@ -468,17 +474,29 @@ class LearningWizard(QWizard, Ui_Wizard):
                     char = ""
                 unit = self.results[i].station.name.units[j]
                 image = cres.station_img[unit[2]:unit[3]+1,unit[0]:unit[1]]
+                #cv2.imshow("x", image)
+                #cv2.waitKey(0)
                 h = res.h
                 if len(image) > 0:
                     if ((h*1.0)/len(image[0])) > 3:
-                        image = cres.station_img[res.y1:unit[3], unit[0]:unit[1]]
+                        y1 = res.y1
+                        if y1 < 0:
+                            y1 = 0
+                        image = cres.station_img[y1:unit[3], unit[0]:unit[1]]
                         border = (h - len(image[0]))/2
                         image = cv2.copyMakeBorder(image,0,0,border,border,cv2.BORDER_CONSTANT,value=(255,255,255))
 
                     if len(image) < h/2.0:
-                        image = cres.station_img[res.y1:res.y2, unit[0]:unit[1]]
+                        y1 = res.y1
+                        if y1 < 0:
+                            y1 = 0
+                        image = cres.station_img[y1:res.y2, unit[0]:unit[1]]
                         border = (h - len(image[0]))/2
                         image = cv2.copyMakeBorder(image,0,0,border,border,cv2.BORDER_CONSTANT,value=(255,255,255))
+                    
+                    th, tw = image.shape
+                    if th < 1 or tw < 1:
+                        image = np.ones((10,10,1), dtype=np.uint8) * 255
                     self.imglist.append(image)
                     
                 word.append([image, char])
@@ -511,15 +529,26 @@ class LearningWizard(QWizard, Ui_Wizard):
                             h = line.h
                             if len(image) > 0:
                                 if ((h*1.0)/len(image[0])) > 3:
-                                    image = cres.commodities_img[line.y1:unit[3], unit[0]:unit[1]]
-                                    border = (h - len(image[0]))/2
-                                    image = cv2.copyMakeBorder(image,0,0,border,border,cv2.BORDER_CONSTANT,value=(255,255,255))
+                                    y1 = line.y1 if line.y1 >= 0 else 0
+                                    if y1 < 0:
+                                        y1 = 0
+                                    image = cres.commodities_img[y1:unit[3], unit[0]:unit[1]]
+                                    if image.shape[0] > 0 and image.shape[1] > 0:
+                                        border = (h - len(image[0]))/2
+                                        image = cv2.copyMakeBorder(image,0,0,border,border,cv2.BORDER_CONSTANT,value=(255,255,255))
 
                                 if len(image) < h/2.0:
-                                    image = cres.commodities_img[line.y1:line.y2, unit[0]:unit[1]]
-                                    border = (h - len(image[0]))/2
-                                    image = cv2.copyMakeBorder(image,0,0,border,border,cv2.BORDER_CONSTANT,value=(255,255,255))
+                                    y1 = line.y1 if line.y1 >= 0 else 0
+                                    if y1 < 0:
+                                        y1 = 0
+                                    image = cres.commodities_img[y1:line.y2, unit[0]:unit[1]]
+                                    if image.shape[0] > 0 and image.shape[1] > 0:
+                                        border = (h - len(image[0]))/2
+                                        image = cv2.copyMakeBorder(image,0,0,border,border,cv2.BORDER_CONSTANT,value=(255,255,255))
                                 
+                                th, tw = image.shape
+                                if th < 1 or tw < 1:
+                                    image = np.ones((10,10,1), dtype=np.uint8) * 255
                                 self.imglist.append(image)
                             
                             word.append([image, char])
