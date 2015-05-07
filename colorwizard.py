@@ -33,7 +33,7 @@ class ColorCalibrationWizard(QWizard, Ui_ColorCalibrationWizard):
             item = QListWidgetItem(file1)
             self.screenshot_list.addItem(item)
             
-        if self.screenshot_list.count() >= 3:
+        if self.screenshot_list.count() >= 1:
             self.wizardPage1.fullfilled = True
             self.wizardPage1.completeChanged.emit()
             

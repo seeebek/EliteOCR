@@ -125,7 +125,7 @@
    </layout>
   </widget>
   <widget class="CustomQWizardPage" name="wizardPage2">
-   <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,0,0,0,0,100">
+   <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,0,0,0,0,100,0">
     <item>
      <widget class="QLabel" name="label">
       <property name="text">
@@ -266,6 +266,16 @@ If two letters are recognized as one use empty text field so it will be ignored 
       </property>
      </spacer>
     </item>
+    <item>
+     <widget class="QLabel" name="notifier">
+      <property name="text">
+       <string>You did not add and OCR any images yet.</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="CustomQWizardPage" name="wizardPage3">
@@ -313,7 +323,7 @@ If two letters are recognized as one use empty text field so it will be ignored 
     <item>
      <widget class="QLabel" name="label_7">
       <property name="text">
-       <string>Base training data and user's training data will be used for OCR training. Click the button above to add just analyzed data to user's images. Please note: Learning process can take several minutes to finish! Summary will be show when the training is completed.</string>
+       <string>Base training data and user's training data will be used for OCR training. Click the button above to add just analyzed data to user's images. Please note: Learning process can take several minutes to finish! Summary will be shown when the training is completed.</string>
       </property>
       <property name="wordWrap">
        <bool>true</bool>

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'learningUI.ui'
 #
-# Created: Mon May 04 19:49:32 2015
+# Created: Thu May 07 11:27:22 2015
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -137,6 +137,10 @@ class Ui_Wizard(object):
         self.verticalLayout_2.addLayout(self.horizontalLayout_4)
         spacerItem4 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem4)
+        self.notifier = QtGui.QLabel(self.wizardPage2)
+        self.notifier.setAlignment(QtCore.Qt.AlignCenter)
+        self.notifier.setObjectName(_fromUtf8("notifier"))
+        self.verticalLayout_2.addWidget(self.notifier)
         self.verticalLayout_2.setStretch(6, 100)
         Wizard.addPage(self.wizardPage2)
         self.wizardPage3 = CustomQWizardPage()
@@ -206,10 +210,11 @@ class Ui_Wizard(object):
 "If two letters are recognized as one use empty text field so it will be ignored while learning.", None))
         self.prev_button.setText(_translate("Wizard", "Previous", None))
         self.next_button.setText(_translate("Wizard", "Next", None))
+        self.notifier.setText(_translate("Wizard", "You did not add and OCR any images yet.", None))
         self.label_6.setText(_translate("Wizard", "You collected following new images:", None))
         self.summary_label.setText(_translate("Wizard", "-", None))
         self.save_button.setText(_translate("Wizard", "Add those images to user\'s training images", None))
-        self.label_7.setText(_translate("Wizard", "Base training data and user\'s training data will be used for OCR training. Click the button above to add just analyzed data to user\'s images. Please note: Learning process can take several minutes to finish! Summary will be show when the training is completed.", None))
+        self.label_7.setText(_translate("Wizard", "Base training data and user\'s training data will be used for OCR training. Click the button above to add just analyzed data to user\'s images. Please note: Learning process can take several minutes to finish! Summary will be shown when the training is completed.", None))
         self.train_button.setText(_translate("Wizard", "Perform training", None))
 
 from customqwizardpage import CustomQWizardPage

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
+import os
 import cv2
 import numpy as np
 from time import time
@@ -41,7 +42,7 @@ class Trainer(QThread):
         classdict = {"0":0,"1":1,"2":2,"3":3,"4":4,"5":5,"6":6,"7":7,"8":8,"9":9,",":10,"-":11}
         nnetwork = self.trainProcess(classdict)
         if not nnetwork is None:
-            nnetwork.save((self.settings.app_path+"\\user_numbers.xml").encode(sys.getfilesystemencoding()), "OCRMLP")
+            nnetwork.save((self.settings.app_path + os.sep + "trainingdata" + os.sep +"user_numbers.xml").encode(sys.getfilesystemencoding()), "OCRMLP")
             
             resultcheck = self.testProcess(classdict, self.testnumbers)
             if not resultcheck is None:
@@ -53,7 +54,7 @@ class Trainer(QThread):
         classdict = {"A":0,"B":1,"C":2,"D":3,"E":4,"F":5,"G":6,"H":7,"I":8,"J":9,"K":10,"L":11,"M":12,"N":13,"O":14,"P":15,"Q":16,"R":17,"S":18,"T":19,"U":20,"V":21,"W":22,"X":23,"Y":24,"Z":25,"-":26,",":27,"'":28}
         nnetwork = self.trainProcess(classdict)
         if not nnetwork is None:
-            nnetwork.save((self.settings.app_path+"\\user_letters.xml").encode(sys.getfilesystemencoding()), "OCRMLP")
+            nnetwork.save((self.settings.app_path + os.sep + "trainingdata" + os.sep + "user_letters.xml").encode(sys.getfilesystemencoding()), "OCRMLP")
             
             resultcheck = self.testProcess(classdict, self.testletters)
             if not resultcheck is None:
@@ -65,7 +66,7 @@ class Trainer(QThread):
         classdict = {"A":0,"B":1,"C":2,"D":3,"E":4,"F":5,"G":6,"H":7,"I":8,"J":9,"K":10,"L":11,"M":12,"N":13,"O":14,"P":15,"Q":16,"R":17,"S":18,"T":19,"U":20,"V":21,"W":22,"X":23,"Y":24,"Z":25,"1":26,"2":27,"3":28,"4":29,"5":30,"6":31,"7":32,"8":33,"9":34,"-":35,",":36,"'":37,"&":38,"[":39,"]":40}
         nnetwork = self.trainProcess(classdict)
         if not nnetwork is None:
-            nnetwork.save((self.settings.app_path+"\\user_station.xml").encode(sys.getfilesystemencoding()), "OCRMLP")
+            nnetwork.save((self.settings.app_path + os.sep + "trainingdata" + os.sep + "user_station.xml").encode(sys.getfilesystemencoding()), "OCRMLP")
             
             resultcheck = self.testProcess(classdict, self.teststation)
             if not resultcheck is None:

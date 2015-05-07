@@ -155,9 +155,12 @@ class MLP:
         self.classdict={0:"A",1:"B",2:"C",3:"D",4:"E",5:"F",6:"G",7:"H",8:"I",9:"J",10:"K",11:"L",12:"M",13:"N",14:"O",15:"P",16:"Q",17:"R",18:"S",19:"T",20:"U",21:"V",22:"W",23:"X",24:"Y",25:"Z",26:"Ä",27:"Ö",28:"Ü",29:"À",30:"É",31:"È",32:"Ê",33:"'",34:"-",35:".",36:"0",37:"1",38:"2",39:"3",40:"4",41:"5",42:"6",43:"7",44:"8",45:"9",}
         """
         #numbers
-        self.numbers = TrainedDataNumbers(path)
-        self.letters = TrainedDataLetters(path)
-        self.station = TrainedDataStation(path)
+        
+        if isstation:
+            self.station = TrainedDataStation(path)
+        else:
+            self.numbers = TrainedDataNumbers(path)
+            self.letters = TrainedDataLetters(path)
         """
         layers = np.array([400,36,12])
         self.nnetwork = cv2.ANN_MLP(layers, 1,0.6,1)
@@ -677,7 +680,7 @@ class TrainedDataNumbers():
         self.keys = len(self.revclassdict)
         layers = np.array([400,71,self.keys])
         self.nnetwork = cv2.ANN_MLP(layers, 1,0.65,1)
-        datapath = (path + os.sep + "user_numbers.xml").encode(sys.getfilesystemencoding())
+        datapath = (path + os.sep + "trainingdata" + os.sep + "user_numbers.xml").encode(sys.getfilesystemencoding())
         if isfile(datapath):
             self.nnetwork.load(datapath, "OCRMLP")
         else:
@@ -692,7 +695,7 @@ class TrainedDataLetters():
         self.keys = len(self.revclassdict)
         layers = np.array([400,71,self.keys])
         self.nnetwork = cv2.ANN_MLP(layers, 1,0.65,1)
-        datapath = (path + os.sep + "user_letters.xml").encode(sys.getfilesystemencoding())
+        datapath = (path + os.sep + "trainingdata" + os.sep + "user_letters.xml").encode(sys.getfilesystemencoding())
         if isfile(datapath):
             self.nnetwork.load(datapath, "OCRMLP")
         else:
@@ -706,7 +709,7 @@ class TrainedDataStation():
         self.keys = len(self.revclassdict)
         layers = np.array([400,71,self.keys])
         self.nnetwork = cv2.ANN_MLP(layers, 1,0.65,1)
-        datapath = (path + os.sep + "user_station.xml").encode(sys.getfilesystemencoding())
+        datapath = (path + os.sep + "trainingdata" + os.sep + "user_station.xml").encode(sys.getfilesystemencoding())
         if isfile(datapath):
             self.nnetwork.load(datapath, "OCRMLP")
         else:

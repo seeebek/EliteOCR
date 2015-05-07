@@ -8,7 +8,7 @@ from imageprocessing import contBright, whiteBalance
 from engine import MLP, Levenshtein
 
 class OCR():
-    def __init__(self, color_image, ocr_areas, language = "big", item = None, levels = True):
+    def __init__(self, color_image, ocr_areas, language = "big", item = None, levels = True, levenshtein = True):
         #self.contrast = 85.0 # standard
         self.item = item
         self.lang = language
@@ -27,7 +27,7 @@ class OCR():
 
         self.station = self.readStationName()
 
-        self.commodities = self.readMarket(levels)
+        self.commodities = self.readMarket(levels, levenshtein)
 
         
     def readStationName(self):
@@ -35,11 +35,12 @@ class OCR():
         #print station.result[0].name
         return station.result[0]
         
-    def readMarket(self, levels):
+    def readMarket(self, levels, levenshtein = True):
         market = MLP(self.commodities_img, self.settings.app_path, self.ocr_areas.areas, isstation=False)
         #for line in market.result:
         #    print line.name
-        Levenshtein(market.result, self.settings.app_path, self.lang, levels)
+        if levenshtein:
+            Levenshtein(market.result, self.settings.app_path, self.lang, levels)
         return market.result
     
     def makeStationImgClean(self, station):

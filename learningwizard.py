@@ -88,12 +88,13 @@ class LearningWizard(QWizard, Ui_Wizard):
         summary = ""
         userdata = {}
         characters = ["'", ',', '-', '&', '[', ']', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
-        for char in self.charlist:
-            if char in characters:
-                if char in userdata:
-                    userdata[char] += 1
-                else:
-                    userdata[char] = 1
+        for word in self.words:
+            for letter in word:
+                if letter[1] in characters:
+                    if letter[1] in userdata:
+                        userdata[letter[1]] += 1
+                    else:
+                        userdata[letter[1]] = 1
         for key in characters:
             if key in userdata:
                 summary += '"'+key+'"' +": " +str(userdata[key])+", "
@@ -184,21 +185,22 @@ class LearningWizard(QWizard, Ui_Wizard):
         if self.user is None:
             self.user = {}
             
-        for i in range(len(self.charlist)):
-            if self.charlist[i] in characters:
-                data = bitarray()
-                image = cv2.resize(self.imglist[i], (20, 20))
-                ret,image = cv2.threshold(image,250,255,cv2.THRESH_BINARY)
-                for row in image:
-                    for cell in row:
-                        if cell == 255:
-                            data.append(True)
-                        else:
-                            data.append(False)
-                if self.charlist[i] in self.user:
-                    self.user[self.charlist[i]] += data
-                else:
-                    self.user[self.charlist[i]] = data
+        for word in self.words:
+            for letter in word:
+                if letter[1] in characters:
+                    data = bitarray()
+                    image = cv2.resize(letter[0], (20, 20))
+                    ret,image = cv2.threshold(image,250,255,cv2.THRESH_BINARY)
+                    for row in image:
+                        for cell in row:
+                            if cell == 255:
+                                data.append(True)
+                            else:
+                                data.append(False)
+                    if letter[1] in self.user:
+                        self.user[letter[1]] += data
+                    else:
+                        self.user[letter[1]] = data
                     
         path = self.settings.app_path+os.sep+"trainingdata"+os.sep+"user_training_data.pck"
         file = gzip.GzipFile(path, 'wb')
@@ -316,15 +318,16 @@ class LearningWizard(QWizard, Ui_Wizard):
             #return
             self.stationoffset.append(item.ocr_areas.station_name)
             self.marketoffset.append(item.ocr_areas.market_table)
-            current_result = OCR(color_image, item.ocr_areas, self.settings["ocr_language"], item, levels = False)
+            current_result = OCR(color_image, item.ocr_areas, self.settings["ocr_language"], item, levels = False, levenshtein = False)
             
             self.results.append(current_result)
         self.allBoxes()
         #print len(self.words)
         #print self.words[1]
         self.next_button.setEnabled(True)
-        self.prev_button.setEnabled(True)
+        self.prev_button.setEnabled(False)
         self.showSet()
+        self.notifier.setText("You did not check every word yet.")
 
     
     def showSet(self):
@@ -384,12 +387,27 @@ class LearningWizard(QWizard, Ui_Wizard):
         if self.current > 0:
             self.current -= 1
             self.showSet()
+        
+        self.next_button.setEnabled(True)
+        
+        if self.current == 0:
+            self.prev_button.setEnabled(False)
+        else:
+            self.prev_button.setEnabled(True)
        
     def nextWord(self):
         #print self.maxcount
         if self.current < self.wordcount-1:
             self.current += 1
             self.showSet()
+            
+        self.prev_button.setEnabled(True)
+            
+        if self.current == self.wordcount-1:
+            self.next_button.setEnabled(False)
+            self.notifier.setText("You checked every word now. If you corrected every letter continue to next page.")
+        else:
+            self.next_button.setEnabled(True)
             
     def cleanSnippet(self, graphicsview):
         scene = QGraphicsScene()
@@ -460,7 +478,7 @@ class LearningWizard(QWizard, Ui_Wizard):
             
             res = self.results[i].station.name
             cres = self.results[i]
-            self.charlist += list(res.value.replace(" ", ""))
+            self.charlist += list(res.value.replace(" ", "").upper())
             
             text = res.value.replace(" ", "")
             imgcount = len(self.results[i].station.name.units)
@@ -515,7 +533,7 @@ class LearningWizard(QWizard, Ui_Wizard):
                         charcount = len(text)
                         word = []
                     
-                        self.charlist += list(item.value.replace(" ", ""))
+                        self.charlist += list(item.value.replace(" ", "").upper())
                         for j in range(imgcount):
                             if j < charcount:
                                 char = text[j]

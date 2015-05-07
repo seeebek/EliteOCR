@@ -23,6 +23,7 @@ import cv2
 from eliteOCRGUI import Ui_MainWindow
 from customqlistwidgetitem import CustomQListWidgetItem
 from help import HelpDialog
+from about import AboutDialog
 from update import UpdateDialog
 from busydialog import BusyDialog
 from settingsdialog import SettingsDialog
@@ -56,7 +57,7 @@ except AttributeError:
     def _translate(context, text, disambig):
         return QApplication.translate(context, text, disambig)
 
-appversion = "0.6.0.5"
+appversion = "0.6.0.6"
 gui = False
 logging.basicConfig(format='%(asctime)s %(levelname)s:\n%(message)s',filename='errorlog.txt',level=logging.WARNING)
 
@@ -365,10 +366,9 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                 self.enableButton(self.tdexport_button, False)
 
     def About(self):
-        QMessageBox.about(self,"About", "EliteOCR\nVersion "+self.appversion+"\n\n"+\
-        "Contributors:\n"+\
-        "Seeebek, CapCap, Gazelle, GMib, Ph.Baumann\n\n"+\
-        "EliteOCR is capable of reading the entries in Elite: Dangerous markets screenshots.\n\n")
+        self.aboutDialog = AboutDialog(self.appversion)
+        self.aboutDialog.setModal(False)
+        self.aboutDialog.show()
         
     def setupTable(self):
         """Add columns and column names to the table"""

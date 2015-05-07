@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="ico">
+    <file>btn_donate_SM.gif</file>
     <file>loader.gif</file>
     <file>arrow.png</file>
     <file>icon.ico</file>
