@@ -72,9 +72,6 @@ class OCRAreasFinder:
         self.xline = longestline
         self.market_width = longestline[2]
         
-        #validate:
-        self.validate(longestline, loi)
-        
         """
         x1 = longestline[0]
         y1 = longestline[1]-int(longestline[2]*0.6653)
@@ -101,6 +98,10 @@ class OCRAreasFinder:
         else:
             self.station_name = None
             self.market_table = None
+        
+        #validate:
+        if (not self.market_table is None) and (not self.market_table is None):
+            self.validate(longestline, loi)
         
     
     def validate(self, longestline, loi):
