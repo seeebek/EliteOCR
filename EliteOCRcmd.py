@@ -57,7 +57,7 @@ except AttributeError:
     def _translate(context, text, disambig):
         return QApplication.translate(context, text, disambig)
 
-appversion = "0.6.0.7"
+appversion = "0.6.0.9"
 gui = False
 logging.basicConfig(format='%(asctime)s %(levelname)s:\n%(message)s',filename='errorlog.txt',level=logging.WARNING)
 
@@ -153,7 +153,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.restorePos()
         
         self.eddnthread = EDDNExport(self)
-        QObject.connect(self.eddnthread, SIGNAL('finished(QString)'), self.export.eddnFinished)
+        QObject.connect(self.eddnthread, SIGNAL('finished(QString, PyQt_PyObject)'), self.export.eddnFinished)
         QObject.connect(self.eddnthread, SIGNAL('update(int,int)'), self.export.eddnUpdate)
         
         self.thread = Worker()

@@ -226,9 +226,14 @@ class Export:
             self.parent.statusbar.clearMessage()
             self.parent.eddnthread.execute(to_send, unicode(self.parent.settings["userID"]))
 
-    def eddnFinished(self, result):
+    def eddnFinished(self, result, failed):
         self.parent.statusbar.showMessage("EDDN Export finished: "+result)
         self.parent.eddn_button.setEnabled(True)
+        if len(failed) > 0:
+            flist = ""
+            for f in failed:
+                flist += f + ", "
+            QMessageBox.warning(self.parent,"EDDN  Export error", "Following entries could not be exported:\n"+flist)
         
     def eddnUpdate(self, done, outof):
         self.parent.statusbar.showMessage("EDDN Export processed "+unicode(done)+" out of "+unicode(outof))

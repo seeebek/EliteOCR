@@ -29,7 +29,6 @@ class OCR():
 
         self.commodities = self.readMarket(levels, levenshtein)
 
-        
     def readStationName(self):
         station = MLP(self.station_img, self.settings.app_path, self.ocr_areas.areas, isstation=True)
         #print station.result[0].name

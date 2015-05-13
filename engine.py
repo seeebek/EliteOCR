@@ -3,6 +3,7 @@ from __future__ import division
 import sys
 import os
 from os.path import isfile
+import re
 import cv2
 import json
 import codecs
@@ -24,16 +25,14 @@ class OCRAreasFinder:
         self.areas = None
         self.contrast = None
         self.xline = None
+        
         if contrast is None:
-            for i in xrange(10, 250, 10):
-                img = contBright(image, i, i+5.0)
-                self.findMarket(img)
-                if self.valid:
-                    self.contrast = i
-                    break
+            self.findContrast(image)
         else:
             img = contBright(image, contrast, contrast+5.0)
             self.findMarket(img)
+            if not self.valid:
+                self.findContrast(image)
             #print self.areas
             #cv2.rectangle(color,(int(self.market_table[0][0]),int(self.market_table[0][1])),(int(self.market_table[1][0]),int(self.market_table[1][1])),(0,0,255),1) 
             #for area in self.areas:
@@ -41,7 +40,14 @@ class OCRAreasFinder:
             #cv2.imshow("x", color)
             #cv2.waitKey(0)
             
-
+    def findContrast(self, image):
+        for i in xrange(10, 250, 10):
+            img = contBright(image, i, i+5.0)
+            self.findMarket(img)
+            if self.valid:
+                self.contrast = i
+                break
+            
     def getValidRange(self, image):
         min_valid = None
         max_valid = None
@@ -307,7 +313,11 @@ class MLP:
                     last = i - whitecount + 1
                     whitecount = 0
                     firstflag = False
-                    boxline.append({"line":line,"box":[first,last, start, end], "units":charboxes})
+                    y1 = start if start > 0 else 0
+                    y2 = end
+                    x1 = first if first > 0 else 0
+                    x2 = last
+                    boxline.append({"line":line,"box":[x1, x2, y1, y2], "units":charboxes})
                     charboxes = []
                     start = line[3]+2
                     end = 0
@@ -316,7 +326,11 @@ class MLP:
                 last = i_to - whitecount
                 whitecount = 0
                 firstflag = False
-                boxline.append({"line":line,"box":[first,last, start, end], "units":charboxes})
+                y1 = start if start > 0 else 0
+                y2 = end
+                x1 = first if first > 0 else 0
+                x2 = last
+                boxline.append({"line":line,"box":[x1, x2, y1, y2], "units":charboxes})
                 charboxes = []
             out = ""
             boxes.append(boxline)
@@ -418,9 +432,8 @@ class MLP:
         
         result = ""
         for line in boxes:
-
             if len(line) > 0:
-                if calibration or (line[0]["line"][0] > tableheight/18):
+                if calibration or isstation or (line[0]["line"][0] > tableheight/18):
                     newline = OCRLine(line[0]["line"], self.areas)
                     conf_mod = 1.0
                     lineheight = line[0]["line"][3]-line[0]["line"][2]
@@ -542,6 +555,9 @@ class OCRLine():
        additionally embedding all recognised words in line as OCRBox 
        objects.
     """
+    
+    numberpattern = re.compile("^([0-9]{1,3},)*[0-9]{1,3}$")
+    
     def __init__(self, coords, areas):
         self.x1 = coords[0]
         self.y1 = coords[2]
@@ -585,6 +601,8 @@ class OCRLine():
             else:
                 self.sell = self.addPart(self.sell, word)
             self.sell.value = self.sell.value.replace('.', ',')
+            if not OCRLine.numberpattern.match(self.sell.value.strip()):
+                self.sell.confidence = 0.0
             self.items[1] = self.sell
             return
         if x1 >= self.areas_x[2][0] and x2 <= self.areas_x[2][1]:
@@ -595,6 +613,8 @@ class OCRLine():
             else:
                 self.buy = self.addPart(self.buy, word)
             self.buy.value = self.buy.value.replace('.', ',')
+            if not OCRLine.numberpattern.match(self.buy.value.strip()):
+                self.buy.confidence = 0.0
             self.items[2] = self.buy
             return
         if x1 >= self.areas_x[3][0] and x2 <= self.areas_x[3][1]:
@@ -603,6 +623,8 @@ class OCRLine():
             else:
                 self.demand_num = self.addPart(self.demand_num, word)
             self.demand_num.value = self.demand_num.value.replace('.', ',')
+            if not OCRLine.numberpattern.match(self.demand_num.value.strip()):
+                self.demand_num.confidence = 0.0
             self.items[3] = self.demand_num
             return
         if x1 >= self.areas_x[4][0] and x2 <= self.areas_x[4][1]:
@@ -615,6 +637,8 @@ class OCRLine():
             else:
                 self.supply_num = self.addPart(self.supply_num, word)
             self.supply_num.value = self.supply_num.value.replace('.', ',')
+            if not OCRLine.numberpattern.match(self.supply_num.value.strip()):
+                self.supply_num.confidence = 0.0
             self.items[5] = self.supply_num
             return
         if x1 >= self.areas_x[6][0] and x2 <= self.areas_x[6][1]:
@@ -640,6 +664,9 @@ class OCRLine():
             self.name = OCRbox(coords, self.name.value+" "+word.value, units)
             self.name.addBox(temp.boxes + [word.box])
     
+    def findConfidence(self):
+        pass
+    
     def __str__(self):
         return "OCRline: "+ unicode(self.items)
     
@@ -651,8 +678,8 @@ class OCRLine():
 class OCRbox():
     """ Class providing recognised words as objects """
     def __init__(self, coords, text, units):
-        self.x1 = coords[0]
-        self.y1 = coords[2]
+        self.x1 = coords[0] if coords[0] > 0 else 0
+        self.y1 = coords[2] if coords[2] > 0 else 0
         self.x2 = coords[1]
         self.y2 = coords[3]
         self.units = units
