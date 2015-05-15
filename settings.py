@@ -2,10 +2,22 @@
 import sys
 import random
 import os
-from os import environ
-from os.path import isdir, dirname, split, realpath
+from os import environ, listdir
+from os.path import isfile, isdir, dirname, join
+from sys import platform
 from PyQt4.QtCore import QSettings, QString
-from PyQt4.QtGui import QMessageBox, QFileDialog
+from PyQt4.QtGui import QMessageBox, QFileDialog, QDesktopServices
+
+if platform == 'win32':
+    import ctypes.wintypes
+    CSIDL_LOCAL_APPDATA = 0x001c
+    CSIDL_PROGRAM_FILESX86 = 0x002a
+    SHGFP_TYPE_CURRENT = 0 	# Current, not default, values
+elif platform == 'darwin':
+    from Foundation import NSHomeDirectory, NSSearchPathForDirectoriesInDomains, NSDocumentDirectory, NSApplicationSupportDirectory, NSPicturesDirectory, NSUserDomainMask
+
+appconf = (platform=="darwin" and "AppConfigLocal.xml" or "AppConfig.xml")
+
 
 class Settings():
     def __init__(self, parent=None):
@@ -141,31 +153,72 @@ class Settings():
         self.reg.setValue('public_mode', True)
     
     def setDefaultNativeDialog(self):
-        self.reg.setValue('native_dialog', False)
+        self.reg.setValue('native_dialog', platform!="win32")
         
     def setDefaultScreenshotDir(self):
-        if isdir(self.userprofile+ os.sep +"Pictures"+ os.sep +"Frontier Developments"+ os.sep +"Elite Dangerous"):
-            dir = self.userprofile+ os.sep +"Pictures"+ os.sep +"Frontier Developments"+ os.sep +"Elite Dangerous"
-        else:
-            dir = self.app_path
-        self.reg.setValue('screenshot_dir', dir)
+        path = join(unicode(QDesktopServices.storageLocation(QDesktopServices.PicturesLocation)), "Frontier Developments", "Elite Dangerous")
+        self.reg.setValue('screenshot_dir', isdir(path) and path or self.userprofile)
         
     def setDefaultLogDir(self):
-        if isdir(self.userprofile+ os.sep +"AppData"+ os.sep +"Local"+ os.sep +"Frontier_Developments"+ os.sep +"Products"+ os.sep +"FORC-FDEV-D-1002"+ os.sep +"Logs"):
-            logdir = self.userprofile+ os.sep +"AppData"+ os.sep +"Local"+ os.sep +"Frontier_Developments"+ os.sep +"Products"+ os.sep +"FORC-FDEV-D-1002"+ os.sep +"Logs"
-            self.reg.setValue('log_dir', logdir)
-        else:
-            self.reg.setValue('log_dir', self.app_path)
-                
+        self.reg.setValue('log_dir', self.getCustomLogDir() or self.getStandardLogDir() or self.userprofile)
+
+    def getStandardLogDir(self):
+        if platform == 'win32':
+            # https://support.elitedangerous.com/kb/faq.php?id=108
+            programs = ctypes.create_unicode_buffer(ctypes.wintypes.MAX_PATH)
+            ctypes.windll.shell32.SHGetSpecialFolderPathW(0, programs, CSIDL_PROGRAM_FILESX86, 0)
+            applocal = ctypes.create_unicode_buffer(ctypes.wintypes.MAX_PATH)
+            ctypes.windll.shell32.SHGetSpecialFolderPathW(0, applocal, CSIDL_LOCAL_APPDATA, 0)
+            for base in [join(programs.value, "Steam", "steamapps", "common", "Elite Dangerous", "Products"),
+                         join(programs.value, "Frontier", "Products"),
+                         join(applocal.value, "Frontier_Developments", "Products")]:
+                if isdir(base):
+                    for d in listdir(base):
+                        if d.startswith("FORC-FDEV-D-1") and isdir(join(base, d, "Logs")):
+                            return join(base, d, "Logs")
+
+        elif platform == 'darwin':
+            # TODO: Steam on Mac
+            suffix = join("Frontier Developments", "Elite Dangerous", "Logs")
+            paths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory, NSUserDomainMask, True)
+            if len(paths) and isdir(join(paths[0], suffix)):
+                return join(paths[0], suffix)
+
+        return None	# not found in standard places
+
+    def getCustomLogDir(self):
+        if platform == 'win32':
+            from _winreg import OpenKey, EnumKey, QueryValueEx, HKEY_LOCAL_MACHINE
+            aKey = OpenKey(HKEY_LOCAL_MACHINE, r"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall")
+            try:
+                i = 0
+                while True:
+                    asubkey = OpenKey(aKey, EnumKey(aKey,i))
+                    try:
+                        if QueryValueEx(asubkey, "Publisher")[0] == "Frontier Developments":
+                            custpath = join(QueryValueEx(asubkey, "InstallLocation")[0], "Products")
+                            if isdir(custpath):
+                                for d in listdir(custpath):
+                                    if d.startswith("FORC-FDEV-D-1") and isdir(join(custpath, d, "Logs")):
+                                        asubkey.Close()
+                                        aKey.Close()
+                                        return join(custpath, d, "Logs")
+                    except:
+                        pass
+                    asubkey.Close()
+                    i += 1
+            except:
+                aKey.Close()
+        return None
+
     def setDefaultExportDir(self):
-        self.reg.setValue('export_dir', self.app_path)
-    
+        path = unicode(QDesktopServices.storageLocation(QDesktopServices.DocumentsLocation))
+        self.reg.setValue('export_dir', isdir(path) and path or self.userprofile)
+
     def getUserProfile(self):
-        if 'USERPROFILE' in environ:
-            return environ['USERPROFILE'].decode(sys.getfilesystemencoding())
-        else:
-            return u"."
-    
+        path = unicode(QDesktopServices.storageLocation(QDesktopServices.HomeLocation))
+        return isdir(path) and path or u"."
+
     def getPathToSelf(self):
         """Return the path to EliteOCR.py or EliteOCR.exe"""
         if getattr(sys, 'frozen', False):
@@ -175,4 +228,59 @@ class Settings():
         else:
             application_path = u"."
         return application_path
-        
+
+
+# AppConfig helpers
+
+def isValidLogPath(logpath):
+    return isfile(join(logpath, os.pardir, (platform=="darwin" and "AppNetCfg.xml" or "AppConfig.xml")))
+
+def hasAppConf(logpath):
+    return isfile(join(logpath, os.pardir, appconf))
+
+def hasVerboseLogging(logpath):
+    path = join(logpath, os.pardir, appconf)
+    if isfile(path):
+        file = open(path, 'rt')
+        file_content = file.read()
+        file.close()
+        start = file_content.find("<Network")
+        end = file_content.find("</Network>")
+        return file_content.lower().find('verboselogging="1"', start, end) >= 0
+    return False
+
+def enableVerboseLogging(logpath):
+    path = join(logpath, os.pardir, appconf)
+    if not isValidLogPath(logpath) or hasVerboseLogging(logpath):
+        return False
+    elif not hasAppConf(logpath):
+        if platform=="darwin":
+            # Create new file
+            f = open(path, 'wt')
+            f.write('<AppConfig>\n\t<Network\n\t\tVerboseLogging="1"\n\t>\n\t</Network>\n</AppConfig>\n')
+            f.close()
+            return True
+        else:
+            return False	# Can't amend file that doesn't exist
+
+    f = open(path, 'rt')
+    file_content = f.read()
+    f.close()
+
+    f = open(path[:-4] + "_backup.xml", 'wt')
+    f.write(file_content)
+    f.close()
+
+    f = open(path, 'wt')
+    start = file_content.find("<Network")
+    if start >= 0:
+        f.write(file_content[:start+8] + '\n\t\tVerboseLogging="1"' + file_content[start+8:])
+    else:
+        start = file_content.find("</AppConfig>")
+        if start >= 0:
+            f.write(file_content[:start] + '\t<Network\n\t\tVerboseLogging="1"\n\t>\n\t</Network>\n' + file_content[start:])
+        else:
+            f.write(file_content)	# eh ?
+    f.close()
+
+    return True

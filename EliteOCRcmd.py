@@ -15,6 +15,7 @@ from calendar import timegm
 import os
 from os.path import split, splitext, isfile, isdir, dirname, realpath, exists, join
 from os import makedirs, listdir, remove
+from platform import system
 from PyQt4.QtGui import QApplication, QMainWindow, QFileDialog, QGraphicsScene, QMessageBox,\
                         QPixmap, QPen, QTableWidgetItem, QPushButton, QAction, QFont
 from PyQt4.QtCore import Qt, QObject, QSize, QPoint, QSettings, QString, QTranslator, QTimer, SIGNAL
@@ -28,7 +29,7 @@ from update import UpdateDialog
 from busydialog import BusyDialog
 from settingsdialog import SettingsDialog
 from editordialog import EditorDialog
-from settings import Settings
+from settings import Settings, isValidLogPath, hasVerboseLogging, enableVerboseLogging
 from ocr import OCR
 from qimage2ndarray import array2qimage
 from eddnexport import EDDNExport
@@ -201,32 +202,13 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         QTimer.singleShot(60000, self.autoRun)
             
     def checkAppConfigXML(self):
-        path = unicode(self.settings['log_dir']).encode(sys.getfilesystemencoding())+ os.sep +".."+ os.sep +"AppConfig.xml"
-        if isfile(path):
-            file = codecs.open(path, 'r', "utf-8")
-            file_content = file.read()
-            file.close()
-            start = file_content.find("<Network")
-            end = file_content.find("</Network>")
-            position = file_content.lower().find('verboselogging="1"', start, end)
-            
-            if position == -1:
-                msg = _translate("EliteOCR","You don't have \"Verbose Logging\" enabled in your AppConfig.xml. It is necessary for automatic system name recognition. Do you want EliteOCR to enable it for you?", None)
-                reply = QMessageBox.question(self, 'Change File', msg, _translate("EliteOCR","Yes", None), _translate("EliteOCR","No", None))
-                if reply == 0:
-                    file = codecs.open(unicode(self.settings['log_dir']).encode(sys.getfilesystemencoding())+ os.sep +".."+ os.sep +"AppConfig_backup.xml", 'w', "utf-8")
-                    file.write(file_content)
-                    file.close()
-                    
-                    newfile = file_content[:start+8] + '\n      VerboseLogging="1"' + file_content[start+8:]
+        logpath = unicode(self.settings['log_dir'])
+        if isValidLogPath(logpath) and not hasVerboseLogging(logpath):
+            msg = _translate("EliteOCR","You don't have \"Verbose Logging\" enabled in your AppConfig.xml. It is necessary for automatic system name recognition. Do you want EliteOCR to enable it for you?", None)
+            if QMessageBox.question(self, 'Change File', msg, _translate("EliteOCR","Yes", None), _translate("EliteOCR","No", None)) == 0:
+                enableVerboseLogging(logpath)
+                QMessageBox.information(self,"Restart the Game", "Please restart the game to apply the change in AppConfig.xml")
 
-                    file = codecs.open(path, 'w', "utf-8")
-                    file.write(newfile)
-                    file.close()
-                    QMessageBox.information(self,"Restart the Game", "Please restart the game to apply the change in AppConfig.xml")
-                else:
-                    return
-    
     def resizeElements(self):
         fields = [self.system_name, self.station_name, self.name, self.sell, self.buy, self.demand_num, self.demand, self.supply_num, self.supply, self.label_12, self.file_label, self.system_not_found]
         for field in fields:
