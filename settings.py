@@ -5,7 +5,7 @@ import os
 from os import environ, listdir
 from os.path import isfile, isdir, basename, dirname, join, normpath
 from sys import platform
-from PyQt4.QtCore import QSettings, QString
+from PyQt4.QtCore import QSettings, QString, QT_VERSION
 from PyQt4.QtGui import QMessageBox, QFileDialog, QDesktopServices
 
 if platform == 'win32':
@@ -153,7 +153,8 @@ class Settings():
         self.reg.setValue('public_mode', True)
     
     def setDefaultNativeDialog(self):
-        self.reg.setValue('native_dialog', platform!="win32")
+        # Native save dialogs bugged on 4.8.6 on OSX - https://codereview.qt-project.org/#/c/94980/
+        self.reg.setValue('native_dialog', platform=="darwin" and QT_VERSION>=0x40807)
         
     def setDefaultScreenshotDir(self):
         path = join(unicode(QDesktopServices.storageLocation(QDesktopServices.PicturesLocation)), "Frontier Developments", "Elite Dangerous")
