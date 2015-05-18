@@ -55,14 +55,16 @@ OPTIONS = {'semi_standalone': True,
            'iconfile': 'EliteOCR.icns',
            'optimize': 2,
            'resources': [pkg_resources.resource_filename('py2app', 'recipes/qt.conf'),	# http://doc.qt.io/qt-4.8/qt-conf.html
+                         'plugins',	# for TD_Export
                          'translations', 'letters.xml', 'numbers.xml', 'station.xml', 'help', 'trainingdata', 'commodities.json'],
            'includes': ['PyQt4.QtNetwork'],
            'excludes': ['PIL', 'setuptools', 'matplotlib', 'wx'],	# random things that tend to get picked up
            'plist': {
                'CFBundleName': 'EliteOCR',
-               'CFBundleIdentifier': 'seeebek.eliteOCR',
+               'CFBundleIdentifier': 'com.seeebek.eliteOCR',	# matches what QSettings stores
                'CFBundleShortVersionString': VERSION,
                'CFBundleVersion':  VERSION,
+               'LSArchitecturePriority': ['x86_64'],	# python exe is fat, but our Frameworks and dylds currently aren't
                'LSMinimumSystemVersion': '.'.join(platform.mac_ver()[0].split('.')[:2]),	# minimum version = build version
                'NSHumanReadableCopyright': u'© 2014 Sebastian Kaminski',
            }
