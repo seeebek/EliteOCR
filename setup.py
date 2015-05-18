@@ -7,8 +7,12 @@ Usage:
 """
 
 from setuptools import setup
-import re
+from os import listdir, mkdir, rmdir, symlink, unlink
+from os.path import isdir, islink, isfile, join
 import pkg_resources
+import platform
+import re
+import shutil
 
 # Patch py2app extension loader to work with gevent
 import py2app.util
@@ -36,9 +40,8 @@ from py2app import recipes
 import py2app.build_app
 def iterRecipes(module=recipes):
     for name in dir(module):
-        if name.startswith('_') or name=='sip']:
+        if name.startswith('_') or name=='sip':
             continue
-        print name
         check = getattr(getattr(module, name), 'check', None)
         if check is not None:
             yield (name, check)
@@ -60,7 +63,7 @@ OPTIONS = {'semi_standalone': True,
                'CFBundleIdentifier': 'seeebek.eliteOCR',
                'CFBundleShortVersionString': VERSION,
                'CFBundleVersion':  VERSION,
-               'LSMinimumSystemVersion': '10.9',
+               'LSMinimumSystemVersion': '.'.join(platform.mac_ver()[0].split('.')[:2]),	# minimum version = build version
                'NSHumanReadableCopyright': u'© 2014 Sebastian Kaminski',
            }
        }
@@ -71,3 +74,36 @@ setup(
     options={'py2app': OPTIONS},
     setup_requires=['py2app'],
 )
+
+# Fix up Qt frameworks for codesigning
+# https://blog.qt.io/blog/2014/10/29/an-update-on-os-x-code-signing/
+root = 'dist/EliteOCR.app/Contents/Frameworks'
+for thing in listdir(root):
+    if not thing.endswith('.framework'):
+        continue
+
+    # Make Resources and executable point to Current version
+    # https://developer.apple.com/library/mac/documentation/MacOSX/Conceptual/BPFrameworks/Concepts/FrameworkAnatomy.html
+    if not(isdir(join(root, thing, 'Versions', 'Current', 'Resources'))):
+        mkdir(join(root, thing, 'Versions', 'Current', 'Resources'))
+    if islink(join(root, thing, 'Resources')):
+        unlink(join(root, thing, 'Resources'))
+    symlink(join('Versions', 'Current', 'Resources'), join(root, thing, 'Resources'))
+
+    fmwk = thing.split('.')[0]
+    if islink(join(root, thing, fmwk)):
+        unlink(join(root, thing, fmwk))
+    symlink(join('Versions', 'Current', fmwk), join(root, thing, fmwk))
+
+    # Move Info.plist and QtThing.prl to Resources
+    if isfile(join(root, thing, 'Contents', 'Info.plist')):
+        shutil.move(join(root, thing, 'Contents', 'Info.plist'), join(root, thing, 'Resources'))
+        rmdir(join(root, thing, 'Contents'))	# should be empty
+    if isfile(join(root, thing, fmwk+'.prl')):
+        shutil.move(join(root, thing, fmwk+'.prl'), join(root, thing, 'Resources'))
+
+    # Remove "4.0" version links
+    for link in listdir(join(root, thing, 'Versions')):
+        if '.' in link:
+            unlink(join(root, thing, 'Versions', link))
+

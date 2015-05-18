@@ -17,4 +17,6 @@ xattr -r dist/${APPNAME}.app
 #codesign --deep -s "Developer ID Application: DEVELOPERNAME" ${APPNAME}.app
 
 # Make zip for distribution, preserving signature
-ditto -ck --keepParent --sequesterRsrc ${APPNAME}.app ${APPNAME}.zip
+pushd dist >/dev/null
+ditto -ck --keepParent --sequesterRsrc ${APPNAME}.app ../${APPNAME}.zip
+popd >/dev/null
