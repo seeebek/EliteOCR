@@ -3,7 +3,7 @@ import sys
 import random
 import os
 from os import environ, listdir
-from os.path import isfile, isdir, dirname, join
+from os.path import isfile, isdir, basename, dirname, join, normpath
 from sys import platform
 from PyQt4.QtCore import QSettings, QString
 from PyQt4.QtGui import QMessageBox, QFileDialog, QDesktopServices
@@ -222,7 +222,10 @@ class Settings():
     def getPathToSelf(self):
         """Return the path to EliteOCR.py or EliteOCR.exe"""
         if getattr(sys, 'frozen', False):
-            application_path = dirname(sys.executable).decode(sys.getfilesystemencoding())
+            if platform=='darwin':
+                application_path = normpath(join(dirname(sys.executable), os.pardir, 'Resources'))
+            else:
+                application_path = dirname(sys.executable).decode(sys.getfilesystemencoding())
         elif __file__:
             application_path = dirname(__file__).decode(sys.getfilesystemencoding())
         else:

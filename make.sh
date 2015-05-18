@@ -1,12 +1,20 @@
 #!/bin/bash
 
-# use this when building on OSX. It'll do most of the same things as make.py,
-# just without the dual build of EliteOCR & EliteOCRcmd
+# use this when building on OSX for distribution.
 
+APPNAME=EliteOCR
+
+# clean
 rm -rf dist build
 
-pyinstaller --onedir --hidden-import=scipy.special._ufuncs_cxx EliteOCR.py
+# build
+python ./setup.py py2app
 
-for i in tessdata translations nn_scripts text.xml plugins help commodities.json LICENSE README.md; do
-	cp -r "$i" dist/EliteOCR/
-done
+# warn about superfluous resource forks / metadata
+xattr -r dist/${APPNAME}.app
+
+# Sign
+#codesign --deep -s "Developer ID Application: DEVELOPERNAME" ${APPNAME}.app
+
+# Make zip for distribution, preserving signature
+ditto -ck --keepParent --sequesterRsrc ${APPNAME}.app ${APPNAME}.zip
