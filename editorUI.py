@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'editorUI.ui'
 #
-# Created: Wed Jan 14 12:48:25 2015
-#      by: PyQt4 UI code generator 4.11.2
+# Created: Tue May 19 16:14:02 2015
+#      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -30,7 +30,6 @@ class Ui_Editor(object):
         self.verticalLayout = QtGui.QVBoxLayout(Editor)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         self.table = QtGui.QTableWidget(Editor)
-        self.table.setAlternatingRowColors(True)
         self.table.setObjectName(_fromUtf8("table"))
         self.table.setColumnCount(0)
         self.table.setRowCount(0)
