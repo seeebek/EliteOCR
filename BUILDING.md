@@ -117,12 +117,15 @@ To create a standalone application
 Windows:
 
     pip install pyinstaller
-    pyinstaller --onedir EliteOCR.py
+    python make.py
 
 Mac:
 
-    easy_install -U py2app
-    python ./setup.py py2app
+* [https://github.com/sparkle-project/Sparkle/releases/latest](https://github.com/sparkle-project/Sparkle/releases/latest)
+* Copy Sparkle.framework to /Library/Frameworks
+
+    	easy_install -U py2app
+    	./make.sh
 
 
 Run on Ubuntu

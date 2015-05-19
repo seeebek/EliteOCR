@@ -70,6 +70,17 @@ OPTIONS = {'semi_standalone': True,
            }
        }
 
+if isdir('/Library/Frameworks/Sparkle.framework'):
+    OPTIONS['frameworks'] = OPTIONS.get('frameworks', []) + ['Sparkle.framework']
+    OPTIONS['plist'].update({
+        'SUEnableAutomaticChecks': False,	# we check explitly on startup
+        'SUAllowsAutomaticUpdates': False,
+        'SUFeedURL': 'https://github.com/Marginal/EliteOCR/raw/master/mac_appcast.xml',
+        'SUScheduledCheckInterval': 24*60*60,
+        })
+else:
+    print "Building without Sparkle update support"
+
 setup(
     app=APP,
     data_files=DATA_FILES,

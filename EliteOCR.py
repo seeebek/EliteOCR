@@ -25,7 +25,6 @@ from eliteOCRGUI import Ui_MainWindow
 from customqlistwidgetitem import CustomQListWidgetItem
 from help import HelpDialog
 from about import AboutDialog
-from update import UpdateDialog
 from busydialog import BusyDialog
 from settingsdialog import SettingsDialog
 from editordialog import EditorDialog
@@ -33,7 +32,6 @@ from settings import Settings, isValidLogPath, hasVerboseLogging, enableVerboseL
 from ocr import OCR
 from qimage2ndarray import array2qimage
 from eddnexport import EDDNExport
-from threadworker import Worker
 from export import Export
 from info import InfoDialog
 from xmloutput import XMLOutput
@@ -45,6 +43,13 @@ from learningwizard import LearningWizard
 
 from openpyxl import Workbook
 from ezodf import newdoc, Sheet
+
+# Updates
+if sys.platform=='darwin':
+    from macupdate import Updater
+else:
+    from threadworker import Worker
+    from update import UpdateDialog
 
 #plugins
 import imp
@@ -156,11 +161,14 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.eddnthread = EDDNExport(self)
         QObject.connect(self.eddnthread, SIGNAL('finished(QString, PyQt_PyObject)'), self.export.eddnFinished)
         QObject.connect(self.eddnthread, SIGNAL('update(int,int)'), self.export.eddnUpdate)
-        
-        self.thread = Worker()
-        self.connect(self.thread, SIGNAL("output(QString, QString)"), self.showUpdateAvailable)
-        self.thread.check(self.appversion)
-         
+
+        if sys.platform=='darwin':
+            Updater.checkForUpdateInformation(self.showUpdateAvailable)
+        else:
+            self.thread = Worker()
+            self.connect(self.thread, SIGNAL("output(QString, QString)"), self.showUpdateAvailable)
+            self.thread.check(self.appversion)
+
         """
         if not self.settings.reg.contains('info_accepted'):
             self.infoDialog = InfoDialog()
@@ -371,9 +379,12 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.helpDialog.show()
         
     def openUpdate(self):
-        self.updateDialog = UpdateDialog(self.settings.app_path, self.appversion, self.newupd)
-        self.updateDialog.setModal(False)
-        self.updateDialog.show()
+        if sys.platform=='darwin':
+            Updater.checkForUpdates()
+        else:
+            self.updateDialog = UpdateDialog(self.settings.app_path, self.appversion, self.newupd)
+            self.updateDialog.setModal(False)
+            self.updateDialog.show()
     
     def openSettings(self):
         """Open settings dialog and reload settings"""

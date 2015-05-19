@@ -3,6 +3,7 @@
 # use this when building on OSX for distribution.
 
 APPNAME=EliteOCR
+VERSION=`python -c "import re; print re.search(r'^appversion\s*=\s*\"(.+)\"', file('EliteOCR.py').read(), re.MULTILINE).group(1)"`
 
 # clean
 rm -rf dist build
@@ -18,5 +19,5 @@ xattr -r dist/${APPNAME}.app
 
 # Make zip for distribution, preserving signature
 pushd dist >/dev/null
-ditto -ck --keepParent --sequesterRsrc ${APPNAME}.app ../${APPNAME}.zip
+ditto -ck --keepParent --sequesterRsrc ${APPNAME}.app ../${APPNAME}_${VERSION}.zip
 popd >/dev/null
