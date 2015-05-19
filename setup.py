@@ -13,6 +13,7 @@ import pkg_resources
 import platform
 import re
 import shutil
+from tempfile import gettempdir
 
 # Patch py2app extension loader to work with gevent
 import py2app.util
@@ -47,6 +48,15 @@ def iterRecipes(module=recipes):
             yield (name, check)
 py2app.build_app.iterRecipes = iterRecipes
 
+# Hack to handle Qt image plugins (py2app 0.9 sip recipe puts them under Resources, which makes the app unsignable)
+from py2app.build_app import PLUGIN_SUFFIXES
+PLUGIN_SUFFIXES['.dylib'] = 'qt_plugins/imageformats'
+qt_conf = join(gettempdir(), 'qt.conf')
+f = open(qt_conf, 'wt')
+f.write('[Paths]\nPlugins = Library/qt_plugins\n')
+f.close()
+
+
 VERSION = re.search(r'^appversion\s*=\s*"(.+)"', file('EliteOCR.py').read(), re.MULTILINE).group(1)
 APP = ['EliteOCR.py']
 DATA_FILES = []
@@ -54,11 +64,13 @@ OPTIONS = {'semi_standalone': True,
            'site_packages': False,
            'iconfile': 'EliteOCR.icns',
            'optimize': 2,
-           'resources': [pkg_resources.resource_filename('py2app', 'recipes/qt.conf'),	# http://doc.qt.io/qt-4.8/qt-conf.html
+           'resources': [qt_conf,	# http://doc.qt.io/qt-4.8/qt-conf.html
                          'plugins',	# for TD_Export
                          'translations', 'letters.xml', 'numbers.xml', 'station.xml', 'help', 'trainingdata', 'commodities.json'],
            'includes': ['PyQt4.QtNetwork'],
-           'excludes': ['PIL', 'setuptools', 'matplotlib', 'wx'],	# random things that tend to get picked up
+           'include_plugins': ['/Developer/Applications/Qt/plugins/imageformats/libqgif.dylib', '/Developer/Applications/Qt/plugins/imageformats/libqico.dylib'],
+           'excludes': ['PIL', 'setuptools', 'matplotlib', 'wx',	# random modules that tend to get picked up
+                        'threadworker', 'update', 'updateUI'],  	# windows-specific source files
            'plist': {
                'CFBundleName': 'EliteOCR',
                'CFBundleIdentifier': 'com.seeebek.eliteOCR',	# matches what QSettings stores
@@ -67,7 +79,8 @@ OPTIONS = {'semi_standalone': True,
                'LSArchitecturePriority': ['x86_64'],	# python exe is fat, but our Frameworks and dylds currently aren't
                'LSMinimumSystemVersion': '.'.join(platform.mac_ver()[0].split('.')[:2]),	# minimum version = build version
                'NSHumanReadableCopyright': u'© 2014 Sebastian Kaminski',
-           }
+           },
+           'graph': True,	# output dependency graph in dist
        }
 
 if isdir('/Library/Frameworks/Sparkle.framework'):

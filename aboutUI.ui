@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>399</width>
-    <height>252</height>
+    <width>400</width>
+    <height>300</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -78,11 +78,9 @@
           <string>
 
 Contributors:
-Seeebek, CapCap, Gazelle, GMib, Ph.Baumann
+Seeebek, CapCap, Gazelle, GMib, Marginal, Ph.Baumann
 
-EliteOCR is capable of reading the entries in Elite: Dangerous markets screenshots.
-
-</string>
+EliteOCR is capable of reading the entries in Elite: Dangerous markets screenshots.</string>
          </property>
          <property name="wordWrap">
           <bool>true</bool>
