@@ -95,25 +95,29 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
             import platform
             self.ui_size = 9
             self.ui_font = float(platform.version().rsplit('.',1)[0]) >= 6 and 'Segoe UI' or 'MS Shell Dlg 2'	# Default system font
-            self.mono_size = 12
+            self.mono_size = 10
+            self.mono_size_large = 13
             self.mono_font = 'Consolas'
         elif sys.platform=='darwin':
             from platform import mac_ver
             self.ui_size = 13
             self.ui_font = float(mac_ver()[0].rsplit('.',1)[0]) > 10.9 and 'Helvetica Neue' or 'Lucida Grande'
-            self.mono_size = 13
+            self.mono_size = 12
+            self.mono_size_large = 15
             self.mono_font = 'Menlo'
         else:
             self.ui_size = 10
             self.ui_font = 'sans serif'
-            self.mono_size = 12
+            self.mono_size = 10
+            self.mono_size_large = 13
             self.mono_font = 'monospace'
         self.darkstyle = self.genDarkStyle()
         self.def_style = """
             QWidget {{ font-size: {0}pt; font-family: '{1}'; }}
-            QTableWidget {{ font-size: {2}pt; font-family: '{3}'; }}
-            QLineEdit {{ font-size: {2}pt; font-family: '{3}'; }}
-        """.format(self.ui_size, self.ui_font, self.mono_size, self.mono_font)
+            QTableWidget {{ font-size: {2}pt; font-family: '{4}'; }}
+            QLineEdit {{ font-size: {2}pt; font-family: '{4}'; }}
+            QWidget#centralwidget QLineEdit {{ font-size: {3}pt; font-family: '{4}'; }}
+        """.format(self.ui_size, self.ui_font, self.mono_size, self.mono_size_large, self.mono_font)
         if self.settings["theme"] == "dark":
             self.dark_theme = True
             self.style = self.darkstyle
@@ -247,7 +251,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
     
     def genDarkStyle(self):
         style = """
-                    QWidget {{ background-color: {5}; font-size: {6}pt; font-family: '{7}'; }}
+                    QWidget {{ background-color: {5}; font-size: {6}pt; font-family: '{8}'; }}
                     QLabel {{ color: {0};}}
                     QPlainTextEdit {{ color: {1};}}
                     QCheckBox {{ color: {0}; }}
@@ -279,8 +283,9 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                     QFrame[frameShape="5"] {{ background-color: #888; }}
 
                     QGraphicsView {{ background-color: {5}; border: 1px solid {4}}}
-                    QTableWidget {{ background-color: {5}; color: {0}; border: 1px solid {4}; font-size: {6}pt; font-family: '{7}';}}
-                    QLineEdit {{ background-color: {5}; border: 1px solid {4}; color: {1}; font-size: {6}pt; font-family: '{7}'; }}
+                    QTableWidget {{ background-color: {5}; color: {0}; border: 1px solid {4}; font-size: {6}pt; font-family: '{8}';}}
+                    QLineEdit {{ background-color: {5}; border: 1px solid {4}; color: {1}; font-size: {6}pt; font-family: '{8}'; }}
+                    QWidget#centralwidget QLineEdit {{ font-size: {7}pt; font-family: '{8}'; }}
                     QComboBox {{  background-color: {5}; border: 1px solid {4}; color: {1};}}
                     QComboBox:editable {{color: {1}; }}
                     QComboBox::down-arrow {{ image: url(:/ico/arrow.png); }}
@@ -302,7 +307,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                    unicode(self.settings['button_border_color']),
                    unicode(self.settings['border_color']),
                    unicode(self.settings['background_color']),
-                   self.mono_size, self.mono_font)
+                   self.mono_size, self.mono_size_large, self.mono_font)
 
         return style
     
