@@ -279,8 +279,8 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                     QFrame[frameShape="5"] {{ background-color: #888; }}
 
                     QGraphicsView {{ background-color: {5}; border: 1px solid {4}}}
-                    QTableWidget {{ background-color: {5}; color: {0}; border: 1px solid {4}; font-size: {8}pt; font-family: '{9}';}}
-                    QLineEdit {{ background-color: {5}; border: 1px solid {4}; color: {1}; font-size: {8}pt; font-family: '{9}'; }}
+                    QTableWidget {{ background-color: {5}; color: {0}; border: 1px solid {4}; font-size: {6}pt; font-family: '{7}';}}
+                    QLineEdit {{ background-color: {5}; border: 1px solid {4}; color: {1}; font-size: {6}pt; font-family: '{7}'; }}
                     QComboBox {{  background-color: {5}; border: 1px solid {4}; color: {1};}}
                     QComboBox:editable {{color: {1}; }}
                     QComboBox::down-arrow {{ image: url(:/ico/arrow.png); }}
@@ -302,7 +302,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                    unicode(self.settings['button_border_color']),
                    unicode(self.settings['border_color']),
                    unicode(self.settings['background_color']),
-                   self.ui_size, self.ui_font, self.mono_size, self.mono_font)
+                   self.mono_size, self.mono_font)
 
         return style
     
