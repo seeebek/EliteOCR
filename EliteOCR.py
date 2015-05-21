@@ -13,7 +13,7 @@ from datetime import datetime, timedelta
 from time import strftime, strptime, time, clock
 from calendar import timegm
 import os
-from os.path import split, splitext, isfile, isdir, dirname, realpath, exists, join
+from os.path import split, splitext, isfile, isdir, basename, dirname, realpath, exists, join
 from os import makedirs, listdir, remove
 from platform import system
 from PyQt4.QtGui import QApplication, QMainWindow, QFileDialog, QGraphicsScene, QMessageBox,\
@@ -65,7 +65,13 @@ except AttributeError:
 
 appversion = "0.6.0.9"
 gui = False
-logging.basicConfig(format='%(asctime)s %(levelname)s:\n%(message)s',filename='errorlog.txt',level=logging.WARNING)
+
+if sys.platform=='darwin':
+    from Foundation import NSSearchPathForDirectoriesInDomains, NSLibraryDirectory, NSUserDomainMask, NSLocalDomainMask
+    errorlog = join(NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask|NSLocalDomainMask, True)[0], 'Logs', 'EliteOCR.log')
+else:
+    errorlog = 'errorlog.txt'
+logging.basicConfig(format='%(asctime)s %(levelname)s:\n%(message)s', filename=errorlog, level=logging.WARNING)
 
 def exception_handler(ex_cls, ex, tb):
     fulltb = ''.join(traceback.format_tb(tb))
@@ -74,10 +80,10 @@ def exception_handler(ex_cls, ex, tb):
     #fulltb = fulltb.replace("C:"+ os.sep +"Users"+ os.sep +"SEBAST~1"+ os.sep +"Desktop"+ os.sep +"RFACTO~2"+ os.sep +"build"+ os.sep +"EliteOCR"+ os.sep +"out00-PYZ.pyz"+ os.sep +"", "")
     #fulltb = fulltb.replace("C:"+ os.sep +"Users"+ os.sep +"SEBAST~1"+ os.sep +"Desktop"+ os.sep +"RFACTO~2"+ os.sep +"build"+ os.sep +"EliteOCRcmd"+ os.sep +"out00-PYZ.pyz"+ os.sep +"", "")
     logging.critical(fulltb+'\n{0}: {1}\n'.format(ex_cls, ex))
-    print "An error was encountered. Please read errorlog.txt"
+    print "An error was encountered. Please read %s" % basename(errorlog)
     #print gui
     if gui:
-        QMessageBox.critical(None,"Error", "An error was encountered. Please read errorlog.txt")
+        QMessageBox.critical(None,"Error", "An error was encountered. Please read %s" % basename(errorlog))
     
 
 sys.excepthook = exception_handler
