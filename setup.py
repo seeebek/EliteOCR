@@ -88,7 +88,7 @@ if isdir('/Library/Frameworks/Sparkle.framework'):
     OPTIONS['plist'].update({
         'SUEnableAutomaticChecks': False,	# we check explitly on startup
         'SUAllowsAutomaticUpdates': False,
-        'SUFeedURL': 'https://github.com/Marginal/EliteOCR/raw/master/mac_appcast.xml',
+        'SUFeedURL': 'http://eliteocr.sourceforge.net/appcast.xml',
         'SUScheduledCheckInterval': 24*60*60,
         })
 else:
