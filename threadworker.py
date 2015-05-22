@@ -55,8 +55,9 @@ class Worker(QThread):
         soup = BeautifulSoup(result2)
         for line in soup.findAll("table", { "id" : "files_list" }):
             for row in line.findAll("tr", { "class" : "file" }):
-                if re.search("zip$", row['title'].strip()):
-                    files.append(row['title'].strip()[9:-4])
+                match = re.search(r"EliteOCR\.([0-9\.]+)\.zip$", row['title'].strip())
+                if match:
+                    files.append(match.group(1))
 
         files.sort(reverse=True)
 
