@@ -1196,6 +1196,8 @@ def ocr(language, input, output, system, translate):
         return 1
             
 def main(argv):
+    if sys.platform=='darwin' and argv and argv[0].startswith('-psn'):
+        argv = argv[1:]	# skip Process Serial Number from LaunchServices (if supplied)
     if len(argv) > 0:
         try:
             opts, args = getopt.getopt(argv,"hvtl:i:o:s:",["help","version","translate","lang=","input=","output=","system="])
