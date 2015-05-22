@@ -1126,18 +1126,10 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
             self.repaint()
 
 def translateApp(app, qtTranslator):
-    if getattr(sys, 'frozen', False):
-        application_path = dirname(sys.executable).decode(sys.getfilesystemencoding())
-    elif __file__:
-        application_path = dirname(__file__).decode(sys.getfilesystemencoding())
-    else:
-        application_path = u"."
-    settings = QSettings('seeebek', 'eliteOCR')
-    ui_language = unicode(settings.value('ui_language', 'en', type=QString))
-    #application_path = unicode(application_path).encode('windows-1252')
-    
+    settings = Settings()
+    ui_language = settings["ui_language"]
     if not ui_language == 'en':
-        path = application_path+ os.sep +"translations"+ os.sep
+        path = join(settings.app_path, "translations")
         if isdir(path):
             qtTranslator.load("EliteOCR_"+ui_language, path)
             app.installTranslator(qtTranslator)

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'eliteOCRGUI.ui'
 #
-# Created: Tue May 19 14:08:28 2015
+# Created: Fri May 22 02:30:30 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -482,9 +482,11 @@ class Ui_MainWindow(object):
         self.actionOpen = QtGui.QAction(MainWindow)
         self.actionOpen.setObjectName(_fromUtf8("actionOpen"))
         self.actionExit = QtGui.QAction(MainWindow)
+        self.actionExit.setMenuRole(QtGui.QAction.QuitRole)
         self.actionExit.setObjectName(_fromUtf8("actionExit"))
         self.actionPreferences = QtGui.QAction(MainWindow)
         self.actionPreferences.setCheckable(False)
+        self.actionPreferences.setMenuRole(QtGui.QAction.PreferencesRole)
         self.actionPreferences.setObjectName(_fromUtf8("actionPreferences"))
         self.actionCommodity_Editor = QtGui.QAction(MainWindow)
         self.actionCommodity_Editor.setObjectName(_fromUtf8("actionCommodity_Editor"))
@@ -496,6 +498,7 @@ class Ui_MainWindow(object):
         self.actionUpdate = QtGui.QAction(MainWindow)
         self.actionUpdate.setObjectName(_fromUtf8("actionUpdate"))
         self.actionAbout = QtGui.QAction(MainWindow)
+        self.actionAbout.setMenuRole(QtGui.QAction.AboutRole)
         self.actionAbout.setObjectName(_fromUtf8("actionAbout"))
         self.actionSetup_Wizard = QtGui.QAction(MainWindow)
         self.actionSetup_Wizard.setObjectName(_fromUtf8("actionSetup_Wizard"))

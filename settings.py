@@ -221,7 +221,7 @@ class Settings():
         return isdir(path) and path or u"."
 
     def getPathToSelf(self):
-        """Return the path to EliteOCR.py or EliteOCR.exe"""
+        """Return the path to our supporting files"""
         if getattr(sys, 'frozen', False):
             if platform=='darwin':
                 application_path = normpath(join(dirname(sys.executable), os.pardir, 'Resources'))
