@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'setupwizardUI.ui'
 #
-# Created: Mon Apr 27 13:44:44 2015
-#      by: PyQt4 UI code generator 4.11.2
+# Created: Fri May 22 02:40:47 2015
+#      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -219,7 +219,7 @@ class Ui_SetupWizard(object):
 "\n"
 "Please read all the instructions very carefully. You can run this wizard at any time from the settings menu.", None))
         self.wizardPage2.setTitle(_translate("SetupWizard", "Setup Wizard", None))
-        self.wizardPage2.setSubTitle(_translate("SetupWizard", "Log Path Setiup", None))
+        self.wizardPage2.setSubTitle(_translate("SetupWizard", "Log Path Setup", None))
         self.label_2.setText(_translate("SetupWizard", "In this step EliteOCR tries to find the location of your games log directory. If the path cannot be found automatically (e.g. network share) you can choose it manually. If you don\'t set this path EliteOCR will not be able to find the system name and you will need to fill it automatically.", None))
         self.label_3.setText(_translate("SetupWizard", "Location", None))
         self.label_4.setText(_translate("SetupWizard", "Found", None))
@@ -244,7 +244,7 @@ class Ui_SetupWizard(object):
         self.wizardPage4.setTitle(_translate("SetupWizard", "Setup Wizard", None))
         self.wizardPage4.setSubTitle(_translate("SetupWizard", "Screenshot and Export paths", None))
         self.label_17.setText(_translate("SetupWizard", "In this step you choose where EliteOCR should look for screenshots and where you want it to export your results.", None))
-        self.label_18.setText(_translate("SetupWizard", "Schreenshot directory:", None))
+        self.label_18.setText(_translate("SetupWizard", "Screenshot directory:", None))
         self.screenshot_dir_browse.setText(_translate("SetupWizard", "Browse", None))
         self.label_19.setText(_translate("SetupWizard", "Export directory:", None))
         self.export_dir_browse.setText(_translate("SetupWizard", "Browse", None))

@@ -228,3 +228,6 @@ nn_training_images
 
 # pyinstaller spec
 EliteOCR.spec
+
+# file generated during build
+EliteOCRcmd.py

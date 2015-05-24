@@ -13,8 +13,9 @@ from datetime import datetime, timedelta
 from time import strftime, strptime, time, clock
 from calendar import timegm
 import os
-from os.path import split, splitext, isfile, isdir, dirname, realpath, exists, join
+from os.path import split, splitext, isfile, isdir, basename, dirname, realpath, exists, join
 from os import makedirs, listdir, remove
+from platform import system
 from PyQt4.QtGui import QApplication, QMainWindow, QFileDialog, QGraphicsScene, QMessageBox,\
                         QPixmap, QPen, QTableWidgetItem, QPushButton, QAction, QFont
 from PyQt4.QtCore import Qt, QObject, QSize, QPoint, QSettings, QString, QTranslator, QTimer, SIGNAL
@@ -24,15 +25,13 @@ from eliteOCRGUI import Ui_MainWindow
 from customqlistwidgetitem import CustomQListWidgetItem
 from help import HelpDialog
 from about import AboutDialog
-from update import UpdateDialog
 from busydialog import BusyDialog
 from settingsdialog import SettingsDialog
 from editordialog import EditorDialog
-from settings import Settings
+from settings import Settings, isValidLogPath, hasVerboseLogging, enableVerboseLogging
 from ocr import OCR
 from qimage2ndarray import array2qimage
 from eddnexport import EDDNExport
-from threadworker import Worker
 from export import Export
 from info import InfoDialog
 from xmloutput import XMLOutput
@@ -44,6 +43,13 @@ from learningwizard import LearningWizard
 
 from openpyxl import Workbook
 from ezodf import newdoc, Sheet
+
+# Updates
+if sys.platform=='darwin':
+    from macupdate import Updater
+else:
+    from threadworker import Worker
+    from update import UpdateDialog
 
 #plugins
 import imp
@@ -59,7 +65,13 @@ except AttributeError:
 
 appversion = "0.6.0.9"
 gui = False
-logging.basicConfig(format='%(asctime)s %(levelname)s:\n%(message)s',filename='errorlog.txt',level=logging.WARNING)
+
+if sys.platform=='darwin':
+    from Foundation import NSSearchPathForDirectoriesInDomains, NSLibraryDirectory, NSUserDomainMask, NSLocalDomainMask
+    errorlog = join(NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask|NSLocalDomainMask, True)[0], 'Logs', 'EliteOCR.log')
+else:
+    errorlog = 'errorlog.txt'
+logging.basicConfig(format='%(asctime)s %(levelname)s:\n%(message)s', filename=errorlog, level=logging.WARNING)
 
 def exception_handler(ex_cls, ex, tb):
     fulltb = ''.join(traceback.format_tb(tb))
@@ -68,10 +80,10 @@ def exception_handler(ex_cls, ex, tb):
     #fulltb = fulltb.replace("C:"+ os.sep +"Users"+ os.sep +"SEBAST~1"+ os.sep +"Desktop"+ os.sep +"RFACTO~2"+ os.sep +"build"+ os.sep +"EliteOCR"+ os.sep +"out00-PYZ.pyz"+ os.sep +"", "")
     #fulltb = fulltb.replace("C:"+ os.sep +"Users"+ os.sep +"SEBAST~1"+ os.sep +"Desktop"+ os.sep +"RFACTO~2"+ os.sep +"build"+ os.sep +"EliteOCRcmd"+ os.sep +"out00-PYZ.pyz"+ os.sep +"", "")
     logging.critical(fulltb+'\n{0}: {1}\n'.format(ex_cls, ex))
-    print "An error was encountered. Please read errorlog.txt"
+    print "An error was encountered. Please read %s" % basename(errorlog)
     #print gui
     if gui:
-        QMessageBox.critical(None,"Error", "An error was encountered. Please read errorlog.txt")
+        QMessageBox.critical(None,"Error", "An error was encountered. Please read %s" % basename(errorlog))
     
 
 sys.excepthook = exception_handler
@@ -85,11 +97,33 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.auto = True
         self.resizeElements()
         
+        if sys.platform=='win32':
+            import platform
+            self.ui_size = 9
+            self.ui_font = float(platform.version().rsplit('.',1)[0]) >= 6 and 'Segoe UI' or 'MS Shell Dlg 2'	# Default system font
+            self.mono_size = 10
+            self.mono_size_large = 13
+            self.mono_font = 'Consolas'
+        elif sys.platform=='darwin':
+            from platform import mac_ver
+            self.ui_size = 13
+            self.ui_font = float(mac_ver()[0].rsplit('.',1)[0]) > 10.9 and 'Helvetica Neue' or 'Lucida Grande'
+            self.mono_size = 12
+            self.mono_size_large = 15
+            self.mono_font = 'Menlo'
+        else:
+            self.ui_size = 10
+            self.ui_font = 'sans serif'
+            self.mono_size = 10
+            self.mono_size_large = 13
+            self.mono_font = 'monospace'
         self.darkstyle = self.genDarkStyle()
         self.def_style = """
-                    QWidget { font-size: 10pt; font-family: Consolas}
-                    QLineEdit { font-size: 13pt; font-family: Consolas}
-        """
+            QWidget {{ font-size: {0}pt; font-family: '{1}'; }}
+            QTableWidget {{ font-size: {2}pt; font-family: '{4}'; }}
+            QLineEdit {{ font-size: {2}pt; font-family: '{4}'; }}
+            QWidget#centralwidget QLineEdit {{ font-size: {3}pt; font-family: '{4}'; }}
+        """.format(self.ui_size, self.ui_font, self.mono_size, self.mono_size_large, self.mono_font)
         if self.settings["theme"] == "dark":
             self.dark_theme = True
             self.style = self.darkstyle
@@ -155,11 +189,14 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.eddnthread = EDDNExport(self)
         QObject.connect(self.eddnthread, SIGNAL('finished(QString, PyQt_PyObject)'), self.export.eddnFinished)
         QObject.connect(self.eddnthread, SIGNAL('update(int,int)'), self.export.eddnUpdate)
-        
-        self.thread = Worker()
-        self.connect(self.thread, SIGNAL("output(QString, QString)"), self.showUpdateAvailable)
-        self.thread.check(self.appversion)
-         
+
+        if sys.platform=='darwin':
+            Updater.checkForUpdateInformation(self.showUpdateAvailable)
+        else:
+            self.thread = Worker()
+            self.connect(self.thread, SIGNAL("output(QString, QString)"), self.showUpdateAvailable)
+            self.thread.check(self.appversion)
+
         """
         if not self.settings.reg.contains('info_accepted'):
             self.infoDialog = InfoDialog()
@@ -201,32 +238,13 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         QTimer.singleShot(60000, self.autoRun)
             
     def checkAppConfigXML(self):
-        path = unicode(self.settings['log_dir']).encode(sys.getfilesystemencoding())+ os.sep +".."+ os.sep +"AppConfig.xml"
-        if isfile(path):
-            file = codecs.open(path, 'r', "utf-8")
-            file_content = file.read()
-            file.close()
-            start = file_content.find("<Network")
-            end = file_content.find("</Network>")
-            position = file_content.lower().find('verboselogging="1"', start, end)
-            
-            if position == -1:
-                msg = _translate("EliteOCR","You don't have \"Verbose Logging\" enabled in your AppConfig.xml. It is necessary for automatic system name recognition. Do you want EliteOCR to enable it for you?", None)
-                reply = QMessageBox.question(self, 'Change File', msg, _translate("EliteOCR","Yes", None), _translate("EliteOCR","No", None))
-                if reply == 0:
-                    file = codecs.open(unicode(self.settings['log_dir']).encode(sys.getfilesystemencoding())+ os.sep +".."+ os.sep +"AppConfig_backup.xml", 'w', "utf-8")
-                    file.write(file_content)
-                    file.close()
-                    
-                    newfile = file_content[:start+8] + '\n      VerboseLogging="1"' + file_content[start+8:]
+        logpath = unicode(self.settings['log_dir'])
+        if isValidLogPath(logpath) and not hasVerboseLogging(logpath):
+            msg = _translate("EliteOCR","You don't have \"Verbose Logging\" enabled in your AppConfig.xml. It is necessary for automatic system name recognition. Do you want EliteOCR to enable it for you?", None)
+            if QMessageBox.question(self, 'Change File', msg, _translate("EliteOCR","Yes", None), _translate("EliteOCR","No", None)) == 0:
+                enableVerboseLogging(logpath)
+                QMessageBox.information(self,"Restart the Game", "Please restart the game to apply the change in AppConfig.xml")
 
-                    file = codecs.open(path, 'w', "utf-8")
-                    file.write(newfile)
-                    file.close()
-                    QMessageBox.information(self,"Restart the Game", "Please restart the game to apply the change in AppConfig.xml")
-                else:
-                    return
-    
     def resizeElements(self):
         fields = [self.system_name, self.station_name, self.name, self.sell, self.buy, self.demand_num, self.demand, self.supply_num, self.supply, self.label_12, self.file_label, self.system_not_found]
         for field in fields:
@@ -239,7 +257,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
     
     def genDarkStyle(self):
         style = """
-                    QWidget {{ background-color: {5}; font-size: 10pt; font-family: Consolas}}
+                    QWidget {{ background-color: {5}; font-size: {6}pt; font-family: '{8}'; }}
                     QLabel {{ color: {0};}}
                     QPlainTextEdit {{ color: {1};}}
                     QCheckBox {{ color: {0}; }}
@@ -271,10 +289,11 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                     QFrame[frameShape="5"] {{ background-color: #888; }}
 
                     QGraphicsView {{ background-color: {5}; border: 1px solid {4}}}
-                    QTableWidget {{ background-color: {5}; color: {0}; border: 1px solid {4}}}
-                    QLineEdit {{ background-color: {5}; border: 1px solid {4}; color: {1}; font-size: 13pt; font-family: Consolas}}
+                    QTableWidget {{ background-color: {5}; color: {0}; border: 1px solid {4}; font-size: {6}pt; font-family: '{8}';}}
+                    QLineEdit {{ background-color: {5}; border: 1px solid {4}; color: {1}; font-size: {6}pt; font-family: '{8}'; }}
+                    QWidget#centralwidget QLineEdit {{ font-size: {7}pt; font-family: '{8}'; }}
                     QComboBox {{  background-color: {5}; border: 1px solid {4}; color: {1};}}
-                    QComboBox:editable {{color: {1}; font-size: 11pt}}
+                    QComboBox:editable {{color: {1}; }}
                     QComboBox::down-arrow {{ image: url(:/ico/arrow.png); }}
                     QComboBox::drop-down:editable {{color: {1};}}
                     QHeaderView::section {{  background-color: {5}; color: {0}; border: 1px solid {4}; padding: 2px; }}
@@ -288,8 +307,14 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                     QTreeView {{ color: {0}; border: 1px solid {4}}}
                     QTabBar::tab {{ background-color: {5}; color:{0}; border: 1px solid {4}; padding: 4px;}}
                     QListView {{ color: {1}; border: 1px solid {4}}}
-        """.format(unicode(self.settings['label_color']),unicode(self.settings['input_color']),unicode(self.settings['button_color']),unicode(self.settings['button_border_color']),unicode(self.settings['border_color']),unicode(self.settings['background_color']))
-        
+        """.format(unicode(self.settings['label_color']),
+                   unicode(self.settings['input_color']),
+                   unicode(self.settings['button_color']),
+                   unicode(self.settings['button_border_color']),
+                   unicode(self.settings['border_color']),
+                   unicode(self.settings['background_color']),
+                   self.mono_size, self.mono_size_large, self.mono_font)
+
         return style
     
     def showUpdateAvailable(self, dir, appversion):
@@ -389,9 +414,12 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.helpDialog.show()
         
     def openUpdate(self):
-        self.updateDialog = UpdateDialog(self.settings.app_path, self.appversion, self.newupd)
-        self.updateDialog.setModal(False)
-        self.updateDialog.show()
+        if sys.platform=='darwin':
+            Updater.checkForUpdates()
+        else:
+            self.updateDialog = UpdateDialog(self.settings.app_path, self.appversion, self.newupd)
+            self.updateDialog.setModal(False)
+            self.updateDialog.show()
     
     def openSettings(self):
         """Open settings dialog and reload settings"""
@@ -1098,18 +1126,10 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
             self.repaint()
 
 def translateApp(app, qtTranslator):
-    if getattr(sys, 'frozen', False):
-        application_path = dirname(sys.executable).decode(sys.getfilesystemencoding())
-    elif __file__:
-        application_path = dirname(__file__).decode(sys.getfilesystemencoding())
-    else:
-        application_path = u"."
-    settings = QSettings('seeebek', 'eliteOCR')
-    ui_language = unicode(settings.value('ui_language', 'en', type=QString))
-    #application_path = unicode(application_path).encode('windows-1252')
-    
+    settings = Settings()
+    ui_language = settings["ui_language"]
     if not ui_language == 'en':
-        path = application_path+ os.sep +"translations"+ os.sep
+        path = join(settings.app_path, "translations")
         if isdir(path):
             qtTranslator.load("EliteOCR_"+ui_language, path)
             app.installTranslator(qtTranslator)
@@ -1168,6 +1188,8 @@ def ocr(language, input, output, system, translate):
         return 1
             
 def main(argv):
+    if sys.platform=='darwin' and argv and argv[0].startswith('-psn'):
+        argv = argv[1:]	# skip Process Serial Number from LaunchServices (if supplied)
     if len(argv) > 0:
         try:
             opts, args = getopt.getopt(argv,"hvtl:i:o:s:",["help","version","translate","lang=","input=","output=","system="])

@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'aboutUI.ui'
 #
-# Created: Thu May 07 12:55:24 2015
-#      by: PyQt4 UI code generator 4.11.2
+# Created: Tue May 19 19:27:44 2015
+#      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_About(object):
     def setupUi(self, About):
         About.setObjectName(_fromUtf8("About"))
-        About.resize(399, 252)
+        About.resize(400, 300)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/ico/icon.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         About.setWindowIcon(icon)
@@ -89,10 +89,8 @@ class Ui_About(object):
         self.label.setText(_translate("About", "\n"
 "\n"
 "Contributors:\n"
-"Seeebek, CapCap, Gazelle, GMib, Ph.Baumann\n"
+"Seeebek, CapCap, Gazelle, GMib, Marginal, Ph.Baumann\n"
 "\n"
-"EliteOCR is capable of reading the entries in Elite: Dangerous markets screenshots.\n"
-"\n"
-"", None))
+"EliteOCR is capable of reading the entries in Elite: Dangerous markets screenshots.", None))
 
 import res_rc

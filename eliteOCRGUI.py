@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'eliteOCRGUI.ui'
 #
-# Created: Mon May 04 19:58:58 2015
-#      by: PyQt4 UI code generator 4.11.2
+# Created: Fri May 22 02:30:30 2015
+#      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -32,10 +32,6 @@ class Ui_MainWindow(object):
         icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/ico/icon.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         MainWindow.setWindowIcon(icon)
         self.centralwidget = QtGui.QWidget(MainWindow)
-        font = QtGui.QFont()
-        font.setFamily(_fromUtf8("Consolas"))
-        font.setPointSize(10)
-        self.centralwidget.setFont(font)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.verticalLayout_4 = QtGui.QVBoxLayout(self.centralwidget)
         self.verticalLayout_4.setContentsMargins(-1, 1, -1, -1)
@@ -49,7 +45,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.label_2.sizePolicy().hasHeightForWidth())
         self.label_2.setSizePolicy(sizePolicy)
-        self.label_2.setMaximumSize(QtCore.QSize(16777215, 15))
+        self.label_2.setMaximumSize(QtCore.QSize(16777215, 18))
         self.label_2.setTextFormat(QtCore.Qt.RichText)
         self.label_2.setOpenExternalLinks(True)
         self.label_2.setObjectName(_fromUtf8("label_2"))
@@ -486,9 +482,11 @@ class Ui_MainWindow(object):
         self.actionOpen = QtGui.QAction(MainWindow)
         self.actionOpen.setObjectName(_fromUtf8("actionOpen"))
         self.actionExit = QtGui.QAction(MainWindow)
+        self.actionExit.setMenuRole(QtGui.QAction.QuitRole)
         self.actionExit.setObjectName(_fromUtf8("actionExit"))
         self.actionPreferences = QtGui.QAction(MainWindow)
         self.actionPreferences.setCheckable(False)
+        self.actionPreferences.setMenuRole(QtGui.QAction.PreferencesRole)
         self.actionPreferences.setObjectName(_fromUtf8("actionPreferences"))
         self.actionCommodity_Editor = QtGui.QAction(MainWindow)
         self.actionCommodity_Editor.setObjectName(_fromUtf8("actionCommodity_Editor"))
@@ -500,6 +498,7 @@ class Ui_MainWindow(object):
         self.actionUpdate = QtGui.QAction(MainWindow)
         self.actionUpdate.setObjectName(_fromUtf8("actionUpdate"))
         self.actionAbout = QtGui.QAction(MainWindow)
+        self.actionAbout.setMenuRole(QtGui.QAction.AboutRole)
         self.actionAbout.setObjectName(_fromUtf8("actionAbout"))
         self.actionSetup_Wizard = QtGui.QAction(MainWindow)
         self.actionSetup_Wizard.setObjectName(_fromUtf8("actionSetup_Wizard"))
