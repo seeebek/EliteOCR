@@ -136,5 +136,5 @@ It is useful to run EliteOCR from a separate computer and access the files as ne
 
 #### Install dependencies
 
-    sudo apt-get install python-pip python-qt4 python-opencv python-numpy python-openpyxl python-requests python-bitarray python-tz python-gevent python-levenshtein python-lxml
+    sudo apt-get install python-pip python-qt4 python-opencv python-numpy python-openpyxl python-requests python-bitarray python-tz python-gevent python-levenshtein python-lxml python-bs4
     sudo pip install tzlocal grequests qimage2ndarray ezodf
