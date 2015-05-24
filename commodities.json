@@ -131,6 +131,12 @@
     "rare": "False",
     "deu": "ALUMINIUM"
   },
+  "AI RELICS": {
+    "rus": "",
+    "fra": "RELIQUATS D'IA",
+    "rare": "False",
+    "deu": "KI-RELIKTE"
+  },
   "AUTO-FABRICATORS": {
     "rus": "АВТОСИНТЕЗАТОРЫ",
     "fra": "DISPOSITIFS D'AUTOFABRICATION",
@@ -166,6 +172,12 @@
     "fra": "EXPLOSIFS",
     "rare": "False",
     "deu": "SPRENGSTOFFE"
+  },
+  "ANTIQUITIES": {
+    "rus": "",
+    "fra": "ANTIQUITÉS",
+    "rare": "False",
+    "deu": "ANTIQUITÄTEN"
   },
   "REACTIVE ARMOUR": {
     "rus": "РЕАКТИВНАЯ ЗАЩИТА",
