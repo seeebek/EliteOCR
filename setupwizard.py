@@ -5,8 +5,9 @@ from setupwizardUI import Ui_SetupWizard
 from platform import system
 import os
 from os import environ, listdir
-from os.path import isdir, isfile
-from settings import Settings
+from os.path import isdir, isfile, join
+from sys import platform
+from settings import appconf, isValidLogPath, hasAppConf, hasVerboseLogging, enableVerboseLogging
 import codecs
 from engine import OCRAreasFinder
 
@@ -18,6 +19,7 @@ class SetupWizard(QWizard, Ui_SetupWizard):
         self.setupUi(self)
         self.settings = settings
         self.path_input.textChanged.connect(self.checkLogValid)
+        self.verbose_button.clicked.connect(self.enableVerbose)
         self.browse_log_path.clicked.connect(self.browseLogPath)
         self.screenshot_dir_browse.clicked.connect(self.browseScreenshotPath)
         self.export_dir_browse.clicked.connect(self.browseExportPath)
@@ -79,103 +81,45 @@ class SetupWizard(QWizard, Ui_SetupWizard):
             self.export_dir.setText(self.settings['export_dir'])
     
     def AppConfigWork(self):
-        path = unicode(self.path_input.text())+ os.sep +".."+ os.sep +"AppConfig.xml"
-        if isfile(path):
-            self.appconf_found.setText("Yes")
-            
-            file = codecs.open(path, 'r', "utf-8")
-            file_content = file.read()
-            file.close()
-            start = file_content.find("<Network")
-            end = file_content.find("</Network>")
-            position = file_content.lower().find('verboselogging="1"', start, end)
-            
-            if position == -1:
+        self.appconf_found.setText(hasAppConf(unicode(self.path_input.text())) and "Yes" or "No")
+        if isValidLogPath(unicode(self.path_input.text())):
+            if hasVerboseLogging(unicode(self.path_input.text())):
+                self.verbose_enabled.setText("Yes")
+                self.verbose_button.setEnabled(False)
+            else:
                 self.verbose_enabled.setText("No")
                 self.verbose_button.setEnabled(True)
-            else:
-                self.verbose_enabled.setText("Yes")
-            
+        else:
+            self.verbose_enabled.setText("No")
+            self.verbose_button.setEnabled(False)
+
     def browseLogPath(self):
-        dir = QFileDialog.getExistingDirectory(self, "Choose directory", ".")
-        if not dir is None and dir != "":
+        dir = QFileDialog.getExistingDirectory(self, "Choose directory", self.path_input.text())
+        if dir:
             self.path_input.setText(dir)
     
     def browseScreenshotPath(self):
-        dir = QFileDialog.getExistingDirectory(self, "Choose directory", ".")
-        if not dir is None and dir != "":
+        dir = QFileDialog.getExistingDirectory(self, "Choose directory", self.screenshot_dir.text())
+        if dir:
             self.screenshot_dir.setText(dir)
             
     def browseExportPath(self):
-        dir = QFileDialog.getExistingDirectory(self, "Choose directory", ".")
-        if not dir is None and dir != "":
+        dir = QFileDialog.getExistingDirectory(self, "Choose directory", self.export_dir.text())
+        if dir:
             self.export_dir.setText(dir)
     
     def checkLogValid(self):
-        if isdir(unicode(self.path_input.text())):
-            path = unicode(self.path_input.text())+ os.sep +".."+ os.sep +"AppConfig.xml"
-            if isfile(path):
-                self.valid_path.setText("Yes")
-                return
-                
-        self.valid_path.setText("No")
-    
+        logpath = unicode(self.path_input.text())
+        self.standard_path.setText(logpath==self.settings.getStandardLogDir() and "Yes" or "No")
+        self.custom_path.setText(logpath==self.settings.getCustomLogDir() and "Yes" or "No")
+        self.valid_path.setText(isValidLogPath(logpath) and "Yes" or "No")
+
     def logWork(self):
-        sys = system()
-        self.operating_system.setText(sys)
-        if sys == 'Windows':
-            self.findLogPathWin()
-            
-    def findLogPathWin(self):
-        #standard Path
-        path = environ['USERPROFILE']+ os.sep +"AppData"+ os.sep +"Local"+ os.sep +"Frontier_Developments"+ os.sep +"Products"+ os.sep
-        #path = "."
-        if isdir(path):
-            dirlist = listdir(path)
-            for dir in dirlist:
-                if dir[:9] == "FORC-FDEV":
-                    if isdir(path + dir + os.sep +"Logs"):
-                        self.standard_path.setText("Yes")
-                        self.path_input.setText(path + dir + os.sep +"Logs")
-                        self.wizardPage2.fullfilled = True
-                        return
-            self.standard_path.setText("No")
-        
-        from _winreg import EnumValue, ConnectRegistry, OpenKey, EnumValue, EnumKey, HKEY_LOCAL_MACHINE
-        aReg = ConnectRegistry(None,HKEY_LOCAL_MACHINE)
-        aKey = OpenKey(aReg, r"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall")
-        for i in range(1024):
-            try:
-                asubkey_name = EnumKey(aKey,i)
-                asubkey = OpenKey(aKey,asubkey_name)
-                for j in range(30):
-                    try:
-                        test = EnumValue(asubkey, j)
-                        if test[0] == "Publisher" and test[1] == "Frontier Developments":
-                            custpath = self.getInstallPath(asubkey, EnumValue)
-                            print custpath
-                            custpath += "Products"+ os.sep +""
-                            if isdir(custpath):
-                                dirlist = listdir(custpath)
-                                for dir in dirlist:
-                                    if dir[:9] == "FORC-FDEV":
-                                        if isdir(custpath + dir + os.sep +"Logs"):
-                                            self.custom_path.setText("Yes")
-                                            self.path_input.setText(custpath + dir + os.sep + "Logs")
-                                            self.wizardPage2.fullfilled = True
-                                            return
-                                            
-                    except:
-                        break
-            except EnvironmentError:
-                break
-        self.custom_path.setText("No")
-                    
-    def getInstallPath(self, subkey, EnumValue):
-        for j in range(30):
-            try:
-                test = EnumValue(subkey, j)
-                if test[0] == "InstallLocation":
-                    return test[1]
-            except:
-                break
+        self.operating_system.setText(platform=="darwin" and "Mac OS" or system())
+        # re-initialize to default settings
+        self.path_input.setText(self.settings.getCustomLogDir() or self.settings.getStandardLogDir() or self.settings.userprofile)
+
+    def enableVerbose(self):
+        enableVerboseLogging(unicode(self.path_input.text()))
+        self.AppConfigWork()	# update displayed values
+

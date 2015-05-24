@@ -21,12 +21,6 @@
     <normaloff>:/ico/icon.ico</normaloff>:/ico/icon.ico</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <property name="font">
-    <font>
-     <family>Consolas</family>
-     <pointsize>10</pointsize>
-    </font>
-   </property>
    <layout class="QVBoxLayout" name="verticalLayout_4">
     <property name="topMargin">
      <number>1</number>
@@ -47,7 +41,7 @@
         <property name="maximumSize">
          <size>
           <width>16777215</width>
-          <height>15</height>
+          <height>18</height>
          </size>
         </property>
         <property name="text">
@@ -1070,6 +1064,9 @@
    <property name="text">
     <string>Exit</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::QuitRole</enum>
+   </property>
   </action>
   <action name="actionPreferences">
    <property name="checkable">
@@ -1077,6 +1074,9 @@
    </property>
    <property name="text">
     <string>Preferences</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::PreferencesRole</enum>
    </property>
   </action>
   <action name="actionCommodity_Editor">
@@ -1105,6 +1105,9 @@
   <action name="actionAbout">
    <property name="text">
     <string>About</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::AboutRole</enum>
    </property>
   </action>
   <action name="actionSetup_Wizard">

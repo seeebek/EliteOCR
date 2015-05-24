@@ -16,9 +16,6 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QTableWidget" name="table">
-     <property name="alternatingRowColors">
-      <bool>true</bool>
-     </property>
     </widget>
    </item>
    <item>

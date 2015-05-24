@@ -15,7 +15,7 @@ from __future__ import absolute_import, with_statement, print_function, division
 import datetime         # some time handling
 
 from os import listdir, remove, makedirs
-from os.path import isdir
+from os.path import isdir, join
 
 ######################################################################
 # Helper Classes
@@ -221,7 +221,7 @@ class TD_Export():
             pass
         if not isdir(exportDir):
             makedirs(exportDir)
-        fileName = exportDir+str("\\import.prices")
+        fileName = join(exportDir, "import.prices")
 
         # python 2 <-> 3
         try:

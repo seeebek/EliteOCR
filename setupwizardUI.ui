@@ -54,7 +54,7 @@ Please read all the instructions very carefully. You can run this wizard at any 
     <string>Setup Wizard</string>
    </property>
    <property name="subTitle">
-    <string>Log Path Setiup</string>
+    <string>Log Path Setup</string>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
@@ -324,7 +324,7 @@ Please read all the instructions very carefully. You can run this wizard at any 
     <item>
      <widget class="QLabel" name="label_18">
       <property name="text">
-       <string>Schreenshot directory:</string>
+       <string>Screenshot directory:</string>
       </property>
      </widget>
     </item>
