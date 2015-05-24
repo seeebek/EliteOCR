@@ -135,3 +135,9 @@ try:
     print "EliteOCR renamed to bin"
 except:
     print "EliteOCR not renamed"
+    
+try:
+    rmtree("./dist/EliteOCRcmd/")
+    print "EliteOCRcmd deleted"
+except:
+    print "EliteOCRcmd not deleted"

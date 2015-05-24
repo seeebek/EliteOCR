@@ -46,8 +46,11 @@ class EDDNExport(QThread):
         
         req_list = []
         for line in data:
-            req_list.append((json.dumps(self.createRequest(line, userID)),line[2]))
-            
+            #print line
+            #print self.createRequest(line, userID)["message"]
+            json_data = json.dumps(self.createRequest(line, userID))
+            req_list.append((json_data, line[2]))
+          
         async_list = []
 
         for d in req_list:
@@ -56,7 +59,6 @@ class EDDNExport(QThread):
 
         # Do our list of things to do via async
         grequests.map(async_list)
-        
         
     def createRequest(self, line, userID):
         message = self.makeDict(line)
@@ -77,7 +79,7 @@ class EDDNExport(QThread):
         numbers = [line[3],line[4],line[5],line[7]]
         buy = line[4] if line[4] != "" else 0
         stock = line[7] if line[7] != "" else 0
-        sell = line[3] if line[6] != "" else 0
+        sell = line[3] if line[3] != "" else 0
         demand = line[5] if line[5] != "" else 0
         
         if not buy is None:

@@ -194,12 +194,12 @@ class Export:
                 continue
                 
             timescreenshot = datetime.strptime(unicode(self.parent.result_table.item(row,8).text()),"%Y-%m-%dT%H:%M:%S+00:00")
-
+            
             if allowedtime > timescreenshot:
                 newitem = QTableWidgetItem("Data too old")
                 self.parent.result_table.setItem(row, 11, newitem)
                 continue
-
+            
             if not self.parent.result_table.item(row,11) is None:
                 if unicode(self.parent.result_table.item(row,11).text()) == "True":
                     continue
