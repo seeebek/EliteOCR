@@ -10,7 +10,7 @@ from Foundation import NSObject
 class Delegate(NSObject):
 
     def init(self):
-        self = super(Delegate, self).init()
+        self = objc.super(Delegate, self).init()
         try:
             objc.loadBundle('Sparkle', globals(), join(dirname(sys.executable), os.pardir, 'Frameworks', 'Sparkle.framework'))
             self.updater = SUUpdater.sharedUpdater()
