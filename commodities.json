@@ -125,17 +125,23 @@
     "rare": "False",
     "deu": "PLATIN"
   },
+  "SAP 8 CORE CONTAINER": {
+    "rus": "SAP 8 CORE CONTAINER",
+    "fra": "SAP 8 CORE CONTAINER",
+    "rare": "False",
+    "deu": "SAP 8 CORE CONTAINER"
+  },
   "ALUMINIUM": {
     "rus": "АЛЮМИНИЙ",
     "fra": "ALUMINIUM",
     "rare": "False",
     "deu": "ALUMINIUM"
   },
-  "AI RELICS": {
-    "rus": "",
-    "fra": "RELIQUATS D'IA",
+  "LITHIUM": {
+    "rus": "ЛИТИЙ",
+    "fra": "LITHIUM",
     "rare": "False",
-    "deu": "KI-RELIKTE"
+    "deu": "LITHIUM"
   },
   "AUTO-FABRICATORS": {
     "rus": "АВТОСИНТЕЗАТОРЫ",
@@ -263,11 +269,11 @@
     "rare": "False",
     "deu": "CHEMIEFASERN"
   },
-  "RESONATING SEPARATORS": {
-    "rus": "РЕЗОНАНСНЫЕ СЕПАРАТОРЫ",
-    "fra": "SÉPARATEURS À RÉSONANCE",
+  "OSMIUM": {
+    "rus": "",
+    "fra": "OSMIUM",
     "rare": "False",
-    "deu": "RESONANZABGRENZER"
+    "deu": "OSMIUM"
   },
   "HYDROGEN FUEL": {
     "rus": "ВОДОРОДНОЕ ТОПЛИВО",
@@ -353,11 +359,11 @@
     "rare": "False",
     "deu": "UNTERHALTUNGSELEKTRONIK"
   },
-  "LITHIUM": {
-    "rus": "ЛИТИЙ",
-    "fra": "LITHIUM",
+  "AI RELICS": {
+    "rus": "",
+    "fra": "RELIQUATS D'IA",
     "rare": "False",
-    "deu": "LITHIUM"
+    "deu": "KI-RELIKTE"
   },
   "SILVER": {
     "rus": "СЕРЕБРО",
@@ -430,6 +436,12 @@
     "fra": "HUILE MINÉRALE",
     "rare": "False",
     "deu": "MINERALÖL"
+  },
+  "RESONATING SEPARATORS": {
+    "rus": "РЕЗОНАНСНЫЕ СЕПАРАТОРЫ",
+    "fra": "SÉPARATEURS À RÉSONANCE",
+    "rare": "False",
+    "deu": "RESONANZABGRENZER"
   },
   "BEER": {
     "rus": "ПИВО",

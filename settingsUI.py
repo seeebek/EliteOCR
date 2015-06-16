@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'settingsUI.ui'
 #
-# Created: Mon May 04 20:23:36 2015
+# Created: Tue Jun 16 19:31:17 2015
 #      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -94,6 +94,22 @@ class Ui_Settings(object):
         self.delete_files.setObjectName(_fromUtf8("delete_files"))
         self.verticalLayout_2.addWidget(self.delete_files)
         self.verticalLayout_4.addLayout(self.verticalLayout_2)
+        self.line_5 = QtGui.QFrame(self.tab)
+        self.line_5.setFrameShape(QtGui.QFrame.HLine)
+        self.line_5.setFrameShadow(QtGui.QFrame.Sunken)
+        self.line_5.setObjectName(_fromUtf8("line_5"))
+        self.verticalLayout_4.addWidget(self.line_5)
+        self.horizontalLayout_15 = QtGui.QHBoxLayout()
+        self.horizontalLayout_15.setObjectName(_fromUtf8("horizontalLayout_15"))
+        self.label_18 = QtGui.QLabel(self.tab)
+        self.label_18.setObjectName(_fromUtf8("label_18"))
+        self.horizontalLayout_15.addWidget(self.label_18)
+        self.user_name = QtGui.QLineEdit(self.tab)
+        self.user_name.setObjectName(_fromUtf8("user_name"))
+        self.horizontalLayout_15.addWidget(self.user_name)
+        self.horizontalLayout_15.setStretch(0, 1)
+        self.horizontalLayout_15.setStretch(1, 1)
+        self.verticalLayout_4.addLayout(self.horizontalLayout_15)
         spacerItem2 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout_4.addItem(spacerItem2)
         self.tabWidget.addTab(self.tab, _fromUtf8(""))
@@ -396,6 +412,7 @@ class Ui_Settings(object):
         self.remove_dupli.setText(_translate("Settings", "Remove duplicates in table", None))
         self.pause_at_end.setText(_translate("Settings", "Pause \"OCR All\" at the end of a file (recommended with Delete processed images)", None))
         self.delete_files.setText(_translate("Settings", "Delete processed images", None))
+        self.label_18.setText(_translate("Settings", "User name", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("Settings", "General", None))
         self.label.setText(_translate("Settings", "Screenshot Directory:", None))
         self.browse.setText(_translate("Settings", "Browse", None))
