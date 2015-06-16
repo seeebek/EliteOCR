@@ -56,9 +56,9 @@ class SetupWizard(QWizard, Ui_SetupWizard):
         text += unicode(self.screenshot_dir.text())+"\n\n"
         text += "Export directory:\n"
         text += unicode(self.export_dir.text())+"\n\n"
-        text += "AppConfig.xml found:\n"
+        text += "%s found:\n" % appconf
         text += unicode(self.appconf_found.text())+"\n\n"
-        text += "Verbose logging enabled in AppConfig.xml:\n"
+        text += "Verbose logging enabled in %s:\n" % appconf
         text += unicode(self.verbose_enabled.text())+"\n\n"
         #text += "OCR contrast value for HUD color:\n"
         #text += unicode(self.contrast)+"\n\n"
@@ -92,6 +92,36 @@ class SetupWizard(QWizard, Ui_SetupWizard):
         else:
             self.verbose_enabled.setText("No")
             self.verbose_button.setEnabled(False)
+
+        # Give advice on Mac users' Keyboard preferences
+        if platform=='darwin':
+            self.appconf.setText(appconf)
+            self.advice.setStyleSheet("font-size: 12pt;")
+
+            # Adjust advice depending on whether users have to press F10 or fn-F10
+            try:
+                from Foundation import NSUserDefaults, NSGlobalDomain
+                screenshotkey = NSUserDefaults.standardUserDefaults().persistentDomainForName_(NSGlobalDomain)["com.apple.keyboard.fnState"] and 'F10' or 'fn-F10'
+            except:
+                screenshotkey = 'fn-F10'	# Default setting, assuming an Apple keyboard
+
+            # Advise if F10 is bound to a keyboard shortcut
+            shortcutissue = ''
+            try:
+                # http://krypted.com/mac-os-x/defaults-symbolichotkeys/
+                for k, v in NSUserDefaults.standardUserDefaults().persistentDomainForName_("com.apple.symbolichotkeys")["AppleSymbolicHotKeys"].iteritems():
+                    if v['enabled'] and v['value']['parameters'][1] == 109 and v['value']['parameters'][2] == 0:
+                        if k == '33':	# F10 was the default binding for "App Exposé" under OSX 10.6
+                            shortcutissue = '<p>The F10 key is currently assigned to the shortcut &ldquo;Application&nbsp;windows&rdquo;. You will need to remove this assignment in &#xF8FF; &rarr; System&nbsp;Preferences &rarr; <a href="file:/System/Library/PreferencePanes/Expose.prefPane/">Mission&nbsp;Control</a>.</p>'
+                        else:
+                            shortcutissue = '<p>The F10 key is currently assigned to a keyboard shortcut. You will need to disable or remove this assignment in &#xF8FF; &rarr; System&nbsp;Preferences &rarr; <a href="file:/System/Library/PreferencePanes/Keyboard.prefPane/">Keyboard</a> &rarr; Shortcuts.</p>'
+                        break
+            except:
+                pass
+        else:
+            screenshotkey = 'F10'
+            shortcutissue = ''
+        self.advice.setText(self.advice.text().replace('%1', screenshotkey).replace('%2', shortcutissue))
 
     def browseLogPath(self):
         dir = QFileDialog.getExistingDirectory(self, "Choose directory", self.path_input.text())

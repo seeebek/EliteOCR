@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>554</width>
-    <height>519</height>
+    <width>560</width>
+    <height>545</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -220,7 +220,7 @@ Please read all the instructions very carefully. You can run this wizard at any 
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
-       <widget class="QLabel" name="label_12">
+       <widget class="QLabel" name="appconf">
         <property name="text">
          <string>AppConfig.xml</string>
         </property>
@@ -281,14 +281,14 @@ Please read all the instructions very carefully. You can run this wizard at any 
      </layout>
     </item>
     <item>
-     <widget class="QLabel" name="label_16">
+     <widget class="QLabel" name="advice">
       <property name="font">
        <font>
         <pointsize>12</pointsize>
        </font>
       </property>
       <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;After enabling verbose logging in ED &lt;span style=&quot; font-weight:600; text-decoration: underline;&quot;&gt;restart the game&lt;/span&gt; and make some good market screenshots for calibration. You make the screenshots by pressing F10 in the game. DO NOT use ALT+F10.&lt;br/&gt;&lt;br/&gt;Exaple of a &lt;a href=&quot;http://i.imgur.com/n2UPagt.jpg&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;good screenshot&lt;/span&gt;&lt;/a&gt; and an exaple of a &lt;a href=&quot;http://i.imgur.com/MZTmTON.jpg&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;bad screenshot&lt;/span&gt;&lt;/a&gt;.&lt;br/&gt;&lt;br/&gt;Please note the selected line and the glow on the top of the market frame. You have to make sure they are not present on your screenshots. You can achieve this by moving the mouse to the right on the field with commodity description or by pressing right on your jostick/gamepad until this field is selected.&lt;/p&gt;&lt;p&gt;(You can keep this wizard open while you make the screenshots.)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;After enabling verbose logging in ED &lt;span style=&quot; font-weight:600; text-decoration: underline;&quot;&gt;restart the game&lt;/span&gt; and make some good market screenshots for calibration. You make the screenshots by pressing %1 in the game. DO NOT use Alt-%1. %2&lt;/p&gt;&lt;p&gt;Example of a &lt;a href=&quot;http://i.imgur.com/n2UPagt.jpg&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;good screenshot&lt;/span&gt;&lt;/a&gt; and an example of a &lt;a href=&quot;http://i.imgur.com/MZTmTON.jpg&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;bad screenshot&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;Please note the selected line and the glow on the top of the market frame. You have to make sure they are not present on your screenshots. You can achieve this by moving the mouse to the right on the field with commodity description or by pressing right on your joystick/gamepad until this field is selected.&lt;/p&gt;&lt;p&gt;(You can keep this wizard open while you make the screenshots.)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
       <property name="textFormat">
        <enum>Qt::RichText</enum>

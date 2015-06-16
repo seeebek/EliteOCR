@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'setupwizardUI.ui'
 #
-# Created: Fri May 22 02:40:47 2015
+# Created: Mon May 25 02:51:00 2015
 #      by: PyQt4 UI code generator 4.11.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ except AttributeError:
 class Ui_SetupWizard(object):
     def setupUi(self, SetupWizard):
         SetupWizard.setObjectName(_fromUtf8("SetupWizard"))
-        SetupWizard.resize(554, 519)
+        SetupWizard.resize(560, 545)
         SetupWizard.setWizardStyle(QtGui.QWizard.ModernStyle)
         self.wizardPage1 = CustomQWizardPage()
         self.wizardPage1.setObjectName(_fromUtf8("wizardPage1"))
@@ -120,9 +120,9 @@ class Ui_SetupWizard(object):
         self.verticalLayout_3.addWidget(self.label_11)
         self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
-        self.label_12 = QtGui.QLabel(self.wizardPage3)
-        self.label_12.setObjectName(_fromUtf8("label_12"))
-        self.horizontalLayout_2.addWidget(self.label_12)
+        self.appconf = QtGui.QLabel(self.wizardPage3)
+        self.appconf.setObjectName(_fromUtf8("appconf"))
+        self.horizontalLayout_2.addWidget(self.appconf)
         self.appconf_found = QtGui.QLabel(self.wizardPage3)
         self.appconf_found.setObjectName(_fromUtf8("appconf_found"))
         self.horizontalLayout_2.addWidget(self.appconf_found)
@@ -145,15 +145,15 @@ class Ui_SetupWizard(object):
         spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_4.addItem(spacerItem1)
         self.verticalLayout_3.addLayout(self.horizontalLayout_4)
-        self.label_16 = QtGui.QLabel(self.wizardPage3)
+        self.advice = QtGui.QLabel(self.wizardPage3)
         font = QtGui.QFont()
         font.setPointSize(12)
-        self.label_16.setFont(font)
-        self.label_16.setTextFormat(QtCore.Qt.RichText)
-        self.label_16.setWordWrap(True)
-        self.label_16.setOpenExternalLinks(True)
-        self.label_16.setObjectName(_fromUtf8("label_16"))
-        self.verticalLayout_3.addWidget(self.label_16)
+        self.advice.setFont(font)
+        self.advice.setTextFormat(QtCore.Qt.RichText)
+        self.advice.setWordWrap(True)
+        self.advice.setOpenExternalLinks(True)
+        self.advice.setObjectName(_fromUtf8("advice"))
+        self.verticalLayout_3.addWidget(self.advice)
         SetupWizard.addPage(self.wizardPage3)
         self.wizardPage4 = CustomQWizardPage()
         self.wizardPage4.setObjectName(_fromUtf8("wizardPage4"))
@@ -235,12 +235,12 @@ class Ui_SetupWizard(object):
         self.wizardPage3.setTitle(_translate("SetupWizard", "Setup Wizard", None))
         self.wizardPage3.setSubTitle(_translate("SetupWizard", "Verbose Logging", None))
         self.label_11.setText(_translate("SetupWizard", "In order to automatically receive system and station names it is necessary to enable verbose logging in games settings files.", None))
-        self.label_12.setText(_translate("SetupWizard", "AppConfig.xml", None))
+        self.appconf.setText(_translate("SetupWizard", "AppConfig.xml", None))
         self.appconf_found.setText(_translate("SetupWizard", "-", None))
         self.label_14.setText(_translate("SetupWizard", "Verbose Logging", None))
         self.verbose_enabled.setText(_translate("SetupWizard", "-", None))
         self.verbose_button.setText(_translate("SetupWizard", "Enable Verbose Logging", None))
-        self.label_16.setText(_translate("SetupWizard", "<html><head/><body><p>After enabling verbose logging in ED <span style=\" font-weight:600; text-decoration: underline;\">restart the game</span> and make some good market screenshots for calibration. You make the screenshots by pressing F10 in the game. DO NOT use ALT+F10.<br/><br/>Exaple of a <a href=\"http://i.imgur.com/n2UPagt.jpg\"><span style=\" text-decoration: underline; color:#0000ff;\">good screenshot</span></a> and an exaple of a <a href=\"http://i.imgur.com/MZTmTON.jpg\"><span style=\" text-decoration: underline; color:#0000ff;\">bad screenshot</span></a>.<br/><br/>Please note the selected line and the glow on the top of the market frame. You have to make sure they are not present on your screenshots. You can achieve this by moving the mouse to the right on the field with commodity description or by pressing right on your jostick/gamepad until this field is selected.</p><p>(You can keep this wizard open while you make the screenshots.)</p></body></html>", None))
+        self.advice.setText(_translate("SetupWizard", "<html><head/><body><p>After enabling verbose logging in ED <span style=\" font-weight:600; text-decoration: underline;\">restart the game</span> and make some good market screenshots for calibration. You make the screenshots by pressing %1 in the game. DO NOT use Alt-%1. %2</p><p>Example of a <a href=\"http://i.imgur.com/n2UPagt.jpg\"><span style=\" text-decoration: underline; color:#0000ff;\">good screenshot</span></a> and an example of a <a href=\"http://i.imgur.com/MZTmTON.jpg\"><span style=\" text-decoration: underline; color:#0000ff;\">bad screenshot</span></a>.</p><p>Please note the selected line and the glow on the top of the market frame. You have to make sure they are not present on your screenshots. You can achieve this by moving the mouse to the right on the field with commodity description or by pressing right on your joystick/gamepad until this field is selected.</p><p>(You can keep this wizard open while you make the screenshots.)</p></body></html>", None))
         self.wizardPage4.setTitle(_translate("SetupWizard", "Setup Wizard", None))
         self.wizardPage4.setSubTitle(_translate("SetupWizard", "Screenshot and Export paths", None))
         self.label_17.setText(_translate("SetupWizard", "In this step you choose where EliteOCR should look for screenshots and where you want it to export your results.", None))
