@@ -41,11 +41,13 @@ class EDDNExport(QThread):
         #print data
         self.outcomeok = []
         self.outcomefail = []
-        self.toprocess = len(data)
+        #self.toprocess = len(data)
         counter = 0
         
         req_list = []
         tosend = self.divideByStations(data)
+        
+        self.toprocess = len(tosend)
         
         # for schema v2
         for key in tosend:
