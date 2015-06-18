@@ -146,6 +146,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         self.newupd = None
         self.zoom = False
         self.minres = 0
+        self.errorcount = 0
         self.busyDialog = None
         self.fields = [self.name, self.sell, self.buy, self.demand_num, self.demand,
                        self.supply_num, self.supply]
@@ -210,6 +211,13 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
             self.openWizard()
             self.openCalibration()
             self.settings.setValue('first_run', False)
+        else:
+            datapath = (self.settings.app_path + os.sep + "trainingdata" + os.sep + "user_station.xml").encode(sys.getfilesystemencoding())
+            if not isfile(datapath):
+                msg = _translate("EliteOCR", "It appears you did not train EliteOCR. Training is essential in order to minimize the amount of OCR errors. Would you like to start the Learning Wizard now?", None)
+                if QMessageBox.question(self, 'Training', msg, _translate("EliteOCR","Yes", None), _translate("EliteOCR","No", None)) == 0:
+                    learningWizard = LearningWizard(self.settings)
+                    learningWizard.exec_()
             
         self.checkAppConfigXML()
         #QTimer.singleShot(2000, self.autoRun)
@@ -818,6 +826,9 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
             self.enableButton(self.skip_button, False)
             self.cleanAllFields()
             self.cleanAllSnippets()
+            if self.errorcount > 3:
+                QMessageBox.information(self,"Many errors", _translate("EliteOCR", "It appears you get many OCR errors. Many are recognized and corrected but there might be even more unrecognized ones.\nYou should consider running the Learning Wizard in order to maximize OCR accuracy.\nPlease read Help for more information.", None))
+                self.errorcount = 0
             if self.ocr_all_set:
                 if self.settings['pause_at_end']:
                     self.enableButton(self.continue_button, True)
@@ -879,6 +890,13 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
         if len(self.current_result.commodities) > self.OCRline:
             #font = QFont("Consolas", 11)
             res = self.current_result.commodities[self.OCRline]
+            if (not res.sell is None) and (not res.buy is None):
+                sell = int(res.sell.value.replace(',', '').replace('.', ''))
+                buy = int(res.buy.value.replace(',', '').replace('.', ''))
+                if sell > buy:
+                    res.sell.confidence = 0.4
+                    res.buy.confidence = 0.4
+            
             if self.OCRline > 0:
                 autofill = True
             else:
@@ -907,6 +925,8 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                     field.setText(item.value)
                     #field.lineEdit().setFont(font)
                     if not(self.settings["auto_fill"] and autofill):
+                        if item.confidence < 0.83:
+                            self.errorcount += 1
                         self.setConfidenceColor(field, item)
                         self.drawSnippet(canvas, item)
                 else:
@@ -914,7 +934,6 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
                     self.cleanField(field)
             if self.settings["auto_fill"] and autofill:
                 self.addItemToTable()
-            
     
     def setConfidenceColor(self, field, item):
         c = item.confidence

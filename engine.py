@@ -556,7 +556,7 @@ class OCRLine():
        objects.
     """
     
-    numberpattern = re.compile("^([0-9]{1,3},)*[0-9]{1,3}$")
+    numberpattern = re.compile("^(?:0|[1-9][0-9]{0,2}(,[0-9]{1,3})*)$")
     
     def __init__(self, coords, areas):
         self.x1 = coords[0]

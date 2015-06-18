@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'aboutUI.ui'
 #
-# Created: Tue May 19 19:27:44 2015
-#      by: PyQt4 UI code generator 4.11.3
+# Created: Thu Jun 18 15:27:32 2015
+#      by: PyQt4 UI code generator 4.11.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -89,7 +89,7 @@ class Ui_About(object):
         self.label.setText(_translate("About", "\n"
 "\n"
 "Contributors:\n"
-"Seeebek, CapCap, Gazelle, GMib, Marginal, Ph.Baumann\n"
+"Seeebek, Marginal, CapCap, Gazelle, GMib, Marginal, Ph.Baumann\n"
 "\n"
 "EliteOCR is capable of reading the entries in Elite: Dangerous markets screenshots.", None))
 
