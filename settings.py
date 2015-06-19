@@ -2,7 +2,7 @@
 import sys
 import random
 import os
-from os import environ, listdir
+from os import environ, listdir, makedirs
 from os.path import isfile, isdir, basename, dirname, join, normpath
 from sys import platform
 from PyQt4.QtCore import QSettings, QString, QT_VERSION
@@ -23,8 +23,9 @@ class Settings():
     def __init__(self, parent=None):
         self.parent = parent
         self.app_path = self.getPathToSelf()
+        self.storage_path = self.getPathToStorage()
         self.values = {}
-        self.reg = QSettings('seeebek', 'eliteOCR')
+        self.reg = QSettings()	# uses QCoreApplication.organizationName and applicationName
         self.userprofile = self.getUserProfile()
         if self.reg.contains('settings_version'):
             if float(self.reg.value('settings_version', type=QString)) < 1.6:
@@ -232,6 +233,16 @@ class Settings():
         else:
             application_path = u"."
         return application_path
+
+    def getPathToStorage(self):
+        """Return the path to a place for writing supporting files"""
+        if platform=='win32':
+            path = join(self.getPathToSelf(), "trainingdata")	# Store writable data alongside executable
+        else:
+            path = unicode(QDesktopServices.storageLocation(QDesktopServices.DataLocation))
+        if not isdir(path):
+            makedirs(path)
+        return path
 
 
 # AppConfig helpers

@@ -79,7 +79,7 @@ class LearningWizard(QWizard, Ui_Wizard):
         
     def deleteUserImages(self):
         self.user = None
-        path = self.settings.app_path+os.sep+"trainingdata"+os.sep+"user_training_data.pck"
+        path = self.settings.storage_path+os.sep+"user_training_data.pck"
         remove(path)
         self.user_data_label.setText("-")
         self.delete_images_button.setEnabled(False)
@@ -202,7 +202,7 @@ class LearningWizard(QWizard, Ui_Wizard):
                     else:
                         self.user[letter[1]] = data
                     
-        path = self.settings.app_path+os.sep+"trainingdata"+os.sep+"user_training_data.pck"
+        path = self.settings.storage_path+os.sep+"user_training_data.pck"
         file = gzip.GzipFile(path, 'wb')
         pickle.dump(self.user, file,-1)
         file.close()
@@ -249,7 +249,7 @@ class LearningWizard(QWizard, Ui_Wizard):
         
     def loadUser(self):
         try:
-            path = self.settings.app_path+os.sep+"trainingdata"+os.sep+"user_training_data.pck"
+            path = self.settings.storage_path+os.sep+"user_training_data.pck"
             file = gzip.GzipFile(path, 'rb')
             letters = pickle.load(file)
             file.close()
