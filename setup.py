@@ -66,7 +66,9 @@ OPTIONS = {'semi_standalone': True,
            'optimize': 2,
            'resources': [qt_conf,	# http://doc.qt.io/qt-4.8/qt-conf.html
                          'plugins',	# for TD_Export
-                         'translations', 'letters.xml', 'numbers.xml', 'station.xml', 'help', 'trainingdata', 'commodities.json'],
+                         'translations', 'letters.xml', 'numbers.xml', 'station.xml', 'help', 'commodities.json',
+                         ('trainingdata', ['trainingdata/base_training_data.pck', 'trainingdata/README'])
+                     ],
            'includes': ['PyQt4.QtNetwork'],
            'include_plugins': ['/Developer/Applications/Qt/plugins/imageformats/libqgif.dylib', '/Developer/Applications/Qt/plugins/imageformats/libqico.dylib'],
            'excludes': ['PIL', 'setuptools', 'matplotlib', 'wx',	# random modules that tend to get picked up
