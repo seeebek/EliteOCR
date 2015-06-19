@@ -116,7 +116,7 @@ class Calibrator(QThread):
         img = 255 - img
         #cv2.imshow("x", img)
         #cv2.waitKey(0)
-        mlp = MLP(img, self.settings.app_path, self.ocr_areas.areas, isstation=False, calibration=True)
+        mlp = MLP(img, self.settings, self.ocr_areas.areas, isstation=False, calibration=True)
         #print market.result
         #for result in market.result:
         #    print result.name.value

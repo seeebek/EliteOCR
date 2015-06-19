@@ -212,7 +212,7 @@ class EliteOCR(QMainWindow, Ui_MainWindow):
             self.openCalibration()
             self.settings.setValue('first_run', False)
         else:
-            datapath = (self.settings.app_path + os.sep + "trainingdata" + os.sep + "user_station.xml").encode(sys.getfilesystemencoding())
+            datapath = (self.settings.storage_path + os.sep + "user_station.xml").encode(sys.getfilesystemencoding())
             if not isfile(datapath):
                 msg = _translate("EliteOCR", "It appears you did not train EliteOCR. Training is essential in order to minimize the amount of OCR errors. Would you like to start the Learning Wizard now?", None)
                 if QMessageBox.question(self, 'Training', msg, _translate("EliteOCR","Yes", None), _translate("EliteOCR","No", None)) == 0:
@@ -1242,6 +1242,8 @@ def main(argv):
         global gui
         gui = True
         app = QApplication(sys.argv)
+        app.setOrganizationName('seeebek')
+        app.setApplicationName('eliteOCR')
         qtTranslator = QTranslator()
         translateApp(app, qtTranslator)
 

@@ -30,12 +30,12 @@ class OCR():
         self.commodities = self.readMarket(levels, levenshtein)
 
     def readStationName(self):
-        station = MLP(self.station_img, self.settings.app_path, self.ocr_areas.areas, isstation=True)
+        station = MLP(self.station_img, self.settings, self.ocr_areas.areas, isstation=True)
         #print station.result[0].name
         return station.result[0]
         
     def readMarket(self, levels, levenshtein = True):
-        market = MLP(self.commodities_img, self.settings.app_path, self.ocr_areas.areas, isstation=False)
+        market = MLP(self.commodities_img, self.settings, self.ocr_areas.areas, isstation=False)
         #for line in market.result:
         #    print line.name
         if levenshtein:

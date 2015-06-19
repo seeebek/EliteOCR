@@ -89,7 +89,7 @@ class Ui_About(object):
         self.label.setText(_translate("About", "\n"
 "\n"
 "Contributors:\n"
-"Seeebek, Marginal, CapCap, Gazelle, GMib, Marginal, Ph.Baumann\n"
+"Seeebek, Marginal, CapCap, Gazelle, GMib, Ph.Baumann\n"
 "\n"
 "EliteOCR is capable of reading the entries in Elite: Dangerous markets screenshots.", None))
 

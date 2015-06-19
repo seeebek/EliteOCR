@@ -153,7 +153,7 @@ class OCRAreasFinder:
         return new_areas
         
 class MLP:
-    def __init__(self, image, path, areas, isstation, calibration = False):
+    def __init__(self, image, settings, areas, isstation, calibration = False):
         #full old
         """
         layers = np.array([400,32,46])
@@ -164,10 +164,10 @@ class MLP:
         #numbers
         
         if isstation:
-            self.station = TrainedDataStation(path)
+            self.station = TrainedDataStation(settings)
         else:
-            self.numbers = TrainedDataNumbers(path)
-            self.letters = TrainedDataLetters(path)
+            self.numbers = TrainedDataNumbers(settings)
+            self.letters = TrainedDataLetters(settings)
         """
         layers = np.array([400,36,12])
         self.nnetwork = cv2.ANN_MLP(layers, 1,0.6,1)
@@ -703,45 +703,45 @@ class OCRbox():
             self.boxes.append(self.box)
         
 class TrainedDataNumbers():
-    def __init__(self, path):
+    def __init__(self, settings):
         self.revclassdict = {"0":0,"1":1,"2":2,"3":3,"4":4,"5":5,"6":6,"7":7,"8":8,"9":9,",":10,"-":11}
         self.keys = len(self.revclassdict)
         layers = np.array([400,71,self.keys])
         self.nnetwork = cv2.ANN_MLP(layers, 1,0.65,1)
-        datapath = (path + os.sep + "trainingdata" + os.sep + "user_numbers.xml").encode(sys.getfilesystemencoding())
+        datapath = (settings.storage_path + os.sep + "user_numbers.xml").encode(sys.getfilesystemencoding())
         if isfile(datapath):
             self.nnetwork.load(datapath, "OCRMLP")
         else:
-            datapath = (path + os.sep + "numbers.xml").encode(sys.getfilesystemencoding())
+            datapath = (settings.app_path + os.sep + "numbers.xml").encode(sys.getfilesystemencoding())
             self.nnetwork.load(datapath, "OCRMLP")
         self.classdict = dict((v,k.decode("utf-8")) for k,v in self.revclassdict.iteritems())
         
         
 class TrainedDataLetters():
-    def __init__(self, path):
+    def __init__(self, settings):
         self.revclassdict = {"A":0,"B":1,"C":2,"D":3,"E":4,"F":5,"G":6,"H":7,"I":8,"J":9,"K":10,"L":11,"M":12,"N":13,"O":14,"P":15,"Q":16,"R":17,"S":18,"T":19,"U":20,"V":21,"W":22,"X":23,"Y":24,"Z":25,"-":26,".":27,"'":28}
         self.keys = len(self.revclassdict)
         layers = np.array([400,71,self.keys])
         self.nnetwork = cv2.ANN_MLP(layers, 1,0.65,1)
-        datapath = (path + os.sep + "trainingdata" + os.sep + "user_letters.xml").encode(sys.getfilesystemencoding())
+        datapath = (settings.storage_path + os.sep + "user_letters.xml").encode(sys.getfilesystemencoding())
         if isfile(datapath):
             self.nnetwork.load(datapath, "OCRMLP")
         else:
-            datapath = (path + os.sep + "letters.xml").encode(sys.getfilesystemencoding())
+            datapath = (settings.app_path + os.sep + "letters.xml").encode(sys.getfilesystemencoding())
             self.nnetwork.load(datapath, "OCRMLP")
         self.classdict = dict((v,k.decode("utf-8")) for k,v in self.revclassdict.iteritems())
         
 class TrainedDataStation():
-    def __init__(self, path):
+    def __init__(self, settings):
         self.revclassdict = {"A":0,"B":1,"C":2,"D":3,"E":4,"F":5,"G":6,"H":7,"I":8,"J":9,"K":10,"L":11,"M":12,"N":13,"O":14,"P":15,"Q":16,"R":17,"S":18,"T":19,"U":20,"V":21,"W":22,"X":23,"Y":24,"Z":25,"1":26,"2":27,"3":28,"4":29,"5":30,"6":31,"7":32,"8":33,"9":34,"-":35,".":36,"'":37,"&":38,"[":39,"]":40}
         self.keys = len(self.revclassdict)
         layers = np.array([400,71,self.keys])
         self.nnetwork = cv2.ANN_MLP(layers, 1,0.65,1)
-        datapath = (path + os.sep + "trainingdata" + os.sep + "user_station.xml").encode(sys.getfilesystemencoding())
+        datapath = (settings.storage_path + os.sep + "user_station.xml").encode(sys.getfilesystemencoding())
         if isfile(datapath):
             self.nnetwork.load(datapath, "OCRMLP")
         else:
-            datapath = (path + os.sep + "station.xml").encode(sys.getfilesystemencoding())
+            datapath = (settings.app_path + os.sep + "station.xml").encode(sys.getfilesystemencoding())
             self.nnetwork.load(datapath, "OCRMLP")
         self.classdict = dict((v,k.decode("utf-8")) for k,v in self.revclassdict.iteritems())        
         
