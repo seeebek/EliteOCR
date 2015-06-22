@@ -31,6 +31,9 @@ opened by most spreadsheet editors like Excel, LibreOffice Calc etc. or alternat
 
 Building/running from source
 --------------
+
 [Windows](WINDOWS.md)
+
 [Mac](MAC.md)
+
 [Linux](LINUX.md)
