@@ -31,4 +31,6 @@ opened by most spreadsheet editors like Excel, LibreOffice Calc etc. or alternat
 
 Building/running from source
 --------------
-Refer to the file [BUILDING.md](BUILDING.md).
+[Windows](WINDOWS.md)
+[Mac](MAC.md)
+[Linux](LINUX.md)
